@@ -1,3 +1,2 @@
-DBInfo
-DBI.mjs
-testIgnore.txt
+DBInfo.js
+DBInfo.mjs
