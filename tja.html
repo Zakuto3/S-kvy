@@ -33,7 +33,9 @@
         </div>
         <div class="row">
             <div class="col-sm-6" style="background-color:#F28986;">
-                <h3>Inkluderade kolumner med ev. alias</h3><h4 id=titelkomihag>( Ange "title" som alias för en kolumn )</h4>
+                <h3>Inkluderade kolumner med ev. alias</h3>
+				<h4 id=titelkomihag>( Ange "title" som alias för en kolumn )</h4>
+				<button type="button" class="add-all-columns" style="position: relative right: 0">Lägg till<br> alla kolumner</button>
                 <table class="table table" id="fler_kolumner">
                     <!--Ändras kanske senare till att läsa från tabell i db "eskilstuna".-->
 					<tbody id=mainbody>
@@ -103,7 +105,9 @@ function update_fixed_fields(array) {
     } else { $('#where').text("") };
 };
 //When selector selection update three text fields with strings, call node js server and receive postgis table column headers then call table method
-$("#layerspecs").on('change', function () {
+/*$("#layerspecs").on('change', function () {
+	//printObject(this);
+	console.log(this);
     console.log(this.value);
     var split = this.value.split('|');
     console.log(split);
@@ -121,8 +125,40 @@ $("#layerspecs").on('change', function () {
     //Node js db:eskilstuna table name column headers
     //table_metod('set', json)
 
-});
+}); */
 
+//Function som skriver ut object
+function printObject(o) {
+
+		var out = '';
+
+		for (var p in o) {
+
+			out += p + ': ' + o[p] + '\n';
+
+		}
+
+	console.log(out);
+
+}
+
+$(".add-all-columns").on('click', function(){
+	console.log("click!");
+	let layerspecs = document.getElementById("layerspecs");
+	console.log(layerspecs.value);
+	let split = layerspecs.value.split("|");
+	update_fixed_fields(split)
+	$.ajax({
+        type: 'GET',
+        url: 'http://localhost:1337/eskilstuna/' + $('#tabell').text(),
+        success: function (json) {
+			console.log(json);
+            //tabellhuvuden = json;
+            //console.log(tabellhuvuden);
+            //setTable(json);
+        }
+    });
+});
 
 
 var i = 1;
@@ -145,7 +181,7 @@ $("#addbutton").click(function () { //klonar rad ett, letar efter input, textare
 
 
 
-function setTable(huvuden) { //Set table
+/*function setTable(huvuden) { //Set table
     $("#fler_kolumner tr").each(function () {
         $("#fler_kolumner").find("tr:gt(0)").remove(); //välj alla element med högre index än 1, dvs 2->
         console.log($(this).val());
@@ -166,7 +202,7 @@ function setTable(huvuden) { //Set table
         });
         $('#fler_kolumner').find('tbody:last').append(rad);
     })
-};
+};*/
 
 
 
