@@ -1,3 +1,0 @@
-DBInfo.js
-DBinfo.mjs
-testIgnore.txt
