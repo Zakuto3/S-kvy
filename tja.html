@@ -38,30 +38,46 @@
 				<button type="button" class="add-all-columns" style="position: relative right: 0">Lägg till<br> alla kolumner</button>
                 <table class="table table" id="fler_kolumner">
                     <!--Ändras kanske senare till att läsa från tabell i db "eskilstuna".-->
-					<tbody id=mainbody>
-						<tr>
-							<th>Försvinn!</th>
-							<th>Kolumnnamn</th>
-							<th>Alias</th>
-							<th>Sökbar kolumn</th>
-						</tr>
-						<tr>
-							<td>
-								<button type="button" class="btn btn-danger" name="bortknapp">X</button>
-							</td>
-							<td>
-								<input type="text" id="kolumn" name="kolumn">
-							</td>
-							<td>
-								<input type="text" id="alias" name="alias">
-								<!-- Varför heter alias titel? En kolumn ska läggas till sökvyn som heter 'title' och har värdet av en tabellkolumn, men hur blir tillagd rad ny radioknapp i existerande grupp? Check efter "title" istället för ny ful knappkolumn, skriv / poppa upp varning och
-								-->
-							</td>
-							<td>
-								<input type="checkbox" id="sokdel" name="checkbox">
-							</td>
-						</tr>
-					</body>
+                    <tbody id=mainbody>
+                        <tr>
+                            <th>Försvinn!</th>
+                            <th>Kolumnnamn</th>
+                            <th>Alias</th>
+                            <th>Sökbar kolumn</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <button type="button" class="btn btn-danger" name="bortknapp">X</button>
+                            </td>
+                            <td>
+                                <input type="text" id="kolumn" name="kolumn">
+                            </td>
+                            <td>
+                                <input type="text" id="alias" name="alias">
+                                <!--Varför heter alias titel? En kolumn ska läggas till sökvyn som heter 'title' och har värdet av en tabellkolumn, men hur blir tillagd rad ny radioknapp i existerande grupp? Check efter "title" istället för ny ful knappkolumn, skriv / poppa upp varning och
+        -->
+                            </td>
+                            <td>
+                                <input type="checkbox" id="sokdel" name="checkbox">
+                            </td>
+                        </tr>
+                        <!--<tr>
+        <td>
+            <button type="button" class="btn btn-danger" name="bortknapp">X</button>
+        </td>
+        <td>
+            <input type="text" id="kolumn" name="kolumn">
+        </td>
+        <td>
+            <input type="text" id="alias" name="alias">
+             Varför heter alias titel? En kolumn ska läggas till sökvyn som heter 'title' och har värdet av en tabellkolumn, men hur blir tillagd rad ny radioknapp i existerande grupp? Check efter "title" istället för ny ful knappkolumn, skriv / poppa upp varning och
+
+        </td>
+        <td>
+            <input type="checkbox" id="sokdel" name="checkbox">
+        </td>
+    </tr>-->
+</body>
                 </table>
                 <button class="btn btn-info" id="addbutton">+1</button>
             </div>
@@ -79,7 +95,6 @@ $(function () {
 
         success: function (json) {
             lagerspecar = json;
-
             lagerspecar.forEach(function (v) {
                 var opt = document.createElement('option');
                 opt.textContent = v.name;
@@ -103,7 +118,8 @@ function update_fixed_fields(array) {
     if (array[3] != 'null') {
         $('#where').text(array[3]);
     } else { $('#where').text("") };
-};
+    };
+
 //When selector selection update three text fields with strings, call node js server and receive postgis table column headers then call table method
 /*$("#layerspecs").on('change', function () {
 	//printObject(this);
@@ -145,7 +161,7 @@ function printObject(o) {
 $(".add-all-columns").on('click', function(){
 	let layerspecs = document.getElementById("layerspecs");
 	console.log(layerspecs.value);
-	let split = layerspecs.value.split("|");
+    let split = layerspecs.value.split("|");
 	update_fixed_fields(split)
 	$.ajax({
         type: 'GET',
@@ -161,7 +177,7 @@ $(".add-all-columns").on('click', function(){
 
 
 var i = 1;
-$("#addbutton").click(function () { //klonar rad ett, letar efter input, textarea-
+$("#addbutton").on('click',function () { //klonar rad ett, letar efter input, textarea-
     $("#fler_kolumner tr").eq(1).clone().find("input,textarea").each(function () { //$("table tr").eq(1)==index 1, .clone()=="deep copy", dvs denna och alla barn, .find("input").each==varje input, tre per rad(function ()
 
 		
@@ -184,6 +200,8 @@ function setTable(huvuden) { //Set table
     $("#fler_kolumner tr").each(function () {
         $("#fler_kolumner").find("tr:gt(0)").remove(); //välj alla element med högre index än 1, dvs 2->
         console.log($(this).val());
+        
+        
     });
     //console.log("Här är setTable och Huvuden: " + JSON.stringify(huvuden)); //[{"column_name":"geom"},{"column_name":"aktualitet"},{"column_name":"SHAPE_len"},{"column_name":"SHAPE_area"},
     $.each(huvuden, function (index, object) { //ska modifiera första radens kolumnnamnsvärde
