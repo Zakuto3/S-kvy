@@ -33,31 +33,35 @@
         </div>
         <div class="row">
             <div class="col-sm-6" style="background-color:#F28986;">
-                <h3>Inkluderade kolumner med ev. alias</h3><h4 id=titelkomihag>( Ange "title" som alias för en kolumn )</h4>
+                <h3>Inkluderade kolumner med ev. alias</h3>
+				<h4 id=titelkomihag>( Ange "title" som alias för en kolumn )</h4>
+				<button type="button" class="add-all-columns" style="position: relative right: 0">Lägg till<br> alla kolumner</button>
                 <table class="table table" id="fler_kolumner">
                     <!--Ändras kanske senare till att läsa från tabell i db "eskilstuna".-->
-                    <tr>
-                        <th>Försvinn!</th>
-                        <th>Kolumnnamn</th>
-                        <th>Alias</th>
-                        <th>Sökbar kolumn</th>
-                    </tr>
-                    <tr>
-                        <td>
-                            <button type="button" class="btn btn-danger" name="bortknapp">X</button>
-                        </td>
-                        <td>
-                            <input type="text" id="kolumn" name="kolumn">
-                        </td>
-                        <td>
-                            <input type="text" id="alias" name="alias">
-                            <!-- Varför heter alias titel? En kolumn ska läggas till sökvyn som heter 'title' och har värdet av en tabellkolumn, men hur blir tillagd rad ny radioknapp i existerande grupp? Check efter "title" istället för ny ful knappkolumn, skriv / poppa upp varning och
-                            -->
-                        </td>
-                        <td>
-                            <input type="checkbox" id="sokdel" name="checkbox">
-                        </td>
-                    </tr>
+					<tbody id=mainbody>
+						<tr>
+							<th>Försvinn!</th>
+							<th>Kolumnnamn</th>
+							<th>Alias</th>
+							<th>Sökbar kolumn</th>
+						</tr>
+						<tr>
+							<td>
+								<button type="button" class="btn btn-danger" name="bortknapp">X</button>
+							</td>
+							<td>
+								<input type="text" id="kolumn" name="kolumn">
+							</td>
+							<td>
+								<input type="text" id="alias" name="alias">
+								<!-- Varför heter alias titel? En kolumn ska läggas till sökvyn som heter 'title' och har värdet av en tabellkolumn, men hur blir tillagd rad ny radioknapp i existerande grupp? Check efter "title" istället för ny ful knappkolumn, skriv / poppa upp varning och
+								-->
+							</td>
+							<td>
+								<input type="checkbox" id="sokdel" name="checkbox">
+							</td>
+						</tr>
+					</body>
                 </table>
                 <button class="btn btn-info" id="addbutton">+1</button>
             </div>
@@ -101,7 +105,9 @@ function update_fixed_fields(array) {
     } else { $('#where').text("") };
 };
 //When selector selection update three text fields with strings, call node js server and receive postgis table column headers then call table method
-$("#layerspecs").on('change', function () {
+/*$("#layerspecs").on('change', function () {
+	//printObject(this);
+	console.log(this);
     console.log(this.value);
     var split = this.value.split('|');
     console.log(split);
@@ -119,15 +125,46 @@ $("#layerspecs").on('change', function () {
     //Node js db:eskilstuna table name column headers
     //table_metod('set', json)
 
-});
+}); */
 
+//Function som skriver ut object
+function printObject(o) {
+
+		var out = '';
+
+		for (var p in o) {
+
+			out += p + ': ' + o[p] + '\n';
+
+		}
+
+	console.log(out);
+
+}
+
+$(".add-all-columns").on('click', function(){
+	let layerspecs = document.getElementById("layerspecs");
+	console.log(layerspecs.value);
+	let split = layerspecs.value.split("|");
+	update_fixed_fields(split)
+	$.ajax({
+        type: 'GET',
+        url: 'http://localhost:1337/eskilstuna/' + $('#tabell').text(),
+        success: function (json) {
+			console.log(json);
+            //tabellhuvuden = json;
+            //console.log(tabellhuvuden);
+            setTable(json);
+        }
+    });
+});
 
 
 var i = 1;
 $("#addbutton").click(function () { //klonar rad ett, letar efter input, textarea-
     $("#fler_kolumner tr").eq(1).clone().find("input,textarea").each(function () { //$("table tr").eq(1)==index 1, .clone()=="deep copy", dvs denna och alla barn, .find("input").each==varje input, tre per rad(function ()
 
-
+		
         $(this).val("").attr({  //$(this).val('')==input value sätts till tom sträng, .attr(==sätter värde för ett eller flera attribut
             'id': function (_, id) { //parameternamnen förefaller inte viktiga; mängden avgör. Första är alltid 0, andra värdet för "id"
                 return id + i
@@ -169,9 +206,14 @@ function setTable(huvuden) { //Set table
 
 
 $(document).on('click', 'button.btn-danger', function () {
-    $(this).closest('tr').remove();
+    var rows = $("#mainbody").children(); 
+	//console.log(rows.length);
+	//console.log(this);
+	
+	if(rows.length > 2)
+		$(this).closest('tr').remove();
+		
     return false;
-
 });
 
 
@@ -210,20 +252,21 @@ $("#calcbutton").click(function () {   //Utvinn tabellens värden, kontrollera, 
                 if (illegalCharsCheck($(this).val())) { return }
                 else {
                     obj["alias"] = $(this).val();
-                    console.log("added Ali");
-
-                    if ($(this).val() == "title") { title_is_present = true } //hittat 'title' som aliasnamn
+                    if ($(this).val() == "title") { //hittat 'title' som aliasnamn
+						title_is_present = true ;
+						} 
                 }
             }
             else {	//resten av textarea och input
 
                 obj["kolumn"] = $(this).val();
-                console.log("added kol");
                 console.log("Kolumn: " + $(this).val())
 
             }
         });
         samling["row" + k] = obj;
+		console.log(["row"+k] + " Kolumn: "+ obj["kolumn"] + "Alias: "+ obj["alias"]);
+		console.log(samling["row"+k]["kolumn"]);
 
     });
     //console.log("här är hopsamling av tabellen, tja.html"+ JSON.stringify(samling)); //Vi bör kunna göra en rätt snyggo json här va, som sen kan skickas
