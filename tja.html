@@ -143,7 +143,6 @@ function printObject(o) {
 }
 
 $(".add-all-columns").on('click', function(){
-	console.log("click!");
 	let layerspecs = document.getElementById("layerspecs");
 	console.log(layerspecs.value);
 	let split = layerspecs.value.split("|");
@@ -155,7 +154,7 @@ $(".add-all-columns").on('click', function(){
 			console.log(json);
             //tabellhuvuden = json;
             //console.log(tabellhuvuden);
-            //setTable(json);
+            setTable(json);
         }
     });
 });
@@ -165,7 +164,7 @@ var i = 1;
 $("#addbutton").click(function () { //klonar rad ett, letar efter input, textarea-
     $("#fler_kolumner tr").eq(1).clone().find("input,textarea").each(function () { //$("table tr").eq(1)==index 1, .clone()=="deep copy", dvs denna och alla barn, .find("input").each==varje input, tre per rad(function ()
 
-
+		
         $(this).val("").attr({  //$(this).val('')==input value sätts till tom sträng, .attr(==sätter värde för ett eller flera attribut
             'id': function (_, id) { //parameternamnen förefaller inte viktiga; mängden avgör. Första är alltid 0, andra värdet för "id"
                 return id + i
@@ -181,7 +180,7 @@ $("#addbutton").click(function () { //klonar rad ett, letar efter input, textare
 
 
 
-/*function setTable(huvuden) { //Set table
+function setTable(huvuden) { //Set table
     $("#fler_kolumner tr").each(function () {
         $("#fler_kolumner").find("tr:gt(0)").remove(); //välj alla element med högre index än 1, dvs 2->
         console.log($(this).val());
@@ -202,7 +201,7 @@ $("#addbutton").click(function () { //klonar rad ett, letar efter input, textare
         });
         $('#fler_kolumner').find('tbody:last').append(rad);
     })
-};*/
+};
 
 
 
