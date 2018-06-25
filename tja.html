@@ -121,7 +121,7 @@ function update_fixed_fields(array) {
     };
 
 //When selector selection update three text fields with strings, call node js server and receive postgis table column headers then call table method
-/*$("#layerspecs").on('change', function () {
+/*$("#layerspecs").on('change', function () { //outcommented due to changed from on change to on click
 	//printObject(this);
 	console.log(this);
     console.log(this.value);
@@ -198,7 +198,8 @@ $("#addbutton").on('click',function () { //klonar rad ett, letar efter input, te
 
 function setTable(huvuden) { //Set table
     $("#fler_kolumner tr").each(function () {
-        $("#fler_kolumner").find("tr:gt(0)").remove(); //välj alla element med högre index än 1, dvs 2->
+        
+        $("#fler_kolumner").find("tr:gt("+((huvuden.length > 0) ? 0 : 1)+")").remove(); //välj alla element med högre index än 1, dvs 2->
         console.log($(this).val());
         
         
