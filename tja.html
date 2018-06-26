@@ -34,8 +34,8 @@
         <div class="row">
             <div class="col-sm-6" style="background-color:#F28986;">
                 <h3>Inkluderade kolumner med ev. alias</h3>
-				<h4 id=titelkomihag>( Ange "title" som alias för en kolumn )</h4>
-				<button type="button" class="add-all-columns" style="position: relative right: 0">Lägg till<br> alla kolumner</button>
+                <h4 id=titelkomihag>( Ange "title" som alias för en kolumn )</h4>
+                <button type="button" class="add-all-columns" style="position: relative right: 0">Lägg till<br> alla kolumner</button>
                 <table class="table table" id="fler_kolumner">
                     <!--Ändras kanske senare till att läsa från tabell i db "eskilstuna".-->
                     <tbody id=mainbody>
@@ -53,267 +53,269 @@
                                 <input type="text" id="kolumn" name="kolumn">
                             </td>
                             <td>
-                                <input type="text" id="alias" name="alias">
+                                <input type="checkbox" id="alias" name="alias">
                                 <!--Varför heter alias titel? En kolumn ska läggas till sökvyn som heter 'title' och har värdet av en tabellkolumn, men hur blir tillagd rad ny radioknapp i existerande grupp? Check efter "title" istället för ny ful knappkolumn, skriv / poppa upp varning och
-        -->
+                                -->
                             </td>
                             <td>
                                 <input type="checkbox" id="sokdel" name="checkbox">
                             </td>
                         </tr>
                         <!--<tr>
-        <td>
-            <button type="button" class="btn btn-danger" name="bortknapp">X</button>
-        </td>
-        <td>
-            <input type="text" id="kolumn" name="kolumn">
-        </td>
-        <td>
-            <input type="text" id="alias" name="alias">
-             Varför heter alias titel? En kolumn ska läggas till sökvyn som heter 'title' och har värdet av en tabellkolumn, men hur blir tillagd rad ny radioknapp i existerande grupp? Check efter "title" istället för ny ful knappkolumn, skriv / poppa upp varning och
+                            <td>
+                                <button type="button" class="btn btn-danger" name="bortknapp">X</button>
+                            </td>
+                            <td>
+                                <input type="text" id="kolumn" name="kolumn">
+                            </td>
+                            <td>
+                                <input type="text" id="alias" name="alias">
+                                 Varför heter alias titel? En kolumn ska läggas till sökvyn som heter 'title' och har värdet av en tabellkolumn, men hur blir tillagd rad ny radioknapp i existerande grupp? Check efter "title" istället för ny ful knappkolumn, skriv / poppa upp varning och
 
-        </td>
-        <td>
-            <input type="checkbox" id="sokdel" name="checkbox">
-        </td>
-    </tr>-->
+                            </td>
+                            <td>
+                                <input type="checkbox" id="sokdel" name="checkbox">
+                            </td>
+                        </tr>-->
 </body>
                 </table>
-                <button class="btn btn-info" id="addbutton">+1</button>
+<button class="btn btn-info" id="addbutton">+1</button>
             </div>
         </div>
 
 <script>
-//When DOM ready then call node js server and receive layer_spec from db:geoportia then populate selector
-$(function () {
+    //When DOM ready then call node js server and receive layer_spec from db:geoportia then populate selector
+    $(function () {
 
-    let lagerspecar = "kattkatt";
+        let lagerspecar = "kattkatt";
 
-    $.ajax({
-        type: 'GET',
-        url: 'http://localhost:1337/geoportia',
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost:1337/geoportia',
 
-        success: function (json) {
-            lagerspecar = json;
-            lagerspecar.forEach(function (v) {
-                var opt = document.createElement('option');
-                opt.textContent = v.name;
-                opt.value = v.name + "|" + v.public_title + "|" + v.postgis_table_name + "|" + v.postgis_view_where_condition;
-                $("#layerspecs").append(opt);
-            });
-            // $("#layerspecs").append('<option value='+ object.public_title + '>' + object.name + '</option>');
-        }
+            success: function (json) {
+                lagerspecar = json;
+                lagerspecar.forEach(function (v) {
+                    var opt = document.createElement('option');
+                    opt.textContent = v.name;
+                    opt.value = v.name + "|" + v.public_title + "|" + v.postgis_table_name + "|" + v.postgis_view_where_condition;
+                    $("#layerspecs").append(opt);
+                });
+                // $("#layerspecs").append('<option value='+ object.public_title + '>' + object.name + '</option>');
+            }
+
+        });
+
 
     });
 
-
-});
-
-function update_fixed_fields(array) {
-    console.log("I uppdatera_fixed_fields");
-    //document.getElementById("tabell").innerHTML=array[2];
-    $('#sokvy').text(array[0]);
-    $('#titel').text(array[1]);
-    $('#tabell').text(array[2]);
-    if (array[3] != 'null') {
-        $('#where').text(array[3]);
-    } else { $('#where').text("") };
+    function update_fixed_fields(array) {
+        console.log("I uppdatera_fixed_fields");
+        //document.getElementById("tabell").innerHTML=array[2];
+        $('#sokvy').text(array[0]);
+        $('#titel').text(array[1]);
+        $('#tabell').text(array[2]);
+        if (array[3] != 'null') {
+            $('#where').text(array[3]);
+        } else { $('#where').text("") };
     };
 
-//When selector selection update three text fields with strings, call node js server and receive postgis table column headers then call table method
-/*$("#layerspecs").on('change', function () { //outcommented due to changed from on change to on click
-	//printObject(this);
-	console.log(this);
-    console.log(this.value);
-    var split = this.value.split('|');
-    console.log(split);
-    update_fixed_fields(split);
-    //console.log("Är du tabellnamnet? " + $('#tabell').text());
-    $.ajax({
-        type: 'GET',
-        url: 'http://localhost:1337/eskilstuna/' + $('#tabell').text(),
-        success: function (json) {
-            //tabellhuvuden = json;
-            //console.log(tabellhuvuden);
-            setTable(json);
-        }
-    });
-    //Node js db:eskilstuna table name column headers
-    //table_metod('set', json)
-
-}); */
-
-//Function som skriver ut object
-function printObject(o) {
-
-		var out = '';
-
-		for (var p in o) {
-
-			out += p + ': ' + o[p] + '\n';
-
-		}
-
-	console.log(out);
-
-}
-
-$(".add-all-columns").on('click', function(){
-	let layerspecs = document.getElementById("layerspecs");
-	console.log(layerspecs.value);
-    let split = layerspecs.value.split("|");
-	update_fixed_fields(split)
-	$.ajax({
-        type: 'GET',
-        url: 'http://localhost:1337/eskilstuna/' + $('#tabell').text(),
-        success: function (json) {
-			console.log(json);
-            //tabellhuvuden = json;
-            //console.log(tabellhuvuden);
-            setTable(json);
-        }
-    });
-});
-
-
-var i = 1;
-$("#addbutton").on('click',function () { //klonar rad ett, letar efter input, textarea-
-    $("#fler_kolumner tr").eq(1).clone().find("input,textarea").each(function () { //$("table tr").eq(1)==index 1, .clone()=="deep copy", dvs denna och alla barn, .find("input").each==varje input, tre per rad(function ()
-
-		
-        $(this).val("").attr({  //$(this).val('')==input value sätts till tom sträng, .attr(==sätter värde för ett eller flera attribut
-            'id': function (_, id) { //parameternamnen förefaller inte viktiga; mängden avgör. Första är alltid 0, andra värdet för "id"
-                return id + i
-            },
-            'name': function (_, name) {
-                return name + i
-            },
-            'value': ""
-        });
-    }).end().appendTo("table");
-    i++;
-});
-
-
-
-function setTable(huvuden) { //Set table
-    $("#fler_kolumner tr").each(function () {
-        
-        $("#fler_kolumner").find("tr:gt("+((huvuden.length > 0) ? 0 : 1)+")").remove(); //välj alla element med högre index än 1, dvs 2->
-        console.log($(this).val());
-        
-        
-    });
-    //console.log("Här är setTable och Huvuden: " + JSON.stringify(huvuden)); //[{"column_name":"geom"},{"column_name":"aktualitet"},{"column_name":"SHAPE_len"},{"column_name":"SHAPE_area"},
-    $.each(huvuden, function (index, object) { //ska modifiera första radens kolumnnamnsvärde
-        //console.log(object);
-        //console.log(object.column_name);
-        $("#fler_kolumner tr:last").after("<tr><td><button type='button' class='btn btn-danger' name='bortknapp'>X</button></td><td><input type='text' id='kolumn' name='kolumn'></td><td><input type='text' id='alias' name='titel'></td><td><input type='checkbox' id='sokdel' name='checkbox'></td></tr>");
-        var rad = $("#fler_kolumner tr:last");
-        //var rad = $("#fler_kolumner tr").eq(1).clone(); //behöver bli utbytt mot tom ny rad annars titel överallt och varför en extra rad med tomt kolumnnamn när man hämtar postgresqltabeller?
-        rad.find("input,textarea").each(function () {
-            //console.log("kollar vad indexOf gör "+ this.id.indexOf("kolumn"));
-            if (this.id.indexOf("kolumn") >= 0) { 														//startposition eller -1, alltid int
-                console.log("Kolumns ID är " + this.id);
-                $(this).val(object.column_name);
+    //When selector selection update three text fields with strings, call node js server and receive postgis table column headers then call table method
+    /*$("#layerspecs").on('change', function () { //outcommented due to changed from on change to on click
+        //printObject(this);
+        console.log(this);
+        console.log(this.value);
+        var split = this.value.split('|');
+        console.log(split);
+        update_fixed_fields(split);
+        //console.log("Är du tabellnamnet? " + $('#tabell').text());
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost:1337/eskilstuna/' + $('#tabell').text(),
+            success: function (json) {
+                //tabellhuvuden = json;
+                //console.log(tabellhuvuden);
+                setTable(json);
             }
         });
-        $('#fler_kolumner').find('tbody:last').append(rad);
-    })
-};
+        //Node js db:eskilstuna table name column headers
+        //table_metod('set', json)
 
+    }); */
 
+    //Function som skriver ut object
+    function printObject(o) {
 
-$(document).on('click', 'button.btn-danger', function () {
-    var rows = $("#mainbody").children(); 
-	//console.log(rows.length);
-	//console.log(this);
-	
-	if(rows.length > 2)
-		$(this).closest('tr').remove();
-		
-    return false;
-});
+        var out = '';
 
+        for (var p in o) {
 
-$("#calcbutton").click(function () {   //Utvinn tabellens värden, kontrollera, post om så, return om ej
+            out += p + ': ' + o[p] + '\n';
 
-    var samling = {}; //tabellobjekt
-    var title_is_present = false;
-
-    function illegalCharsCheck(string) { //Returnerar falskt om inkommande sträng ej innehåller känt problematiskt tecken
-        if (!(string.indexOf(" ") > -1) && !(string.indexOf("/") > -1) && !(string.indexOf("Å") > -1) && !(string.indexOf("å") > -1) && (!string.indexOf("Ä") > -1) && !(string.indexOf("ä") > -1) && !(string.indexOf("Ö") > -1) && !(string.indexOf("ö") > -1)) {
-            return false
         }
-        else {
-            return true
-        }
+
+        console.log(out);
+
     }
 
-
-    $('#fler_kolumner tr').each(function (k) {// 'table row'
-
-
-        var obj = {}; //js-objekt som representerar en rad
-
-        $(this).find("input,textarea").each(function (i) {
-            //console.log($(this).);
-            if (this.id.indexOf('sokdel') >= 0) {
-                if ($(this).is(":checked")) {
-                    obj["sokdel"] = "j";
-                }
-                else {
-                    obj["sokdel"] = "n";
-                }
+    $(".add-all-columns").on('click', function () {
+        let layerspecs = document.getElementById("layerspecs");
+        console.log(layerspecs.value);
+        let split = layerspecs.value.split("|");
+        update_fixed_fields(split)
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost:1337/eskilstuna/' + $('#tabell').text(),
+            success: function (json) {
+                console.log(json);
+                //tabellhuvuden = json;
+                //console.log(tabellhuvuden);
+                setTable(json);
             }
-            else if (this.id.indexOf('alias') >= 0) {
-                //gör illegalCharsCheck(), om fail så return
-                if (illegalCharsCheck($(this).val())) { return }
-                else {
-                    obj["alias"] = $(this).val();
+        });      
+    });
+    });
+    
+
+    var i = 1;
+    $("#addbutton").on('click', function () { //klonar rad ett, letar efter input, textarea-
+        $("#fler_kolumner tr").eq(1).clone().find("input,textarea").each(function () { //$("table tr").eq(1)==index 1, .clone()=="deep copy", dvs denna och alla barn, .find("input").each==varje input, tre per rad(function ()
+
+
+            $(this).val("").attr({  //$(this).val('')==input value sätts till tom sträng, .attr(==sätter värde för ett eller flera attribut
+                'id': function (_, id) { //parameternamnen förefaller inte viktiga; mängden avgör. Första är alltid 0, andra värdet för "id"
+                    return id + i
+                },
+                'name': function (_, name) {
+                    return name + i
+                },
+                'value': ""
+            });
+        }).end().appendTo("table");
+        i++;
+    });
+
+
+
+    function setTable(huvuden) { //Set table
+        $("#fler_kolumner tr").each(function () {
+
+            $("#fler_kolumner").find("tr:gt(" + ((huvuden.length > 0) ? 0 : 1) + ")").remove(); //välj alla element med högre index än 1, dvs 2->
+            console.log($(this).val());
+
+
+        });
+        //console.log("Här är setTable och Huvuden: " + JSON.stringify(huvuden)); //[{"column_name":"geom"},{"column_name":"aktualitet"},{"column_name":"SHAPE_len"},{"column_name":"SHAPE_area"},
+        $.each(huvuden, function (index, object) { //ska modifiera första radens kolumnnamnsvärde
+            //console.log(object);
+            //console.log(object.column_name);
+            $("#fler_kolumner tr:last").after("<tr><td><button type='button' class='btn btn-danger' name='bortknapp'>X</button></td><td><input type='text' id='kolumn' name='kolumn'></td><td><input type='checkbox' id='alias' name='titel'></td><td><input type='checkbox' id='sokdel' name='checkbox'></td></tr>");
+            var rad = $("#fler_kolumner tr:last");
+            //var rad = $("#fler_kolumner tr").eq(1).clone(); //behöver bli utbytt mot tom ny rad annars titel överallt och varför en extra rad med tomt kolumnnamn när man hämtar postgresqltabeller?
+            rad.find("input,textarea").each(function () {
+                //console.log("kollar vad indexOf gör "+ this.id.indexOf("kolumn"));
+                if (this.id.indexOf("kolumn") >= 0) { 														//startposition eller -1, alltid int
+                    console.log("Kolumns ID är " + this.id);
+                    $(this).val(object.column_name);
+                }
+            });
+            $('#fler_kolumner').find('tbody:last').append(rad);
+        })
+    };
+
+
+
+    $(document).on('click', 'button.btn-danger', function () {
+        var rows = $("#mainbody").children();
+        //console.log(rows.length);
+        //console.log(this);
+
+        if (rows.length > 2)
+            $(this).closest('tr').remove();
+
+        return false;
+    });
+
+    
+    
+  
+
+    $("#calcbutton").click(function () {   //Utvinn tabellens värden, kontrollera, post om så, return om ej
+
+        var samling = {}; //tabellobjekt
+        var title_is_present = false;
+
+        function illegalCharsCheck(string) { //Returnerar falskt om inkommande sträng ej innehåller känt problematiskt tecken
+            if (!(string.indexOf(" ") > -1) && !(string.indexOf("/") > -1) && !(string.indexOf("Å") > -1) && !(string.indexOf("å") > -1) && (!string.indexOf("Ä") > -1) && !(string.indexOf("ä") > -1) && !(string.indexOf("Ö") > -1) && !(string.indexOf("ö") > -1)) {
+                return false
+            }
+            else {
+                return true
+            }
+        }
+
+
+
+        $('#fler_kolumner tr').each(function (k) {// 'table row'
+
+
+            var obj = {}; //js-objekt som representerar en rad
+
+            $(this).find("input,textarea").each(function (i) {
+                //console.log($(this).);
+                if (this.id.indexOf('sokdel') >= 0) {
+                    if ($(this).is(":checked")) {
+                        obj["sokdel"] = "j";
+                    }
+                    else {
+                        obj["sokdel"] = "n";
+                    }
+                }
+                else if (this.id.indexOf('alias') >= 0) { // ZAK: Under Construction
+                    obj["alias"] = "title";
                     if ($(this).val() == "title") { //hittat 'title' som aliasnamn
-						title_is_present = true ;
-						} 
+                        title_is_present = true;
+                    }
                 }
-            }
-            else {	//resten av textarea och input
 
-                obj["kolumn"] = $(this).val();
-                console.log("Kolumn: " + $(this).val())
+                else {	//resten av textarea och input
 
-            }
+                    obj["kolumn"] = $(this).val();
+                    console.log("Kolumn: " + $(this).val())
+
+                }
+            });
+            samling["row" + k] = obj;
+            console.log(["row" + k] + " Kolumn: " + obj["kolumn"] + "Alias: " + obj["alias"]);
+            console.log(samling["row" + k]["kolumn"]);
+
         });
-        samling["row" + k] = obj;
-		console.log(["row"+k] + " Kolumn: "+ obj["kolumn"] + "Alias: "+ obj["alias"]);
-		console.log(samling["row"+k]["kolumn"]);
+        //console.log("här är hopsamling av tabellen, tja.html"+ JSON.stringify(samling)); //Vi bör kunna göra en rätt snyggo json här va, som sen kan skickas
+        if (!title_is_present) {
+            $("#titelkomihag").fadeOut(700).fadeIn(700).fadeOut(700).fadeIn(700);
+            return;
+        }
 
-    });
-    //console.log("här är hopsamling av tabellen, tja.html"+ JSON.stringify(samling)); //Vi bör kunna göra en rätt snyggo json här va, som sen kan skickas
-    if (!title_is_present) {
-        $("#titelkomihag").fadeOut(700).fadeIn(700).fadeOut(700).fadeIn(700);
-        return;
+        else {
+
+            samling["tabellnamn"] = $('#tabell').text();
+            samling["sokvynamn"] = $('#sokvy').text();
+            samling["titel"] = $('#titel').text();
+            samling["where"] = $('#where').text();
+
+            $.post('http://localhost:1337/eskilstuna_nyvy', samling, function (data, status) {
+
+                $('#sql').html("<code>" + data + "</code>"); //klienten behöver formatera svaret för visning i div, nyrad vid första AS, FROM, WHERE
+                console.log("Data: " + data + "\nStatus: " + status);
+            });
+        }
     }
-
-    else {
-
-        samling["tabellnamn"] = $('#tabell').text();
-        samling["sokvynamn"] = $('#sokvy').text();
-        samling["titel"] = $('#titel').text();
-        samling["where"] = $('#where').text();
-
-        $.post('http://localhost:1337/eskilstuna_nyvy', samling, function (data, status) {
-
-            $('#sql').html("<code>" + data + "</code>"); //klienten behöver formatera svaret för visning i div, nyrad vid första AS, FROM, WHERE
-            console.log("Data: " + data + "\nStatus: " + status);
-        });
-    }
-}
-);
+    );
 
 
 
-//jqueryUI för att göra lista DOMelement sorterbar
-$('#fler_kolumner tbody').sortable();
+    //jqueryUI för att göra lista DOMelement sorterbar
+    $('#fler_kolumner tbody').sortable();
 
 </script>
 </html>
