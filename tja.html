@@ -9,11 +9,16 @@
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+	<style>
+		.margin-left{
+		margin-left: 0.5em;
+		}
+	</style>
 </head>
 <body>
     <div class="container-fluid" style="background-color:#33928C;">
-        <div class="row">
-            <div class="col-sm-6" style="background-color:#33928C;">
+        <div class="col-sm-6">
+            <div class="row" style="background-color:#33928C;">
                 <select id="layerspecs" label="Select one:"></select> <br> < (Innehållet i tabellen nedan ersätts när ny spec väljs och dess postgrestabell hämtas)
                 <h3>Tabell</h3>
                 <p id="tabell">mellow</p>
@@ -24,15 +29,7 @@
                 <h3>Where</h3>
                 <p id="where"></p>
             </div>
-            <div class="col-sm-6" style="background-color:#97B6CB;">
-                <h3>SQL</h3>
-                <div readonly id="sql" rows="5" cols="70" autocomplete="off"></div>
-                <button type="button" class="btn btn-info" id="calcbutton">Show SQL</button>
-                <button type="button" class="btn btn-info" id="sendbutton">Send</button>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-6" style="background-color:#F28986;">
+			<div class="row" style="background-color:#F28986;">
                 <h3>Inkluderade kolumner med ev. alias</h3>
                 <h4 id=titelkomihag>( Ange "title" som alias för en kolumn )</h4>
                 <table class="table table" id="fler_kolumner">
@@ -64,12 +61,29 @@
 							</td>
 						</tr>
 					</body>
-
+				
                 </table>
-				<button type="button" class="add-all-columns btn btn-info" style="position: relative; float: right; bottom: 1em;">Lägg till<br> alla kolumner</button>
-                <button class="btn btn-info" id="addbutton">+1</button>
+				<button type="button" class="add-all-columns btn btn-info" style="position: relative; float: right; bottom: 1em; right: 0.5em;">Lägg till<br> alla kolumner</button>
+                <button class="btn btn-info" id="addbutton" style="position: relative; left: 0.5em;">+1</button>
             </div>
         </div>
+        <div class="col-sm-6">
+		
+            <div class="row" style="background-color:#97B6CB;" >
+                <h3 class="margin-left">SQL</h3>
+                <div class="margin-left" readonly id="sql" rows="5" cols="70" autocomplete="off"></div>
+                <button type="button" class="btn btn-info margin-left" id="calcbutton">Show SQL</button>
+                <button type="button" class="btn btn-info margin-left" id="sendbutton">Send</button>
+            </div>
+			<div class="row" style="background-color:green;">
+                <h3 class="margin-left">FTL</h3>
+                <div class="margin-left" readonly id="ftl" rows="5" cols="70" autocomplete="off"></div>
+                <button type="button" class="btn btn-info margin-left" id="calcFTL">Show FTL</button>
+            </div>
+            
+        
+
+		</div>
 
 <script>
     //When DOM ready then call node js server and receive layer_spec from db:geoportia then populate selector
