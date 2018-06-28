@@ -9,11 +9,16 @@
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+	<style>
+		.margin-left{
+		margin-left: 0.5em;
+		}
+	</style>
 </head>
 <body>
     <div class="container-fluid" style="background-color:#33928C;">
-        <div class="row">
-            <div class="col-sm-6" style="background-color:#33928C;">
+        <div class="col-sm-6">
+            <div class="row" style="background-color:#33928C;">
                 <select id="layerspecs" label="Select one:"></select> <br> < (Innehållet i tabellen nedan ersätts när ny spec väljs och dess postgrestabell hämtas)
                 <h3>Tabell</h3>
                 <p id="tabell">mellow</p>
@@ -24,15 +29,7 @@
                 <h3>Where</h3>
                 <p id="where"></p>
             </div>
-            <div class="col-sm-6" style="background-color:#97B6CB;">
-                <h3>SQL</h3>
-                <div readonly id="sql" rows="5" cols="70" autocomplete="off"></div>
-                <button type="button" class="btn btn-info" id="calcbutton">Show SQL</button>
-                <button type="button" class="btn btn-info" id="sendbutton">Send</button>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-6" style="background-color:#F28986;">
+			<div class="row" style="background-color:#F28986;">
                 <h3>Inkluderade kolumner med ev. alias</h3>
                 <h4 id=titelkomihag>( Ange "title" som alias för en kolumn )</h4>
                 <table class="table table" id="fler_kolumner">
@@ -64,12 +61,29 @@
 							</td>
 						</tr>
 					</body>
-
+				
                 </table>
-				<button type="button" class="add-all-columns btn btn-info" style="position: relative; float: right; bottom: 1em;">Lägg till<br> alla kolumner</button>
-                <button class="btn btn-info" id="addbutton">+1</button>
+				<button type="button" class="add-all-columns btn btn-info" style="position: relative; float: right; bottom: 1em; right: 0.5em;">Lägg till<br> alla kolumner</button>
+                <button class="btn btn-info" id="addbutton" style="position: relative; left: 0.5em;">+1</button>
             </div>
         </div>
+        <div class="col-sm-6">
+		
+            <div class="row" style="background-color:#97B6CB;" >
+                <h3 class="margin-left">SQL</h3>
+                <div class="margin-left" readonly id="sql" rows="5" cols="70" autocomplete="off"></div>
+                <button type="button" class="btn btn-info margin-left" id="calcbutton">Show SQL</button>
+                <button type="button" class="btn btn-info margin-left" id="sendbutton">Send</button>
+            </div>
+			<div class="row" style="background-color:green;">
+                <h3 class="margin-left">FTL</h3>
+                <div class="margin-left" readonly id="ftl" rows="5" cols="70" autocomplete="off"></div>
+                <button type="button" class="btn btn-info margin-left" id="calcFTL">Show FTL</button>
+            </div>
+            
+        
+
+		</div>
 
 <script>
     //When DOM ready then call node js server and receive layer_spec from db:geoportia then populate selector
@@ -204,8 +218,9 @@ function updateAllDropboxes(){
 	$('.dropbox').each(function (index){
 		let box = $(this);
 		let options = box.children();
-		if(options.length > index)
-		box.val(options[index].text); 
+		if(options.length > index){
+			box.val(options[index].text); 
+		}
 	}); 
 
 }
@@ -224,27 +239,14 @@ function updateNewDropbox(){
 		newDropBox.append(opt);
 	})
 	let options = newDropBox.children();
-	newDropBox.val(options[index].text);
+	if(options.length > index){
+		newDropBox.val(options[index].text);
+	}
 }
 	
 
-//var i = 1;
 /*adds a new row when clicking on +1*/
-$("#addbutton").click(function () { //klonar rad ett, letar efter input, textarea-
-    /*$("#fler_kolumner tr").eq(1).clone().find("input,textarea").each(function () { //$("table tr").eq(1)==index 1, .clone()=="deep copy", dvs denna och alla barn, .find("input").each==varje input, tre per rad(function ()
-
-		
-        $(this).val("").attr({  //$(this).val('')==input value sätts till tom sträng, .attr(==sätter värde för ett eller flera attribut
-            'id': function (_, id) { //parameternamnen förefaller inte viktiga; mängden avgör. Första är alltid 0, andra värdet för "id"
-                return id + i
-            },
-            'name': function (_, name) {
-                return name + i
-            },
-            'value': ""
-        });
-    }).end().appendTo("table");
-    i++;*/
+$("#addbutton").click(function () {
 	$("table").append(createRow()); // new createRow func
 	updateNewDropbox();	//update the new dropbox
 	
@@ -258,7 +260,6 @@ function setTable(huvuden) { //Set table
        $("#fler_kolumner").find("tr:gt(" + ((huvuden.length > 0) ? 0 : 1) + ")").remove(); //välj alla element med högre index än 1, dvs 2->
         console.log($(this).val());
     });
-    //console.log("Här är setTable och Huvuden: " + JSON.stringify(huvuden)); //[{"column_name":"geom"},{"column_name":"aktualitet"},{"column_name":"SHAPE_len"},{"column_name":"SHAPE_area"},
     $.each(huvuden, function (index, object){
         $("#fler_kolumner tr:last").after(createRow());
     });
@@ -272,7 +273,6 @@ $(document).on('click', 'button.btn-danger', function () {
     var rows = $("#mainbody").children(); 
 	if(rows.length > 2)
 		$(this).closest('tr').remove();
-    //return false;
 });
 
 $("#calcbutton").click(function () {   //Utvinn tabellens värden, kontrollera, post om så, return om ej
@@ -294,7 +294,7 @@ $("#calcbutton").click(function () {   //Utvinn tabellens värden, kontrollera, 
 
             var obj = {}; //js-objekt som representerar en rad
 
-            $(this).find("input,textarea").each(function (i) {
+            $(this).find("input,select").each(function (i) {
                 //console.log($(this).);
                 if (this.id.indexOf('sokdel') >= 0) {
                     if ($(this).is(":checked")) {
@@ -305,21 +305,16 @@ $("#calcbutton").click(function () {   //Utvinn tabellens värden, kontrollera, 
                     }
                 }
 				else if (this.id.indexOf('title') >= 0) {
-					//gör illegalCharsCheck(), om fail så return
-					/*if (illegalCharsCheck($(this).val())) { return }
-					else {
-						obj["alias"] = $(this).val();
-						if ($(this).val() == "title") { //hittat 'title' som aliasnamn
-							title_is_present = true ;
-							} 
-					}*/
 					if($(this).is(":checked")){
 						title_is_present = true;
+						obj["title"] = "j";
+					}
+					else{
+						obj["title"] = "n";
 					}
 				}
 				else {
                     obj["kolumn"] = $(this).val();
-                    console.log("Kolumn: " + $(this).val())			//resten av textarea och input
 				}
 			});
         samling["row" + k] = obj;
@@ -328,7 +323,7 @@ $("#calcbutton").click(function () {   //Utvinn tabellens värden, kontrollera, 
     });
     //console.log("här är hopsamling av tabellen, tja.html"+ JSON.stringify(samling)); //Vi bör kunna göra en rätt snyggo json här va, som sen kan skickas
     if (!title_is_present) {
-		alert("Måste ha en title");
+		alert("Måste ange en title");
         //$("#titelkomihag").fadeOut(700).fadeIn(700).fadeOut(700).fadeIn(700);
         return;
     }
