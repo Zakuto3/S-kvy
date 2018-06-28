@@ -105,8 +105,8 @@ app.post('/eskilstuna_nyvy', function (req, res) {
             skapasokvy_str += '"' + tabelln + '"."' + value + '"';
             sistaknamn = value;
         }
-        else if (key == "alias") {
-            if (value != "") { skapasokvy_str += " AS " + value + ", "; }
+        else if (key == "title") {
+            if (value == "j") { skapasokvy_str += " AS title, "; }
             else {
                 skapasokvy_str += ", "; //Kan sluta med , om COALESCE eller dylikt sokstrang-skapande kommer efter. Annat scenario är att inget blir sökbart.
             }
@@ -131,7 +131,7 @@ app.post('/eskilstuna_nyvy', function (req, res) {
             if (o[i] !== null && typeof (o[i]) == "object") {
                 traverse(o[i], func);
             }
-            else if (i == "kolumn" || i == "alias" || i == "sokdel") {
+            else if (i == "kolumn" || i == "title" || i == "sokdel") {
                 func.apply(this, [i, o[i]]); //http://www.w3schools.com/js/js_function_invocation.asp
             }
         }

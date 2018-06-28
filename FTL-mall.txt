@@ -1,0 +1,27 @@
+<#--
+Body section of the GetFeatureInfo template, it's provided with one feature collection, and
+will be called multiple times if there are various feature collections
+-->
+
+  <table class="featureInfo">
+<ul>
+
+<#list features as feature>
+  <ul>
+
+  <#list feature.attributes as attribute>
+  <tr>
+    <#if (!attribute.isGeometry && !(attribute.name="sokid") && !(attribute.name="title") && !(attribute.name="searchfield"))>
+	 <!-- attribut som inte ska visas-->
+      <td valign="top"><b>${attribute.name}</b></td> <td>${attribute.value}</td>
+	  <!-- attribut som ska visas-->
+    </#if>
+  </tr>	
+  </#list>
+
+	
+  </ul>
+</#list>
+</ul>
+</table> 
+
