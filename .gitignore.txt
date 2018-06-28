@@ -1,2 +1,2 @@
-DBInfo.js
-DBInfo.mjs
+DBinfo.js
+DBinfo.mjs

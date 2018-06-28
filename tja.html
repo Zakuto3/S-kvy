@@ -34,9 +34,10 @@
         <div class="row">
             <div class="col-sm-6" style="background-color:#F28986;">
                 <h3>Inkluderade kolumner med ev. alias</h3>
-				<h4 id=titelkomihag>( Ange "title" som alias för en kolumn )</h4>
+                <h4 id=titelkomihag>( Ange "title" som alias för en kolumn )</h4>
                 <table class="table table" id="fler_kolumner">
                     <!--Ändras kanske senare till att läsa från tabell i db "eskilstuna".-->
+
 					<tbody id=mainbody>
 						<tr>
 							<th>Försvinn!</th>
@@ -63,6 +64,7 @@
 							</td>
 						</tr>
 					</body>
+
                 </table>
 				<button type="button" class="add-all-columns btn btn-info" style="position: relative; float: right; bottom: 1em;">Lägg till<br> alla kolumner</button>
                 <button class="btn btn-info" id="addbutton">+1</button>
@@ -70,32 +72,41 @@
         </div>
 
 <script>
-//When DOM ready then call node js server and receive layer_spec from db:geoportia then populate selector
-$(function () {
+    //When DOM ready then call node js server and receive layer_spec from db:geoportia then populate selector
+    $(function () {
 
-    let lagerspecar = "kattkatt";
+        let lagerspecar = "kattkatt";
 
-    $.ajax({
-        type: 'GET',
-        url: 'http://localhost:1337/geoportia',
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost:1337/geoportia',
 
-        success: function (json) {
-            lagerspecar = json;
+            success: function (json) {
+                lagerspecar = json;
+                lagerspecar.forEach(function (v) {
+                    var opt = document.createElement('option');
+                    opt.textContent = v.name;
+                    opt.value = v.name + "|" + v.public_title + "|" + v.postgis_table_name + "|" + v.postgis_view_where_condition;
+                    $("#layerspecs").append(opt);
+                });
+                // $("#layerspecs").append('<option value='+ object.public_title + '>' + object.name + '</option>');
+            }
 
-            lagerspecar.forEach(function (v) {
-                var opt = document.createElement('option');
-                opt.textContent = v.name;
-                opt.value = v.name + "|" + v.public_title + "|" + v.postgis_table_name + "|" + v.postgis_view_where_condition;
-                $("#layerspecs").append(opt);
-				//console.log("v.name: "+ v.name);
-            });
-            // $("#layerspecs").append('<option value='+ object.public_title + '>' + object.name + '</option>');
-        }
+        });
+
 
     });
+  
+    //Function som skriver ut object
+    function printObject(o) {
+      var out = '';
+        for (var p in o) {
+            out += p + ': ' + o[p] + '\n';
+        }
+        console.log(out);
+    }
 
 
-});
 
 //fill dropbox with table column names from the database
 function fillDropBox(kolumner){
@@ -172,6 +183,7 @@ function printObject(o) {
 	console.log(out);
 }
 
+
 //reads columns from database and updates the whole table
 $(".add-all-columns").on('click', function(){
 	let layerspecs = document.getElementById("layerspecs");
@@ -243,7 +255,7 @@ $("#addbutton").click(function () { //klonar rad ett, letar efter input, textare
 	to set the value on the dropboxes*/
 function setTable(huvuden) { //Set table
     $("#fler_kolumner tr").each(function () {
-        $("#fler_kolumner").find("tr:gt(" + ((huvuden.length > 0) ? 0 : 1) + ")").remove(); //välj alla element med högre index än 1, dvs 2->
+       $("#fler_kolumner").find("tr:gt(" + ((huvuden.length > 0) ? 0 : 1) + ")").remove(); //välj alla element med högre index än 1, dvs 2->
         console.log($(this).val());
     });
     //console.log("Här är setTable och Huvuden: " + JSON.stringify(huvuden)); //[{"column_name":"geom"},{"column_name":"aktualitet"},{"column_name":"SHAPE_len"},{"column_name":"SHAPE_area"},
@@ -263,8 +275,8 @@ $(document).on('click', 'button.btn-danger', function () {
     //return false;
 });
 
-
 $("#calcbutton").click(function () {   //Utvinn tabellens värden, kontrollera, post om så, return om ej
+
     var samling = {}; //tabellobjekt
     var title_is_present = false;
 
@@ -275,44 +287,41 @@ $("#calcbutton").click(function () {   //Utvinn tabellens värden, kontrollera, 
         else {
             return true
         }
-    }
+        }
+
+        $('#fler_kolumner tr').each(function (k) {// 'table row'
 
 
-    $('#fler_kolumner tr').each(function (k) {// 'table row'
+            var obj = {}; //js-objekt som representerar en rad
 
-
-        var obj = {}; //js-objekt som representerar en rad
-
-        $(this).find("input,textarea").each(function (i) {
-            //console.log($(this).);
-            if (this.id.indexOf('sokdel') >= 0) {
-                if ($(this).is(":checked")) {
-                    obj["sokdel"] = "j";
+            $(this).find("input,textarea").each(function (i) {
+                //console.log($(this).);
+                if (this.id.indexOf('sokdel') >= 0) {
+                    if ($(this).is(":checked")) {
+                        obj["sokdel"] = "j";
+                    }
+                    else {
+                        obj["sokdel"] = "n";
+                    }
                 }
-                else {
-                    obj["sokdel"] = "n";
-                }
-            }
-            else if (this.id.indexOf('title') >= 0) {
-                //gör illegalCharsCheck(), om fail så return
-                /*if (illegalCharsCheck($(this).val())) { return }
-                else {
-                    obj["alias"] = $(this).val();
-                    if ($(this).val() == "title") { //hittat 'title' som aliasnamn
-						title_is_present = true ;
-						} 
-                }*/
-				if($(this).is(":checked")){
-					title_is_present = true;
+				else if (this.id.indexOf('title') >= 0) {
+					//gör illegalCharsCheck(), om fail så return
+					/*if (illegalCharsCheck($(this).val())) { return }
+					else {
+						obj["alias"] = $(this).val();
+						if ($(this).val() == "title") { //hittat 'title' som aliasnamn
+							title_is_present = true ;
+							} 
+					}*/
+					if($(this).is(":checked")){
+						title_is_present = true;
+					}
 				}
-            }
-            else {	//resten av textarea och input
-
-                obj["kolumn"] = $(this).val();
-                console.log("Kolumn: " + $(this).val())
-
-            }
-        });
+				else {
+                    obj["kolumn"] = $(this).val();
+                    console.log("Kolumn: " + $(this).val())			//resten av textarea och input
+				}
+			});
         samling["row" + k] = obj;
 		console.log(["row"+k] + " Kolumn: "+ obj["kolumn"]);
 
@@ -323,7 +332,6 @@ $("#calcbutton").click(function () {   //Utvinn tabellens värden, kontrollera, 
         //$("#titelkomihag").fadeOut(700).fadeIn(700).fadeOut(700).fadeIn(700);
         return;
     }
-
     else {
 
         samling["tabellnamn"] = $('#tabell').text();
@@ -335,15 +343,15 @@ $("#calcbutton").click(function () {   //Utvinn tabellens värden, kontrollera, 
 
             $('#sql').html("<code>" + data + "</code>"); //klienten behöver formatera svaret för visning i div, nyrad vid första AS, FROM, WHERE
             console.log("Data: " + data + "\nStatus: " + status);
-        });
+            });
+        }
     }
-}
-);
+    );
 
 
 
-//jqueryUI för att göra lista DOMelement sorterbar
-$('#fler_kolumner tbody').sortable();
+    //jqueryUI för att göra lista DOMelement sorterbar
+    $('#fler_kolumner tbody').sortable();
 
 </script>
 </html>
