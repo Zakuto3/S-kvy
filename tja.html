@@ -204,8 +204,9 @@ function updateAllDropboxes(){
 	$('.dropbox').each(function (index){
 		let box = $(this);
 		let options = box.children();
-		if(options.length > index)
-		box.val(options[index].text); 
+		if(options.length > index){
+			box.val(options[index].text); 
+		}
 	}); 
 
 }
@@ -224,27 +225,14 @@ function updateNewDropbox(){
 		newDropBox.append(opt);
 	})
 	let options = newDropBox.children();
-	newDropBox.val(options[index].text);
+	if(options.length > index){
+		newDropBox.val(options[index].text);
+	}
 }
 	
 
-//var i = 1;
 /*adds a new row when clicking on +1*/
-$("#addbutton").click(function () { //klonar rad ett, letar efter input, textarea-
-    /*$("#fler_kolumner tr").eq(1).clone().find("input,textarea").each(function () { //$("table tr").eq(1)==index 1, .clone()=="deep copy", dvs denna och alla barn, .find("input").each==varje input, tre per rad(function ()
-
-		
-        $(this).val("").attr({  //$(this).val('')==input value sätts till tom sträng, .attr(==sätter värde för ett eller flera attribut
-            'id': function (_, id) { //parameternamnen förefaller inte viktiga; mängden avgör. Första är alltid 0, andra värdet för "id"
-                return id + i
-            },
-            'name': function (_, name) {
-                return name + i
-            },
-            'value': ""
-        });
-    }).end().appendTo("table");
-    i++;*/
+$("#addbutton").click(function () {
 	$("table").append(createRow()); // new createRow func
 	updateNewDropbox();	//update the new dropbox
 	
@@ -258,7 +246,6 @@ function setTable(huvuden) { //Set table
        $("#fler_kolumner").find("tr:gt(" + ((huvuden.length > 0) ? 0 : 1) + ")").remove(); //välj alla element med högre index än 1, dvs 2->
         console.log($(this).val());
     });
-    //console.log("Här är setTable och Huvuden: " + JSON.stringify(huvuden)); //[{"column_name":"geom"},{"column_name":"aktualitet"},{"column_name":"SHAPE_len"},{"column_name":"SHAPE_area"},
     $.each(huvuden, function (index, object){
         $("#fler_kolumner tr:last").after(createRow());
     });
@@ -272,7 +259,6 @@ $(document).on('click', 'button.btn-danger', function () {
     var rows = $("#mainbody").children(); 
 	if(rows.length > 2)
 		$(this).closest('tr').remove();
-    //return false;
 });
 
 $("#calcbutton").click(function () {   //Utvinn tabellens värden, kontrollera, post om så, return om ej
@@ -294,7 +280,7 @@ $("#calcbutton").click(function () {   //Utvinn tabellens värden, kontrollera, 
 
             var obj = {}; //js-objekt som representerar en rad
 
-            $(this).find("input,textarea").each(function (i) {
+            $(this).find("input,select").each(function (i) {
                 //console.log($(this).);
                 if (this.id.indexOf('sokdel') >= 0) {
                     if ($(this).is(":checked")) {
@@ -305,21 +291,16 @@ $("#calcbutton").click(function () {   //Utvinn tabellens värden, kontrollera, 
                     }
                 }
 				else if (this.id.indexOf('title') >= 0) {
-					//gör illegalCharsCheck(), om fail så return
-					/*if (illegalCharsCheck($(this).val())) { return }
-					else {
-						obj["alias"] = $(this).val();
-						if ($(this).val() == "title") { //hittat 'title' som aliasnamn
-							title_is_present = true ;
-							} 
-					}*/
 					if($(this).is(":checked")){
 						title_is_present = true;
+						obj["title"] = "j";
+					}
+					else{
+						obj["title"] = "n";
 					}
 				}
 				else {
                     obj["kolumn"] = $(this).val();
-                    console.log("Kolumn: " + $(this).val())			//resten av textarea och input
 				}
 			});
         samling["row" + k] = obj;
@@ -328,7 +309,7 @@ $("#calcbutton").click(function () {   //Utvinn tabellens värden, kontrollera, 
     });
     //console.log("här är hopsamling av tabellen, tja.html"+ JSON.stringify(samling)); //Vi bör kunna göra en rätt snyggo json här va, som sen kan skickas
     if (!title_is_present) {
-		alert("Måste ha en title");
+		alert("Måste ange en title");
         //$("#titelkomihag").fadeOut(700).fadeIn(700).fadeOut(700).fadeIn(700);
         return;
     }
