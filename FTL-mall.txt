@@ -25,7 +25,3 @@ will be called multiple times if there are various feature collections
 </ul>
 </table> 
 
-
-
-\\easrv042\testar
-https://karta.eskilstuna.se/eskilstunakartan/intern/#maps/2288  
