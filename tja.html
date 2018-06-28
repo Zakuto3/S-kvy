@@ -35,7 +35,6 @@
             <div class="col-sm-6" style="background-color:#F28986;">
                 <h3>Inkluderade kolumner med ev. alias</h3>
 				<h4 id=titelkomihag>( Ange "title" som alias för en kolumn )</h4>
-				<button type="button" class="add-all-columns" style="position: relative right: 0">Lägg till<br> alla kolumner</button>
                 <table class="table table" id="fler_kolumner">
                     <!--Ändras kanske senare till att läsa från tabell i db "eskilstuna".-->
 					<tbody id=mainbody>
@@ -65,6 +64,7 @@
 						</tr>
 					</body>
                 </table>
+				<button type="button" class="add-all-columns btn btn-info" style="position: relative; float: right; bottom: 1em;">Lägg till<br> alla kolumner</button>
                 <button class="btn btn-info" id="addbutton">+1</button>
             </div>
         </div>
@@ -97,25 +97,20 @@ $(function () {
 
 });
 
+//fill dropbox with table column names from the database
 function fillDropBox(kolumner){
 	$(".dropbox_option").remove();
 	kolumner.forEach(function (kolumn) {
 		let option = document.createElement('option');
 		option.className = "dropbox_option";
 		option.textContent = kolumn.column_name;
-		//console.log("kolumn: " + kolumn.column_name);
-		//printObject(kolumn);
-		//console.log("option: " + option);
-		//$("#fler_kolumner tr").each(function (){
 		$(".dropbox").append(option);
-			//console.log(this);
-			//});
-		//$.forEach(".dropbox").append(option);
 		});
 };		
 			
 	
 //onchange='checkbox()'
+//creates a string which you can insert in the html to create a  new row
 function createRow(){
 	let row = "<tr>";
 	let removeButton = "<td><button type='button' class='btn btn-danger' name='bortknapp'>X</button></td>";
@@ -127,6 +122,7 @@ function createRow(){
 };
 
 //onclick event in the html
+//unchecks all title-checkboxes except for the one you click.
 function checkbox(title){
 	$('input[id="' + title.id + '"]').not(title).prop('checked', false);
 }
@@ -145,60 +141,38 @@ function update_fixed_fields(array) {
     } else { $('#where').text("") };
 };
 
-function updateDropbox(){
+//reads the current table from the database to get the columns
+function readTableColumns(){
 	let layerspecs = document.getElementById("layerspecs");
 	let split = layerspecs.value.split("|");
-	update_fixed_fields(split)
+	update_fixed_fields(split);
 	$.ajax({
         type: 'GET',
         url: 'http://localhost:1337/eskilstuna/' + $('#tabell').text(),
         success: function (json) {
-            fillDropBox(json);
+            fillDropBox(json);	//use the columns to fill/update the dropbox
+			updateAllDropboxes();
         }
 	})
 }
 
-$("#layerspecs").on('change', updateDropbox);
-
-//When selector selection update three text fields with strings, call node js server and receive postgis table column headers then call table method
-/*$("#layerspecs").on('change', function () {
-	//printObject(this);
-	//console.log(this);
-    //console.log(this.value);
-    var split = this.value.split('|');
-    //console.log(split);
-    update_fixed_fields(split);
-    //console.log("Är du tabellnamnet? " + $('#tabell').text());
-    $.ajax({
-        type: 'GET',
-        url: 'http://localhost:1337/eskilstuna/' + $('#tabell').text(),
-        success: function (json) {
-            //tabellhuvuden = json;
-            //console.log(tabellhuvuden);
-            //setTable(json);
-			fillDropBox(json);
-        }
-    });
-    //Node js db:eskilstuna table name column headers
-    //table_metod('set', json)
-
-}); */
+//remove all rows except the first one and update the data
+$("#layerspecs").on('change', function(){
+	let length = $(".dropbox").length - 1;
+	$("#fler_kolumner tr:gt(1)").remove();
+	readTableColumns();
+	});
 
 //Function som skriver ut object
 function printObject(o) {
-
 		var out = '';
-
 		for (var p in o) {
-
 			out += p + ': ' + o[p] + '\n';
-
 		}
-
 	console.log(out);
-
 }
 
+//reads columns from database and updates the whole table
 $(".add-all-columns").on('click', function(){
 	let layerspecs = document.getElementById("layerspecs");
 	//console.log(layerspecs.value);
@@ -208,20 +182,42 @@ $(".add-all-columns").on('click', function(){
         type: 'GET',
         url: 'http://localhost:1337/eskilstuna/' + $('#tabell').text(),
         success: function (json) {
-			//console.log(json);
-            //tabellhuvuden = json;
-            //console.log(tabellhuvuden);
             setTable(json);
-			
-        }
+		}
     });
-	
-        
-	
 });
 
+//sets dropboxes default value based on thier index, ex row 2 by default will have value from column 2
+function updateAllDropboxes(){
+	$('.dropbox').each(function (index){
+		let box = $(this);
+		let options = box.children();
+		if(options.length > index)
+		box.val(options[index].text); 
+	}); 
 
-var i = 1;
+}
+
+/*copies data from above row and
+	sets dropbox default value to whatever
+	its index is, same as updateAllDropboxes
+	but for +1 clickevent*/
+function updateNewDropbox(){
+	let index = $(".dropbox").length - 1;
+	let newDropBox = $("table").find("select:last");
+	$("#kolumn:first option").each(function(){
+		let opt = document.createElement('option');
+		opt.textContent = this.text;
+		opt.className = "dropbox_option";
+		newDropBox.append(opt);
+	})
+	let options = newDropBox.children();
+	newDropBox.val(options[index].text);
+}
+	
+
+//var i = 1;
+/*adds a new row when clicking on +1*/
 $("#addbutton").click(function () { //klonar rad ett, letar efter input, textarea-
     /*$("#fler_kolumner tr").eq(1).clone().find("input,textarea").each(function () { //$("table tr").eq(1)==index 1, .clone()=="deep copy", dvs denna och alla barn, .find("input").each==varje input, tre per rad(function ()
 
@@ -238,56 +234,37 @@ $("#addbutton").click(function () { //klonar rad ett, letar efter input, textare
     }).end().appendTo("table");
     i++;*/
 	$("table").append(createRow()); // new createRow func
-	updateDropbox();
-
+	updateNewDropbox();	//update the new dropbox
+	
 });
 
 
-
+/*creates all needed rows and then calls readTableColumns
+	to set the value on the dropboxes*/
 function setTable(huvuden) { //Set table
     $("#fler_kolumner tr").each(function () {
-        $("#fler_kolumner").find("tr:gt(0)").remove(); //välj alla element med högre index än 1, dvs 2->
+        $("#fler_kolumner").find("tr:gt(" + ((huvuden.length > 0) ? 0 : 1) + ")").remove(); //välj alla element med högre index än 1, dvs 2->
         console.log($(this).val());
     });
     //console.log("Här är setTable och Huvuden: " + JSON.stringify(huvuden)); //[{"column_name":"geom"},{"column_name":"aktualitet"},{"column_name":"SHAPE_len"},{"column_name":"SHAPE_area"},
-    $.each(huvuden, function (index, object) { //ska modifiera första radens kolumnnamnsvärde
-        //console.log(object);
-        //console.log(object.column_name);
-        //$("#fler_kolumner tr:last").after("<tr><td><button type='button' class='btn btn-danger' name='bortknapp'>X</button></td><td><input type='text' id='kolumn' name='kolumn'></td><td><input type='text' id='alias' name='titel'></td><td><input type='checkbox' id='sokdel' name='checkbox'></td></tr>");
+    $.each(huvuden, function (index, object){
         $("#fler_kolumner tr:last").after(createRow());
-		var rad = $("#fler_kolumner tr:last");
-        //var rad = $("#fler_kolumner tr").eq(1).clone(); //behöver bli utbytt mot tom ny rad annars titel överallt och varför en extra rad med tomt kolumnnamn när man hämtar postgresqltabeller?
-        //rad.find("select,value").each(function () {
-            //console.log("kollar vad indexOf gör "+ this.id.indexOf("kolumn"));
-            /*if (this.id.indexOf("kolumn") >= 0) { 														//startposition eller -1, alltid int
-                console.log("Kolumns ID är " + this.id);
-				
-				this.value = object.column_name;
-				console.log(this.value);
-                $(this).val(object.column_name);
-            }
-        });
-        $('#fler_kolumner').find('tbody:last').append(rad);*/
     });
-	updateDropbox();
+	readTableColumns();
+	
 };
 
 
-
+//clickevent to remove a row
 $(document).on('click', 'button.btn-danger', function () {
     var rows = $("#mainbody").children(); 
-	//console.log(rows.length);
-	//console.log(this);
-	
 	if(rows.length > 2)
 		$(this).closest('tr').remove();
-		
-    return false;
+    //return false;
 });
 
 
 $("#calcbutton").click(function () {   //Utvinn tabellens värden, kontrollera, post om så, return om ej
-
     var samling = {}; //tabellobjekt
     var title_is_present = false;
 
@@ -316,15 +293,18 @@ $("#calcbutton").click(function () {   //Utvinn tabellens värden, kontrollera, 
                     obj["sokdel"] = "n";
                 }
             }
-            else if (this.id.indexOf('alias') >= 0) {
+            else if (this.id.indexOf('title') >= 0) {
                 //gör illegalCharsCheck(), om fail så return
-                if (illegalCharsCheck($(this).val())) { return }
+                /*if (illegalCharsCheck($(this).val())) { return }
                 else {
                     obj["alias"] = $(this).val();
                     if ($(this).val() == "title") { //hittat 'title' som aliasnamn
 						title_is_present = true ;
 						} 
-                }
+                }*/
+				if($(this).is(":checked")){
+					title_is_present = true;
+				}
             }
             else {	//resten av textarea och input
 
@@ -334,13 +314,13 @@ $("#calcbutton").click(function () {   //Utvinn tabellens värden, kontrollera, 
             }
         });
         samling["row" + k] = obj;
-		console.log(["row"+k] + " Kolumn: "+ obj["kolumn"] + "Alias: "+ obj["alias"]);
-		console.log(samling["row"+k]["kolumn"]);
+		console.log(["row"+k] + " Kolumn: "+ obj["kolumn"]);
 
     });
     //console.log("här är hopsamling av tabellen, tja.html"+ JSON.stringify(samling)); //Vi bör kunna göra en rätt snyggo json här va, som sen kan skickas
     if (!title_is_present) {
-        $("#titelkomihag").fadeOut(700).fadeIn(700).fadeOut(700).fadeIn(700);
+		alert("Måste ha en title");
+        //$("#titelkomihag").fadeOut(700).fadeIn(700).fadeOut(700).fadeIn(700);
         return;
     }
 
