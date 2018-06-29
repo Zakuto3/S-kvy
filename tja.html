@@ -33,8 +33,7 @@
                 <p id="where"></p>
             </div>
 			<div class="row" style="background-color:#F28986;">
-                <h3>Inkluderade kolumner med ev. alias</h3>
-                <h4 id=titelkomihag>( Ange "title" som alias för en kolumn )</h4>
+                <h3>Inkluderade kolumner med ev. FTLnamn</h3>
                 <table class="table table" id="fler_kolumner">
                     <!--Ändras kanske senare till att läsa från tabell i db "eskilstuna".-->
 
@@ -87,7 +86,7 @@
                 <h3 class="margin-left">FTL</h3>
                 <div class="margin-left" readonly id="ftl" rows="5" cols="70" autocomplete="off"></div>
                 <button type="button" class="btn btn-info margin-left" id="calcFTL">Show FTL</button>
-				<button type="button" class="btn btn-info margin-left" download="content.ftl" id="saveFTL" >Save</button>
+				<button type="button" class="btn btn-info margin-left" id="saveFTL" >Save</button>
 				<!--<a href="data:application/xml;charset=utf-8,your code here" download="content.ftl">Save</a>-->
 				
             </div>
@@ -95,13 +94,6 @@
 	</div>
 	<script type="text/javascript">
     //When DOM ready then call node js server and receive layer_spec from db:geoportia then populate selector
-	
-
-	function loadFTLLink(){
-	var text = "helloLink";
-		var downloadLink = "<a id='SaveLink' href='data:application/xml;charset=utf-8," + text +"' download='content.ftl'></a>";
-		$("#saveFTL").wrap(downloadLink);
-	}
 
     $(function () {
 
@@ -350,46 +342,69 @@ $("#calcbutton").click(function () {   //Utvinn tabellens värden, kontrollera, 
     });
 	
 $("#calcFTL").click(calcFTL);
-	
-	function calcFTL (){
-		var samling = [];
-		$('#fler_kolumner tr').each(function (k) {// 'table row'
-			var obj = {}; //js-objekt som representerar en rad
-			$(this).find("input").each(function (i) {
-                if (this.id.indexOf('FTLfield') >= 0) {
-                    samling[k] = $(this).val();
-                }
-			});
-        samling["row" + k] = obj;
-		console.log("calcFTL: " + samling[k]);
 
+$("#saveFTL").click(loadFTLLink);
+
+function calcFTL (){
+	var FTLnamn = [];
+	var kolumnNamn = [];
+	$('#fler_kolumner tr').each(function (k) {// 'table row'
+		$(this).find("input,select").each(function (i) {
+			if (this.id.indexOf('FTLfield') >= 0) {
+				FTLnamn[k] = $(this).val();
+			}
+			if (this.id.indexOf('kolumn') >= 0){
+				kolumnNamn[k] = $(this).val();
+			}
 		});
-		loadFTLLink();
-	}
-	
-});
-	
-function FTLbuilder(FTLarr){ 
+
+	});
+	var FTLString = FTLbuilder(FTLnamn, kolumnNamn);
+	$('#ftl').html("<code id='FTL'>"+FTLString+"</code>"); 	
+}
+		
+function FTLbuilder(FTLarr, kolumnArr){ 
 let OT = "&lt;";
 let CT = "&gt;";
-let BR = "<br>";
-let OUL = OT+"ul"+CT+BR;
-let CUL = OT+"/ul"+CT+BR;
-let FTLbegin = OT+"#list features as feature"+CT+BR+OT+'table class="featureInfo"'+CT+BR+OUL;
+let tab = "\t";
+let BR = "\n<br>";
+let tr = tab+tab+tab+OT+"tr";
+let td = tab+tab+tab+tab+OT+"td"
+let OUL = tab+tab+OT+"ul"+CT+BR;
+let CUL = tab+tab+OT+"/ul"+CT+BR;
+let FTLbegin = OT+"#list features as feature"+CT+BR+tab+OT+'table class="featureInfo"'+CT+BR+OUL;
 
 let FTLmiddle = "";
 
-let FTLend = CUL+OT+"/table"+CT+BR+OT+"/#list"+CT;
+let FTLend = CUL+tab+OT+"/table"+CT+BR+OT+"/#list"+CT;
 
-for(amount in FTLarr)
+for(amount in kolumnArr)
 {
+	console.log("Hi amount: " + amount);
 	if(FTLarr[amount] != "")
-	FTLmiddle += OT+"tr"+CT+BR+OT+"td"+CT+FTLarr[amount]+" ${feature."+FTLarr[amount]+".value}"+OT+"/td"+CT+BR+OT+"/tr"+CT+BR
+	FTLmiddle += tr+CT+BR+td+CT+FTLarr[amount]+": ${feature."+kolumnArr[amount]+".value}"+OT+"/td"+CT+BR+tr+CT+BR
 }
 
-$('#ftl').html("<code>"+FTLbegin+FTLmiddle+FTLend+"</code>"); 
-});
 
+return FTLbegin + FTLmiddle+FTLend;
+};
+
+function loadFTLLink(){
+	var FTLtext = $("#FTL").text();
+	var file = new Blob([FTLtext]);
+	var a = document.createElement("a"),
+            url = URL.createObjectURL(file);
+    a.href = url;
+    a.download = "content.ftl";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function() {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);  
+    }, 0); 
+	//var downloadLink = "<a id='SaveLink' href='data:application/xml;charset=utf-8," + FTLtext +"' download='content.ftl'></a>";
+	//$("#saveFTL").wrap(downloadLink);
+}
 
 //jqueryUI för att göra lista DOMelement sorterbar
 $('#fler_kolumner tbody').sortable();
