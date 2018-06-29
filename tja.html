@@ -4,11 +4,14 @@
     <title>Jej er en fin haj</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    
+	
 	<style>
 		.margin-left{
 		margin-left: 0.5em;
@@ -59,6 +62,9 @@
 							<td>
 								<input type="checkbox" id="sokdel" name="checkbox">
 							</td>
+							<td>
+								<input id='FTLfield' type='text'>
+							</td>
 						</tr>
 					</body>
 				
@@ -79,17 +85,23 @@
                 <h3 class="margin-left">FTL</h3>
                 <div class="margin-left" readonly id="ftl" rows="5" cols="70" autocomplete="off"></div>
                 <button type="button" class="btn btn-info margin-left" id="calcFTL">Show FTL</button>
+				<button type="button" class="btn btn-info margin-left" download="content.ftl" id="saveFTL" >Save</button>
+				<!--<a href="data:application/xml;charset=utf-8,your code here" download="content.ftl">Save</a>-->
+				
             </div>
-            
-        
-
 		</div>
-
-<script>
+		
+	</div>
+	<script type="text/javascript">
     //When DOM ready then call node js server and receive layer_spec from db:geoportia then populate selector
+	$("#saveFTL").on('click', function(){ 
+	var text = "hello";
+	var downloadLink = "<a href='data:application/xml;charset=utf-8," + text +"' download='content.ftl'></a>";
+	$("#saveFTL").wrap(downloadLink);
+	});
     $(function () {
 
-        let lagerspecar = "kattkatt";
+        var lagerspecar = "kattkatt";;
 
         $.ajax({
             type: 'GET',
@@ -110,23 +122,13 @@
 
 
     });
-  
-    //Function som skriver ut object
-    function printObject(o) {
-      var out = '';
-        for (var p in o) {
-            out += p + ': ' + o[p] + '\n';
-        }
-        console.log(out);
-    }
-
 
 
 //fill dropbox with table column names from the database
 function fillDropBox(kolumner){
 	$(".dropbox_option").remove();
 	kolumner.forEach(function (kolumn) {
-		let option = document.createElement('option');
+		var option = document.createElement('option');
 		option.className = "dropbox_option";
 		option.textContent = kolumn.column_name;
 		$(".dropbox").append(option);
@@ -137,12 +139,13 @@ function fillDropBox(kolumner){
 //onchange='checkbox()'
 //creates a string which you can insert in the html to create a  new row
 function createRow(){
-	let row = "<tr>";
-	let removeButton = "<td><button type='button' class='btn btn-danger' name='bortknapp'>X</button></td>";
-	let columnName = "<td><select class='dropbox' id='kolumn' name='kolumn'></select></td>";
-	let titleBox = "<td><input onchange='checkbox(this)' type='checkbox' id='title' class='title_check'></td>";
-	let searchBox = "<td><input type='checkbox' id='sokdel' name='checkbox'></td>";
-	row += removeButton + columnName + titleBox + searchBox + "</tr>";
+	var row = "<tr>";
+	var removeButton = "<td><button type='button' class='btn btn-danger' name='bortknapp'>X</button></td>";
+	var columnName = "<td><select class='dropbox' id='kolumn' name='kolumn'></select></td>";
+	var titleBox = "<td><input onchange='checkbox(this)' type='checkbox' id='title' class='title_check'></td>";
+	var searchBox = "<td><input type='checkbox' id='sokdel' name='checkbox'></td>";
+	var FTLfield = "<td><input id='FTLfield' type='text'></td>"
+	row += removeButton + columnName + titleBox + searchBox + FTLfield + "</tr>";
 	return row;
 };
 
@@ -168,8 +171,8 @@ function update_fixed_fields(array) {
 
 //reads the current table from the database to get the columns
 function readTableColumns(){
-	let layerspecs = document.getElementById("layerspecs");
-	let split = layerspecs.value.split("|");
+	var layerspecs = document.getElementById("layerspecs");
+	var split = layerspecs.value.split("|");
 	update_fixed_fields(split);
 	$.ajax({
         type: 'GET',
@@ -183,7 +186,7 @@ function readTableColumns(){
 
 //remove all rows except the first one and update the data
 $("#layerspecs").on('change', function(){
-	let length = $(".dropbox").length - 1;
+	var length = $(".dropbox").length - 1;
 	$("#fler_kolumner tr:gt(1)").remove();
 	readTableColumns();
 	});
@@ -200,9 +203,9 @@ function printObject(o) {
 
 //reads columns from database and updates the whole table
 $(".add-all-columns").on('click', function(){
-	let layerspecs = document.getElementById("layerspecs");
+	var layerspecs = document.getElementById("layerspecs");
 	//console.log(layerspecs.value);
-	let split = layerspecs.value.split("|");
+	var split = layerspecs.value.split("|");
 	update_fixed_fields(split)
 	$.ajax({
         type: 'GET',
@@ -216,8 +219,8 @@ $(".add-all-columns").on('click', function(){
 //sets dropboxes default value based on thier index, ex row 2 by default will have value from column 2
 function updateAllDropboxes(){
 	$('.dropbox').each(function (index){
-		let box = $(this);
-		let options = box.children();
+		var box = $(this);
+		var options = box.children();
 		if(options.length > index){
 			box.val(options[index].text); 
 		}
@@ -230,15 +233,15 @@ function updateAllDropboxes(){
 	its index is, same as updateAllDropboxes
 	but for +1 clickevent*/
 function updateNewDropbox(){
-	let index = $(".dropbox").length - 1;
-	let newDropBox = $("table").find("select:last");
+	var index = $(".dropbox").length - 1;
+	var newDropBox = $("table").find("select:last");
 	$("#kolumn:first option").each(function(){
-		let opt = document.createElement('option');
+		var opt = document.createElement('option');
 		opt.textContent = this.text;
 		opt.className = "dropbox_option";
 		newDropBox.append(opt);
 	})
-	let options = newDropBox.children();
+	var options = newDropBox.children();
 	if(options.length > index){
 		newDropBox.val(options[index].text);
 	}
@@ -342,11 +345,28 @@ $("#calcbutton").click(function () {   //Utvinn tabellens värden, kontrollera, 
         }
     }
     );
+	
+	$("#calcFTL").click(calcFTL);
+	
+	function calcFTL (){
+		var samling = [];
+		$('#fler_kolumner tr').each(function (k) {// 'table row'
+			var obj = {}; //js-objekt som representerar en rad
+			$(this).find("input").each(function (i) {
+                if (this.id.indexOf('FTLfield') >= 0) {
+                    samling[k] = $(this).val();
+                }
+			});
+        samling["row" + k] = obj;
+		console.log("calcFTL: " + samling[k]);
 
-
+		});
+	}
+	
 
     //jqueryUI för att göra lista DOMelement sorterbar
     $('#fler_kolumner tbody').sortable();
 
 </script>
+</body>
 </html>
