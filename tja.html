@@ -44,6 +44,7 @@
 							<th>Kolumnnamn</th>
 							<th>Title</th>
 							<th>Sökbar kolumn</th>
+							<th>FTL-namn</th>
 						</tr>
 						<tr>
 							<td>
@@ -94,11 +95,14 @@
 	</div>
 	<script type="text/javascript">
     //When DOM ready then call node js server and receive layer_spec from db:geoportia then populate selector
-	$("#saveFTL").on('click', function(){ 
-	var text = "hello";
-	var downloadLink = "<a href='data:application/xml;charset=utf-8," + text +"' download='content.ftl'></a>";
-	$("#saveFTL").wrap(downloadLink);
-	});
+	
+
+	function loadFTLLink(){
+	var text = "helloLink";
+		var downloadLink = "<a id='SaveLink' href='data:application/xml;charset=utf-8," + text +"' download='content.ftl'></a>";
+		$("#saveFTL").wrap(downloadLink);
+	}
+
     $(function () {
 
         var lagerspecar = "kattkatt";;
@@ -307,7 +311,7 @@ $("#calcbutton").click(function () {   //Utvinn tabellens värden, kontrollera, 
                         obj["sokdel"] = "n";
                     }
                 }
-				else if (this.id.indexOf('title') >= 0) {
+				if (this.id.indexOf('title') >= 0) {
 					if($(this).is(":checked")){
 						title_is_present = true;
 						obj["title"] = "j";
@@ -316,7 +320,7 @@ $("#calcbutton").click(function () {   //Utvinn tabellens värden, kontrollera, 
 						obj["title"] = "n";
 					}
 				}
-				else {
+				if(this.id.indexOf('kolumn') >= 0){
                     obj["kolumn"] = $(this).val();
 				}
 			});
@@ -346,7 +350,7 @@ $("#calcbutton").click(function () {   //Utvinn tabellens värden, kontrollera, 
     }
     );
 	
-	$("#calcFTL").click(calcFTL);
+$("#calcFTL").click(calcFTL);
 	
 	function calcFTL (){
 		var samling = [];
@@ -361,6 +365,7 @@ $("#calcbutton").click(function () {   //Utvinn tabellens värden, kontrollera, 
 		console.log("calcFTL: " + samling[k]);
 
 		});
+		loadFTLLink();
 	}
 	
 
