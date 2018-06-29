@@ -82,6 +82,7 @@
                 <button type="button" class="btn btn-info margin-left" id="calcbutton">Show SQL</button>
                 <button type="button" class="btn btn-info margin-left" id="sendbutton">Send</button>
             </div>
+			
 			<div class="row" style="background-color:green;">
                 <h3 class="margin-left">FTL</h3>
                 <div class="margin-left" readonly id="ftl" rows="5" cols="70" autocomplete="off"></div>
@@ -91,7 +92,6 @@
 				
             </div>
 		</div>
-		
 	</div>
 	<script type="text/javascript">
     //When DOM ready then call node js server and receive layer_spec from db:geoportia then populate selector
@@ -347,8 +347,7 @@ $("#calcbutton").click(function () {   //Utvinn tabellens värden, kontrollera, 
             console.log("Data: " + data + "\nStatus: " + status);
             });
         }
-    }
-    );
+    });
 	
 $("#calcFTL").click(calcFTL);
 	
@@ -368,9 +367,32 @@ $("#calcFTL").click(calcFTL);
 		loadFTLLink();
 	}
 	
+});
+	
+function FTLbuilder(FTLarr){ 
+let OT = "&lt;";
+let CT = "&gt;";
+let BR = "<br>";
+let OUL = OT+"ul"+CT+BR;
+let CUL = OT+"/ul"+CT+BR;
+let FTLbegin = OT+"#list features as feature"+CT+BR+OT+'table class="featureInfo"'+CT+BR+OUL;
 
-    //jqueryUI för att göra lista DOMelement sorterbar
-    $('#fler_kolumner tbody').sortable();
+let FTLmiddle = "";
+
+let FTLend = CUL+OT+"/table"+CT+BR+OT+"/#list"+CT;
+
+for(amount in FTLarr)
+{
+	if(FTLarr[amount] != "")
+	FTLmiddle += OT+"tr"+CT+BR+OT+"td"+CT+FTLarr[amount]+" ${feature."+FTLarr[amount]+".value}"+OT+"/td"+CT+BR+OT+"/tr"+CT+BR
+}
+
+$('#ftl').html("<code>"+FTLbegin+FTLmiddle+FTLend+"</code>"); 
+});
+
+
+//jqueryUI för att göra lista DOMelement sorterbar
+$('#fler_kolumner tbody').sortable();
 
 </script>
 </body>
