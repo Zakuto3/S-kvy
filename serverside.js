@@ -102,11 +102,9 @@ app.post('/eskilstuna_nyvy', function (req, res) {
         }
         else if (key == "title") {
             if (value == "j") {
-				console.log("i if hello");
 				skapasokvy_str += " AS title, ";
 			}
             else {
-				console.log("i else hello");
                 skapasokvy_str += ", "; //Kan sluta med , om COALESCE eller dylikt sokstrang-skapande kommer efter. Annat scenario är att inget blir sökbart.
             }
         }
@@ -155,6 +153,10 @@ app.post('/eskilstuna_nyvy', function (req, res) {
 
     res.send(skapasokvy_str);
 });
+app.post('', function (req, res){
+	console.log("test_sokvy: " + req);
+});
+
 /*
 var pool = new pg.Pool(config_eskilstuna);
 pool.connect(function(err, client, done) {

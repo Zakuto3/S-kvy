@@ -335,16 +335,18 @@ $("#calcbutton").click(function () {   //Utvinn tabellens värden, kontrollera, 
 
         $.post('http://localhost:1337/eskilstuna_nyvy', samling, function (data, status) {
 
-            $('#sql').html("<code>" + data + "</code>"); //klienten behöver formatera svaret för visning i div, nyrad vid första AS, FROM, WHERE
+            $('#sql').html("<code id='SQL'>" + data + "</code>"); //klienten behöver formatera svaret för visning i div, nyrad vid första AS, FROM, WHERE
             console.log("Data: " + data + "\nStatus: " + status);
             });
         }
     });
-	
+
+//trigger FTLfunctions on click	
 $("#calcFTL").click(calcFTL);
+$("#saveFTL").click(saveFTL);
 
-$("#saveFTL").click(loadFTLLink);
-
+/*calculates which columns to be included in FTL
+	and show the completed FTLtext on screen*/
 function calcFTL (){
 	var FTLnamn = [];
 	var kolumnNamn = [];
@@ -359,37 +361,42 @@ function calcFTL (){
 		});
 
 	});
-	var FTLString = FTLbuilder(FTLnamn, kolumnNamn);
+	/*send columnNames and FTLNames into FTLbuilder
+		and get the completed FTLstring*/
+	var FTLString = FTLbuilder(FTLnamn, kolumnNamn); 
 	$('#ftl').html("<code id='FTL'>"+FTLString+"</code>"); 	
 }
-		
+
+//builds the FTLstring and returns it
 function FTLbuilder(FTLarr, kolumnArr){ 
-let OT = "&lt;";
-let CT = "&gt;";
-let tab = "\t";
-let BR = "\n<br>";
-let tr = tab+tab+tab+OT+"tr";
-let td = tab+tab+tab+tab+OT+"td"
-let OUL = tab+tab+OT+"ul"+CT+BR;
-let CUL = tab+tab+OT+"/ul"+CT+BR;
-let FTLbegin = OT+"#list features as feature"+CT+BR+tab+OT+'table class="featureInfo"'+CT+BR+OUL;
+	let OT = "&lt;";
+	let CT = "&gt;";
+	let tab = "\t";
+	let BR = "\n<br>";
+	let Otr = tab+tab+tab+OT+"tr";
+	let Ctr = tab+tab+tab+OT+"/tr";
+	let td = tab+tab+tab+tab+OT+"td"
+	let OUL = tab+tab+OT+"ul"+CT+BR;
+	let CUL = tab+tab+OT+"/ul"+CT+BR;
+	let FTLbegin = OT+"#list features as feature"+CT+BR+tab+OT+'table class="featureInfo"'+CT+BR+OUL;
 
-let FTLmiddle = "";
+	let FTLmiddle = "";
 
-let FTLend = CUL+tab+OT+"/table"+CT+BR+OT+"/#list"+CT;
+	let FTLend = CUL+tab+OT+"/table"+CT+BR+OT+"/#list"+CT;
 
-for(amount in kolumnArr)
-{
-	console.log("Hi amount: " + amount);
-	if(FTLarr[amount] != "")
-	FTLmiddle += tr+CT+BR+td+CT+FTLarr[amount]+": ${feature."+kolumnArr[amount]+".value}"+OT+"/td"+CT+BR+tr+CT+BR
-}
+	for(amount in kolumnArr)
+	{
+		if(FTLarr[amount] != "") //check if FTLfield was empty
+		FTLmiddle += Otr+CT+BR+td+CT+FTLarr[amount]+": ${feature."+kolumnArr[amount]+".value}"+OT+"/td"+CT+BR+Ctr+CT+BR
+	}
 
 
-return FTLbegin + FTLmiddle+FTLend;
+	return FTLbegin + FTLmiddle+FTLend;
 };
 
-function loadFTLLink(){
+/*downloads the FTLstring into
+	a content.ftl file*/
+function saveFTL(){
 	var FTLtext = $("#FTL").text();
 	var file = new Blob([FTLtext]);
 	var a = document.createElement("a"),
@@ -404,6 +411,17 @@ function loadFTLLink(){
     }, 0); 
 	//var downloadLink = "<a id='SaveLink' href='data:application/xml;charset=utf-8," + FTLtext +"' download='content.ftl'></a>";
 	//$("#saveFTL").wrap(downloadLink);
+}
+
+$("#sendbutton").click(SendSQL);
+
+function SendSQL(){
+	
+	var SqlQuery = $("#SQL").text();
+	console.log(SqlQuery);
+	$.post('', SqlQuery, function () {
+            console.log("Query Success");
+    });
 }
 
 //jqueryUI för att göra lista DOMelement sorterbar
