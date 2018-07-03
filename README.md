@@ -9,4 +9,6 @@ node serverside.js
 
 <h3>TODO:</h3>
   -Send button function <br>
-  -Implement FTL: UI, String builder, Show FTL button <br>
+  -Improve on visual UI, HTML syle template? <br>
+  -add funktionalitites to FTL: Link, Img <br>
+  -Work on serverside code structure <br>
