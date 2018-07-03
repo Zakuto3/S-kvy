@@ -18,8 +18,11 @@
 		}
 	</style>
 </head>
+
+
 <body>
-    <div class="container-fluid" style="background-color:#33928C;">
+
+    <div class="container-fluid" style="background-color:#293134;">
         <div class="col-sm-6">
             <div class="row" style="background-color:#33928C;">
                 <select id="layerspecs" label="Select one:"></select> <br> < (Innehållet i tabellen nedan ersätts när ny spec väljs och dess postgrestabell hämtas)
@@ -366,14 +369,14 @@ function saveFTL(){
 	//var downloadLink = "<a id='SaveLink' href='data:application/xml;charset=utf-8," + FTLtext +"' download='content.ftl'></a>";
 	//$("#saveFTL").wrap(downloadLink);
 }
-$("#sendbutton").click(SendSQL);
+/*$("#sendbutton").click(SendSQL);
 function SendSQL(){
 	
 	var SqlQuery = $("#SQL").text();
 	console.log(SqlQuery);
 	$.post('', SqlQuery, function () {
             console.log("Query Success");
-    });
+    });*/
 }
 //jqueryUI för att göra lista DOMelement sorterbar
 $('#fler_kolumner tbody').sortable();
