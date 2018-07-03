@@ -86,7 +86,7 @@ app.post('/eskilstuna_nyvy', function (req, res) {
     var sokbara = "";
     var sistaknamn = "";
     var skapasokvy_str = "CREATE OR REPLACE VIEW ";
-    skapasokvy_str += sokvyn;
+    skapasokvy_str += "test_sokvy_scriptet"; //sokvyn
     skapasokvy_str += " AS SELECT ";
     skapasokvy_str += '"' + tabelln + '".geom, ' + '"' + tabelln + '".geodb_oid AS sokid, ';
 
@@ -111,7 +111,7 @@ app.post('/eskilstuna_nyvy', function (req, res) {
         //Eftersom en kolumn-cell skickas åt gången måste sokdel "n" eller "j" sparas i lista som motsvarar rader, eller något
         //Se firefox-D för concat(kol1, kol2..) re coalesce för att undvika null. || är concat-operator i SQL, :: castar om, måste från en till andra till tredje ibland 
 
-        else // key == "sokdel" 
+        else if(key == "sokdel")// key == "sokdel" 
         {
             if (value == "j") {
                 sokbara += '"' + sistaknamn + '",'; //lägg till searchfield mha dessa..behöver nog en traverserare
@@ -153,10 +153,21 @@ app.post('/eskilstuna_nyvy', function (req, res) {
 
     res.send(skapasokvy_str);
 });
-app.post('', function (req, res){
-	console.log("test_sokvy: " + req);
+app.post('/sovy_testo', function (req, res){
+	var pool = new pg.Pool(DBobj.config_eskilstuna);
+    pool.connect(function (err, client, done) {
+        if (err) {
+            return console.error('error fetching client from pool', err);
+        }
+		client.query(req.body.query, function (err, result) { 
+            done();
+			if (err) {
+                return console.error('error running query', err);
+            }
+	console.log("test_sokvy: " + req.body.query);
+		});
+	});
 });
-
 /*
 var pool = new pg.Pool(config_eskilstuna);
 pool.connect(function(err, client, done) {

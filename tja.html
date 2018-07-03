@@ -11,20 +11,20 @@
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
     
-	
 	<style>
 		.margin-left{
 		margin-left: 0.5em;
 		}
 	</style>
+
 </head>
 <body>
-    <div class="container-fluid" style="background-color:#33928C;">
+    <div class="container-fluid" style="background-color:#945D5D;">
         <div class="col-sm-6">
-            <div class="row" style="background-color:#33928C;">
+            <div class="row" style="background-color:#FFFFFF; border-style:solid;">
                 <select id="layerspecs" label="Select one:"></select> <br> < (Innehållet i tabellen nedan ersätts när ny spec väljs och dess postgrestabell hämtas)
                 <h3>Tabell</h3>
-                <p id="tabell">mellow</p>
+                <p id="tabell"></p>
                 <h3>Sökvy</h3>
                 <p id="sokvy"></p>
                 <h3>Titel</h3>
@@ -32,7 +32,7 @@
                 <h3>Where</h3>
                 <p id="where"></p>
             </div>
-			<div class="row" style="background-color:#F28986;">
+			<div class="row" style="background-color:#F28986; border-style:solid;">
                 <h3>Inkluderade kolumner med ev. FTLnamn</h3>
                 <table class="table table" id="fler_kolumner">
                     <!--Ändras kanske senare till att läsa från tabell i db "eskilstuna".-->
@@ -75,26 +75,24 @@
         </div>
         <div class="col-sm-6">
 		
-            <div class="row" style="background-color:#97B6CB;" >
+            <div class="row" style="background-color:#97B6CB; border-style:solid;" >
                 <h3 class="margin-left">SQL</h3>
                 <div class="margin-left" readonly id="sql" rows="5" cols="70" autocomplete="off"></div>
                 <button type="button" class="btn btn-info margin-left" id="calcbutton">Show SQL</button>
-                <button type="button" class="btn btn-info margin-left" id="sendbutton">Send</button>
+                <button type="button" class="btn btn-info margin-left" id="sendbutton" disabled>Send</button>
             </div>
 			
-			<div class="row" style="background-color:green;">
+			<div class="row" style="background-color:#97B6CB; border-style:solid;">
                 <h3 class="margin-left">FTL</h3>
                 <div class="margin-left" readonly id="ftl" rows="5" cols="70" autocomplete="off"></div>
                 <button type="button" class="btn btn-info margin-left" id="calcFTL">Show FTL</button>
-				<button type="button" class="btn btn-info margin-left" id="saveFTL" >Save</button>
-				<!--<a href="data:application/xml;charset=utf-8,your code here" download="content.ftl">Save</a>-->
+				<button type="button" class="btn btn-info margin-left" id="saveFTL" disabled >Save</button>
 				
             </div>
 		</div>
 	</div>
 	<script type="text/javascript">
     //When DOM ready then call node js server and receive layer_spec from db:geoportia then populate selector
-
     $(function () {
 
         var lagerspecar = "kattkatt";;
@@ -170,6 +168,7 @@ function readTableColumns(){
 	var layerspecs = document.getElementById("layerspecs");
 	var split = layerspecs.value.split("|");
 	update_fixed_fields(split);
+	console.log("$('#tabell').text(): " + $('#tabell').text());
 	$.ajax({
         type: 'GET',
         url: 'http://localhost:1337/eskilstuna/' + $('#tabell').text(),
@@ -338,6 +337,7 @@ $("#calcbutton").click(function () {   //Utvinn tabellens värden, kontrollera, 
             $('#sql').html("<code id='SQL'>" + data + "</code>"); //klienten behöver formatera svaret för visning i div, nyrad vid första AS, FROM, WHERE
             console.log("Data: " + data + "\nStatus: " + status);
             });
+			$('#sendbutton').prop("disabled", false);
         }
     });
 
@@ -361,33 +361,42 @@ function calcFTL (){
 		});
 
 	});
+	
 	/*send columnNames and FTLNames into FTLbuilder
 		and get the completed FTLstring*/
 	var FTLString = FTLbuilder(FTLnamn, kolumnNamn); 
-	$('#ftl').html("<code id='FTL'>"+FTLString+"</code>"); 	
+	$('#ftl').html("<code id='FTL'>"+FTLString+"</code>"); 
+	$('#saveFTL').prop("disabled", false);
 }
 
-//builds the FTLstring and returns it
+//builds the FTLstring and returns it(frankenstein)
 function FTLbuilder(FTLarr, kolumnArr){ 
-	let OT = "&lt;";
-	let CT = "&gt;";
+	let OT = "&lt;"; //<
+	let CT = "&gt;"; //>
+	let Obold = OT + "b" + CT; //<b>
+	let Cbold = OT + "/b" + CT; //</b>
 	let tab = "\t";
 	let BR = "\n<br>";
-	let Otr = tab+tab+tab+OT+"tr";
-	let Ctr = tab+tab+tab+OT+"/tr";
-	let td = tab+tab+tab+tab+OT+"td"
-	let OUL = tab+tab+OT+"ul"+CT+BR;
-	let CUL = tab+tab+OT+"/ul"+CT+BR;
-	let FTLbegin = OT+"#list features as feature"+CT+BR+tab+OT+'table class="featureInfo"'+CT+BR+OUL;
+	let Otr = tab+tab+tab+OT+"tr"; // /t/t/t<tr
+	let Ctr = tab+tab+tab+OT+"/tr"; // /t/t/t</tr
+	let td = tab+tab+tab+tab+OT+"td"+CT; // /t/t/t/t<td>
+	let OUL = tab+tab+OT+"ul"+CT+BR; // /t/t<ul><br>
+	let CUL = tab+tab+OT+"/ul"+CT+BR; // /t/t</ul><br>
+	let FTLbegin = OT+"#list features as feature"+CT+BR+
+					tab+OT+'table class="featureInfo"'+CT+BR+OUL;
 
 	let FTLmiddle = "";
 
-	let FTLend = CUL+tab+OT+"/table"+CT+BR+OT+"/#list"+CT;
+	let FTLend = CUL+tab+OT+"/table"+CT+BR+
+					OT+"/#list"+CT;
 
 	for(amount in kolumnArr)
 	{
 		if(FTLarr[amount] != "") //check if FTLfield was empty
-		FTLmiddle += Otr+CT+BR+td+CT+FTLarr[amount]+": ${feature."+kolumnArr[amount]+".value}"+OT+"/td"+CT+BR+Ctr+CT+BR
+		FTLmiddle += Otr+CT+BR+
+						td+Obold+FTLarr[amount]+":"+Cbold+OT+"/td"+CT+BR+
+						td+"${feature."+kolumnArr[amount]+".value}"+OT+"/td"+CT+BR+
+						Ctr+CT+BR;
 	}
 
 
@@ -417,11 +426,12 @@ $("#sendbutton").click(SendSQL);
 
 function SendSQL(){
 	
-	var SqlQuery = $("#SQL").text();
+	/*var SqlQuery = {};
+	SqlQuery["query"] = $("#SQL").text() 
 	console.log(SqlQuery);
-	$.post('', SqlQuery, function () {
-            console.log("Query Success");
-    });
+	$.post('http://localhost:1337/sovy_testo', SqlQuery, function () {
+            console.log("Success");
+    });*/
 }
 
 //jqueryUI för att göra lista DOMelement sorterbar
