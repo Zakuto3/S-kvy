@@ -4,19 +4,60 @@
     <title>Jej er en fin haj</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">   
+	<style>
+		.margin-left{
+			margin-left: 0.5em;
+		}
+		.divs{
+			background: linear-gradient(white,white, #A9E2F3);
+			background-color:#EFEFFB;
+			border: solid 1px black;
+			/*border-style:solid;
+			border-color: #58D3F7;
+			border-bottom: 0px;*/
+			position: absolute;
+			top: 30px;
+			overflow:auto;
+			margin 3px 2px 0px 2px;
+			padding-left: 5px;
+			min-height: 98%;
+		}
+		.header{
+			background: linear-gradient(#58D3F7, white, #58D3F7);
+			overflow:auto;
+			border: solid 1px black;
+			position: absolute;
+			top: 0px;
+			height: 30px;
+			color: black;
+			font-weight: bold;
+			margin 3px 2px 0px 2px;
+			font-family: Serif;
+			
+		}
+	</style>
+
 </head>
 <body>
-    <div class="container-fluid" style="background-color:#33928C;">
-        <div class="row">
-            <div class="col-sm-6" style="background-color:#33928C;">
+		<div name='tabellHeader' class='header' style="width: 31%;  left:0px; ">
+			TABELLER
+		</div>
+		<div name='kolumnHeader' class='header' style="width: 38%; right: 31%;">
+			KOLUMNER
+		</div>
+		<div name='FTLnSQLHeader' class='header' style='width: 31%; right: 0px;'>
+			SCRIPT
+		</div>
+        <div name='tabellWindow' class='divs'  style="width: 31%;  left:0px; ">
                 <select id="layerspecs" label="Select one:"></select> <br> < (Innehållet i tabellen nedan ersätts när ny spec väljs och dess postgrestabell hämtas)
                 <h3>Tabell</h3>
-                <p id="tabell">mellow</p>
+                <p id="tabell"></p>
                 <h3>Sökvy</h3>
                 <p id="sokvy"></p>
                 <h3>Titel</h3>
@@ -24,18 +65,9 @@
                 <h3>Where</h3>
                 <p id="where"></p>
             </div>
-            <div class="col-sm-6" style="background-color:#97B6CB;">
-                <h3>SQL</h3>
-                <div readonly id="sql" rows="5" cols="70" autocomplete="off"></div>
-                <button type="button" class="btn btn-info" id="calcbutton">Show SQL</button>
-                <button type="button" class="btn btn-info" id="sendbutton">Send</button>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-6" style="background-color:#F28986;">
-                <h3>Inkluderade kolumner med ev. alias</h3>
-                <h4 id=titelkomihag>( Ange "title" som alias för en kolumn )</h4>
-                <table class="table table" id="fler_kolumner">
+		<div name='kolumnWindow' class='divs' style="width: 38%; right: 31%;">
+                <h3>Inkluderade kolumner med ev. FTLnamn</h3>
+                <table class="table" id="fler_kolumner">
                     <!--Ändras kanske senare till att läsa från tabell i db "eskilstuna".-->
 
 					<tbody id=mainbody>
@@ -44,91 +76,94 @@
 							<th>Kolumnnamn</th>
 							<th>Title</th>
 							<th>Sökbar kolumn</th>
+							<th>FTL-namn</th>
 						</tr>
 						<tr>
 							<td>
 								<button type="button" class="btn btn-danger" name="bortknapp">X</button>
 							</td>
 							<td>
-								<!--<input type="text" id="kolumn" name="kolumn">-->
 								<select class="dropbox" id="kolumn" name="kolumn">
 								</select>
 							</td>
 							<td>
 								<input onchange='checkbox(this)' type='checkbox' id='title' class='title_check'>
-								<!-- Varför heter alias titel? En kolumn ska läggas till sökvyn som heter 'title' och har värdet av en tabellkolumn, men hur blir tillagd rad ny radioknapp i existerande grupp? Check efter "title" istället för ny ful knappkolumn, skriv / poppa upp varning och
-								-->
 							</td>
 							<td>
 								<input type="checkbox" id="sokdel" name="checkbox">
 							</td>
+							<td>
+								<input id='FTLfield' type='text'>
+							</td>
 						</tr>
 					</body>
-
+				
                 </table>
-				<button type="button" class="add-all-columns btn btn-info" style="position: relative; float: right; bottom: 1em;">Lägg till<br> alla kolumner</button>
-                <button class="btn btn-info" id="addbutton">+1</button>
+				<button type="button" class="add-all-columns btn btn-info" style="position: relative; float: right; bottom: 1em; right: 0.5em;">Lägg till<br> alla kolumner</button>
+                <button class="btn btn-info" id="addbutton" style="position: relative; left: 0.5em;">+1</button>
             </div>
-        </div>
+        <div name='SQLandFTL' class='divs' style=' width: 31%; right: 0px;  padding-left: 0px;'>		
+            <div name='SQLWindow' style=" border: 1px solid;" >
+                <h3 class="margin-left">SQL</h3>
+                <div class="margin-left" readonly id="sql" rows="5" cols="70" autocomplete="off"></div>
+                <button type="button" class="btn btn-info margin-left" id="calcbutton">Show SQL</button>
+                <button type="button" class="btn btn-info margin-left" id="sendbutton" disabled>Send</button>
+            </div>		
+			<div name='FTLWindow' style=" border: 1px solid;">
+                <h3 class="margin-left">FTL</h3>
+                <div class="margin-left" readonly id="ftl" rows="5" cols="70" autocomplete="off"></div>
+                <button type="button" class="btn btn-info margin-left" id="calcFTL">Show FTL</button>
+				<button type="button" class="btn btn-info margin-left" id="saveFTL" disabled >Save</button>
+				
+            </div>
+		</div>
+	<script type="text/javascript">
+//When DOM ready then call node js server and receive layer_spec from db:geoportia then populate selector
+$(function () {
 
-<script>
-    //When DOM ready then call node js server and receive layer_spec from db:geoportia then populate selector
-    $(function () {
+	var lagerspecar = "kattkatt";;
 
-        let lagerspecar = "kattkatt";
+	$.ajax({
+		type: 'GET',
+		url: 'http://localhost:1337/geoportia',
 
-        $.ajax({
-            type: 'GET',
-            url: 'http://localhost:1337/geoportia',
+		success: function (json) {
+			lagerspecar = json;
+			lagerspecar.forEach(function (v) {
+				var opt = document.createElement('option');
+				opt.textContent = v.name;
+				opt.value = v.name + "|" + v.public_title + "|" + v.postgis_table_name + "|" + v.postgis_view_where_condition;
+				$("#layerspecs").append(opt);
+			});
+			// $("#layerspecs").append('<option value='+ object.public_title + '>' + object.name + '</option>');
+		}
 
-            success: function (json) {
-                lagerspecar = json;
-                lagerspecar.forEach(function (v) {
-                    var opt = document.createElement('option');
-                    opt.textContent = v.name;
-                    opt.value = v.name + "|" + v.public_title + "|" + v.postgis_table_name + "|" + v.postgis_view_where_condition;
-                    $("#layerspecs").append(opt);
-                });
-                // $("#layerspecs").append('<option value='+ object.public_title + '>' + object.name + '</option>');
-            }
-
-        });
+	});
 
 
-    });
-  
-    //Function som skriver ut object
-    function printObject(o) {
-      var out = '';
-        for (var p in o) {
-            out += p + ': ' + o[p] + '\n';
-        }
-        console.log(out);
-    }
-
-
+});
 
 //fill dropbox with table column names from the database
 function fillDropBox(kolumner){
 	$(".dropbox_option").remove();
 	kolumner.forEach(function (kolumn) {
-		let option = document.createElement('option');
+		var option = document.createElement('option');
 		option.className = "dropbox_option";
 		option.textContent = kolumn.column_name;
 		$(".dropbox").append(option);
 		});
 };		
-			
-	
+				
 //onchange='checkbox()'
 //creates a string which you can insert in the html to create a  new row
 function createRow(){
-	let row = "<tr>";
-	let removeButton = "<td><button type='button' class='btn btn-danger' name='bortknapp'>X</button></td>";
-	let columnName = "<td><select class='dropbox' id='kolumn' name='kolumn'></select></td>";
-	let titleBox = "<td><input onchange='checkbox(this)' type='checkbox' id='title' class='title_check'></td>";
-	let searchBox = "<td><input type='checkbox' id='sokdel' name='checkbox'></td>";
-	row += removeButton + columnName + titleBox + searchBox + "</tr>";
+	var row = "<tr>";
+	var removeButton = "<td><button type='button' class='btn btn-danger' name='bortknapp'>X</button></td>";
+	var columnName = "<td><select class='dropbox' id='kolumn' name='kolumn'></select></td>";
+	var titleBox = "<td><input onchange='checkbox(this)' type='checkbox' id='title' class='title_check'></td>";
+	var searchBox = "<td><input type='checkbox' id='sokdel' name='checkbox'></td>";
+	var FTLfield = "<td><input id='FTLfield' type='text'></td>"
+	row += removeButton + columnName + titleBox + searchBox + FTLfield + "</tr>";
 	return row;
 };
 
@@ -138,11 +173,7 @@ function checkbox(title){
 	$('input[id="' + title.id + '"]').not(title).prop('checked', false);
 }
 	
-
-	
-
 function update_fixed_fields(array) {
-    console.log("I uppdatera_fixed_fields");
     //document.getElementById("tabell").innerHTML=array[2];
     $('#sokvy').text(array[0]);
     $('#titel').text(array[1]);
@@ -154,8 +185,8 @@ function update_fixed_fields(array) {
 
 //reads the current table from the database to get the columns
 function readTableColumns(){
-	let layerspecs = document.getElementById("layerspecs");
-	let split = layerspecs.value.split("|");
+	var layerspecs = document.getElementById("layerspecs");
+	var split = layerspecs.value.split("|");
 	update_fixed_fields(split);
 	$.ajax({
         type: 'GET',
@@ -169,26 +200,15 @@ function readTableColumns(){
 
 //remove all rows except the first one and update the data
 $("#layerspecs").on('change', function(){
-	let length = $(".dropbox").length - 1;
+	var length = $(".dropbox").length - 1;
 	$("#fler_kolumner tr:gt(1)").remove();
 	readTableColumns();
 	});
 
-//Function som skriver ut object
-function printObject(o) {
-		var out = '';
-		for (var p in o) {
-			out += p + ': ' + o[p] + '\n';
-		}
-	console.log(out);
-}
-
-
 //reads columns from database and updates the whole table
 $(".add-all-columns").on('click', function(){
-	let layerspecs = document.getElementById("layerspecs");
-	//console.log(layerspecs.value);
-	let split = layerspecs.value.split("|");
+	var layerspecs = document.getElementById("layerspecs");
+	var split = layerspecs.value.split("|");
 	update_fixed_fields(split)
 	$.ajax({
         type: 'GET',
@@ -202,8 +222,8 @@ $(".add-all-columns").on('click', function(){
 //sets dropboxes default value based on thier index, ex row 2 by default will have value from column 2
 function updateAllDropboxes(){
 	$('.dropbox').each(function (index){
-		let box = $(this);
-		let options = box.children();
+		var box = $(this);
+		var options = box.children();
 		if(options.length > index){
 			box.val(options[index].text); 
 		}
@@ -216,21 +236,20 @@ function updateAllDropboxes(){
 	its index is, same as updateAllDropboxes
 	but for +1 clickevent*/
 function updateNewDropbox(){
-	let index = $(".dropbox").length - 1;
-	let newDropBox = $("table").find("select:last");
+	var index = $(".dropbox").length - 1;
+	var newDropBox = $("table").find("select:last");
 	$("#kolumn:first option").each(function(){
-		let opt = document.createElement('option');
+		var opt = document.createElement('option');
 		opt.textContent = this.text;
 		opt.className = "dropbox_option";
 		newDropBox.append(opt);
 	})
-	let options = newDropBox.children();
+	var options = newDropBox.children();
 	if(options.length > index){
 		newDropBox.val(options[index].text);
 	}
 }
 	
-
 /*adds a new row when clicking on +1*/
 $("#addbutton").click(function () {
 	$("table").append(createRow()); // new createRow func
@@ -238,13 +257,11 @@ $("#addbutton").click(function () {
 	
 });
 
-
 /*creates all needed rows and then calls readTableColumns
 	to set the value on the dropboxes*/
-function setTable(huvuden) { //Set table
+function setTable(huvuden) { 
     $("#fler_kolumner tr").each(function () {
-       $("#fler_kolumner").find("tr:gt(" + ((huvuden.length > 0) ? 0 : 1) + ")").remove(); //välj alla element med högre index än 1, dvs 2->
-        console.log($(this).val());
+       $("#fler_kolumner").find("tr:gt(" + ((huvuden.length > 0) ? 0 : 1) + ")").remove();
     });
     $.each(huvuden, function (index, object){
         $("#fler_kolumner tr:last").after(createRow());
@@ -261,78 +278,166 @@ $(document).on('click', 'button.btn-danger', function () {
 		$(this).closest('tr').remove();
 });
 
-$("#calcbutton").click(function () {   //Utvinn tabellens värden, kontrollera, post om så, return om ej
+/*reads row and sends a object with
+	information to serverside which
+	returns an sqlQuery*/
+$("#calcbutton").click(function () {
 
     var samling = {}; //tabellobjekt
     var title_is_present = false;
 
-    function illegalCharsCheck(string) { //Returnerar falskt om inkommande sträng ej innehåller känt problematiskt tecken
-        if (!(string.indexOf(" ") > -1) && !(string.indexOf("/") > -1) && !(string.indexOf("Å") > -1) && !(string.indexOf("å") > -1) && (!string.indexOf("Ä") > -1) && !(string.indexOf("ä") > -1) && !(string.indexOf("Ö") > -1) && !(string.indexOf("ö") > -1)) {
-            return false
-        }
-        else {
-            return true
-        }
-        }
+    $('#fler_kolumner tr').each(function (k) {// 'table row'
 
-        $('#fler_kolumner tr').each(function (k) {// 'table row'
+        var obj = {};
 
-
-            var obj = {}; //js-objekt som representerar en rad
-
-            $(this).find("input,select").each(function (i) {
-                //console.log($(this).);
-                if (this.id.indexOf('sokdel') >= 0) {
-                    if ($(this).is(":checked")) {
-                        obj["sokdel"] = "j";
-                    }
-                    else {
-                        obj["sokdel"] = "n";
-                    }
-                }
-				else if (this.id.indexOf('title') >= 0) {
-					if($(this).is(":checked")){
-						title_is_present = true;
-						obj["title"] = "j";
-					}
-					else{
-						obj["title"] = "n";
-					}
+        $(this).find("input,select").each(function (i) {
+			if (this.id.indexOf('sokdel') >= 0) {
+				if ($(this).is(":checked")) 
+				{
+					obj["sokdel"] = "j";
 				}
-				else {
-                    obj["kolumn"] = $(this).val();
+				else 
+				{
+					obj["sokdel"] = "n";
 				}
-			});
-        samling["row" + k] = obj;
-		console.log(["row"+k] + " Kolumn: "+ obj["kolumn"]);
-
-    });
-    //console.log("här är hopsamling av tabellen, tja.html"+ JSON.stringify(samling)); //Vi bör kunna göra en rätt snyggo json här va, som sen kan skickas
-    if (!title_is_present) {
+			}
+			if (this.id.indexOf('title') >= 0) 
+			{
+				if($(this).is(":checked"))
+				{
+					title_is_present = true;
+					obj["title"] = "j";
+				}
+				else
+				{
+					obj["title"] = "n";
+				}
+			}
+			if(this.id.indexOf('kolumn') >= 0)
+			{
+				obj["kolumn"] = $(this).val();
+			}
+		});
+	samling["row" + k] = obj;
+	});
+	if (!title_is_present) 
+	{
 		alert("Måste ange en title");
-        //$("#titelkomihag").fadeOut(700).fadeIn(700).fadeOut(700).fadeIn(700);
-        return;
-    }
-    else {
+		return;
+	}
+	else 
+	{
+	samling["tabellnamn"] = $('#tabell').text();
+	samling["sokvynamn"] = $('#sokvy').text();
+	samling["titel"] = $('#titel').text();
+	samling["where"] = $('#where').text();
 
-        samling["tabellnamn"] = $('#tabell').text();
-        samling["sokvynamn"] = $('#sokvy').text();
-        samling["titel"] = $('#titel').text();
-        samling["where"] = $('#where').text();
+	$.post('http://localhost:1337/eskilstuna_nyvy', samling, function (data, status) {
 
-        $.post('http://localhost:1337/eskilstuna_nyvy', samling, function (data, status) {
+		$('#sql').html("<code id='SQL'>" + data + "</code>");
+	});
+	$('#sendbutton').prop("disabled", false);
+	}
+});
 
-            $('#sql').html("<code>" + data + "</code>"); //klienten behöver formatera svaret för visning i div, nyrad vid första AS, FROM, WHERE
-            console.log("Data: " + data + "\nStatus: " + status);
-            });
-        }
-    }
-    );
+//trigger FTLfunctions on click	
+$("#calcFTL").click(calcFTL);
+$("#saveFTL").click(saveFTL);
+
+/*calculates which columns to be included in FTL
+	and show the completed FTLtext on screen*/
+function calcFTL (){
+	var FTLnamn = [];
+	var kolumnNamn = [];
+	$('#fler_kolumner tr').each(function (k) {// 'table row'
+		$(this).find("input,select").each(function (i) {
+			if (this.id.indexOf('FTLfield') >= 0) {
+				FTLnamn[k] = $(this).val();
+			}
+			if (this.id.indexOf('kolumn') >= 0){
+				kolumnNamn[k] = $(this).val();
+			}
+		});
+
+	});
+	
+	/*send columnNames and FTLNames into FTLbuilder
+		and get the completed FTLstring*/
+	var FTLString = FTLbuilder(FTLnamn, kolumnNamn); 
+	$('#ftl').html("<code id='FTL'>"+FTLString+"</code>"); 
+	$('#saveFTL').prop("disabled", false);
+}
+
+//builds the FTLstring and returns it(frankenstein)
+function FTLbuilder(FTLarr, kolumnArr){ 
+	let OT = "&lt;"; //<
+	let CT = "&gt;"; //>
+	let Obold = OT + "b" + CT; //<b>
+	let Cbold = OT + "/b" + CT; //</b>
+	let tab = "\t";
+	let BR = "\n<br>";
+	let Otr = tab+tab+tab+OT+"tr"; // /t/t/t<tr
+	let Ctr = tab+tab+tab+OT+"/tr"; // /t/t/t</tr
+	let td = tab+tab+tab+tab+OT+"td"+CT; // /t/t/t/t<td>
+	let OUL = tab+tab+OT+"ul"+CT+BR; // /t/t<ul><br>
+	let CUL = tab+tab+OT+"/ul"+CT+BR; // /t/t</ul><br>
+	let FTLbegin = OT+"#list features as feature"+CT+BR+
+					tab+OT+'table class="featureInfo"'+CT+BR+OUL;
+
+	let FTLmiddle = "";
+
+	let FTLend = CUL+tab+OT+"/table"+CT+BR+
+					OT+"/#list"+CT;
+
+	for(amount in kolumnArr)
+	{
+		if(FTLarr[amount] != "") //check if FTLfield was empty
+		FTLmiddle += Otr+CT+BR+
+						td+Obold+FTLarr[amount]+":"+Cbold+OT+"/td"+CT+BR+
+						td+"${feature."+kolumnArr[amount]+".value}"+OT+"/td"+CT+BR+
+						Ctr+CT+BR;
+	}
 
 
+	return FTLbegin + FTLmiddle+FTLend;
+};
 
-    //jqueryUI för att göra lista DOMelement sorterbar
-    $('#fler_kolumner tbody').sortable();
+/*downloads the FTLstring into
+	a content.ftl file*/
+function saveFTL(){
+	var FTLtext = $("#FTL").text();
+	var file = new Blob([FTLtext]);
+	var a = document.createElement("a"),
+            url = URL.createObjectURL(file);
+    a.href = url;
+    a.download = "content.ftl";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function() {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);  
+    }, 0); 
+	//var downloadLink = "<a id='SaveLink' href='data:application/xml;charset=utf-8," + FTLtext +"' download='content.ftl'></a>";
+	//$("#saveFTL").wrap(downloadLink);
+}
+
+$("#sendbutton").click(SendSQL);
+
+//Sends query to serverside and the database
+function SendSQL(){
+	
+	var SqlQuery = {};
+	SqlQuery["query"] = $("#SQL").text();
+	
+	$.post('http://localhost:1337/sovy_testo', SqlQuery, function (data, status) {
+            console.log("Send successful!");
+			console.log("supah status:" + status);
+    });
+}
+
+//jqueryUI för att göra lista DOMelement sorterbar
+$('#fler_kolumner tbody').sortable();
 
 </script>
+</body>
 </html>
