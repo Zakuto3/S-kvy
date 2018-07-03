@@ -47,8 +47,6 @@ app.get('/geoportia', function (req, res) {
 });
 
 app.get('/eskilstuna/:tabell', function (req, res) {
-
-
     var pool = new pg.Pool(DBobj.config_eskilstuna);
     pool.connect(function (err, client, done) {
         if (err) {
@@ -90,21 +88,22 @@ app.post('/eskilstuna_nyvy', function (req, res) {
     skapasokvy_str += " AS SELECT ";
     skapasokvy_str += '"' + tabelln + '".geom, ' + '"' + tabelln + '".geodb_oid AS sokid, ';
 
-    //traversera resten av rec.body, dvs kolumnerna, såhär kanske: http://stackoverflow.com/questions/722668/traverse-all-the-nodes-of-a-json-object-tree-with-javascript
-
     //geom och oid behövs inte hämtas eftersom de inte specas i sökvyn.. 
     function process(key, value) {
         console.log("Nyckel: " + key + " : " + "värde: " + value); //stoppa i sträng
-
-        if (key == "kolumn") {
+        if (key == "kolumn") 
+		{
             skapasokvy_str += '"' + tabelln + '"."' + value + '"';
             sistaknamn = value;
         }
-        else if (key == "title") {
-            if (value == "j") {
+        else if (key == "title") 
+		{
+            if (value == "j") 
+			{
 				skapasokvy_str += " AS title, ";
 			}
-            else {
+            else 
+			{
                 skapasokvy_str += ", "; //Kan sluta med , om COALESCE eller dylikt sokstrang-skapande kommer efter. Annat scenario är att inget blir sökbart.
             }
         }
@@ -133,54 +132,35 @@ app.post('/eskilstuna_nyvy', function (req, res) {
             }
         }
     };
-    console.log("Börjar att traversera tabellen\n");
-
     traverse(req.body, process);
-
-    console.log("sökbara-sträng: " + sokbara);
-
-    console.log("Klar.  ");
     sokbaraArray = sokbara.split(",");
-    console.log(sokbaraArray);
     sokbaraArray.pop();
-    console.log(sokbaraArray);
     skapasokvy_str += " concat(" + sokbaraArray + ")::text AS searchfield ";
     skapasokvy_str += "FROM " + '"' + tabelln + '";';
-
     console.log(skapasokvy_str);
-
-    //FROM "Natur_miljo_Foryngringsomraden_fisk";
-
     res.send(skapasokvy_str);
 });
+
 app.post('/sovy_testo', function (req, res){
 	var pool = new pg.Pool(DBobj.config_eskilstuna);
     pool.connect(function (err, client, done) {
-        if (err) {
+        if (err) 
+		{
             return console.error('error fetching client from pool', err);
         }
 		client.query(req.body.query, function (err, result) { 
             done();
-			if (err) {
+			if (err) 
+			{
                 return console.error('error running query', err);
             }
-	console.log("test_sokvy: " + req.body.query);
+			else
+			{
+			res.send();
+			}
 		});
 	});
 });
-/*
-var pool = new pg.Pool(config_eskilstuna);
-pool.connect(function(err, client, done) {
-  if(err) {
-    return console.error('error fetching client from pool', err);
-  }
-
-  
-  
-  pool.on('error', function (err, client) {
-  console.error('idle client error', err.message, err.stack)
-})
-});*/
 
 
 app.listen(1337);

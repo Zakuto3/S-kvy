@@ -9,19 +9,52 @@
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-    
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">   
 	<style>
 		.margin-left{
-		margin-left: 0.5em;
+			margin-left: 0.5em;
+		}
+		.divs{
+			background: linear-gradient(white,white, #A9E2F3);
+			background-color:#EFEFFB;
+			border: solid 1px black;
+			/*border-style:solid;
+			border-color: #58D3F7;
+			border-bottom: 0px;*/
+			position: absolute;
+			top: 30px;
+			overflow:auto;
+			margin 3px 2px 0px 2px;
+			padding-left: 5px;
+			min-height: 98%;
+		}
+		.header{
+			background: linear-gradient(#58D3F7, white, #58D3F7);
+			overflow:auto;
+			border: solid 1px black;
+			position: absolute;
+			top: 0px;
+			height: 30px;
+			color: black;
+			font-weight: bold;
+			margin 3px 2px 0px 2px;
+			font-family: Serif;
+			
 		}
 	</style>
 
 </head>
 <body>
-    <div class="container-fluid" style="background-color:#945D5D;">
-        <div class="col-sm-6">
-            <div class="row" style="background-color:#FFFFFF; border-style:solid;">
+		<div name='tabellHeader' class='header' style="width: 31%;  left:0px; ">
+			TABELLER
+		</div>
+		<div name='kolumnHeader' class='header' style="width: 38%; right: 31%;">
+			KOLUMNER
+		</div>
+		<div name='FTLnSQLHeader' class='header' style='width: 31%; right: 0px;'>
+			SCRIPT
+		</div>
+        <div name='tabellWindow' class='divs'  style="width: 31%;  left:0px; ">
                 <select id="layerspecs" label="Select one:"></select> <br> < (Innehållet i tabellen nedan ersätts när ny spec väljs och dess postgrestabell hämtas)
                 <h3>Tabell</h3>
                 <p id="tabell"></p>
@@ -32,9 +65,9 @@
                 <h3>Where</h3>
                 <p id="where"></p>
             </div>
-			<div class="row" style="background-color:#F28986; border-style:solid;">
+		<div name='kolumnWindow' class='divs' style="width: 38%; right: 31%;">
                 <h3>Inkluderade kolumner med ev. FTLnamn</h3>
-                <table class="table table" id="fler_kolumner">
+                <table class="table" id="fler_kolumner">
                     <!--Ändras kanske senare till att läsa från tabell i db "eskilstuna".-->
 
 					<tbody id=mainbody>
@@ -50,14 +83,11 @@
 								<button type="button" class="btn btn-danger" name="bortknapp">X</button>
 							</td>
 							<td>
-								<!--<input type="text" id="kolumn" name="kolumn">-->
 								<select class="dropbox" id="kolumn" name="kolumn">
 								</select>
 							</td>
 							<td>
 								<input onchange='checkbox(this)' type='checkbox' id='title' class='title_check'>
-								<!-- Varför heter alias titel? En kolumn ska läggas till sökvyn som heter 'title' och har värdet av en tabellkolumn, men hur blir tillagd rad ny radioknapp i existerande grupp? Check efter "title" istället för ny ful knappkolumn, skriv / poppa upp varning och
-								-->
 							</td>
 							<td>
 								<input type="checkbox" id="sokdel" name="checkbox">
@@ -72,17 +102,14 @@
 				<button type="button" class="add-all-columns btn btn-info" style="position: relative; float: right; bottom: 1em; right: 0.5em;">Lägg till<br> alla kolumner</button>
                 <button class="btn btn-info" id="addbutton" style="position: relative; left: 0.5em;">+1</button>
             </div>
-        </div>
-        <div class="col-sm-6">
-		
-            <div class="row" style="background-color:#97B6CB; border-style:solid;" >
+        <div name='SQLandFTL' class='divs' style=' width: 31%; right: 0px;  padding-left: 0px;'>		
+            <div name='SQLWindow' style=" border: 1px solid;" >
                 <h3 class="margin-left">SQL</h3>
                 <div class="margin-left" readonly id="sql" rows="5" cols="70" autocomplete="off"></div>
                 <button type="button" class="btn btn-info margin-left" id="calcbutton">Show SQL</button>
                 <button type="button" class="btn btn-info margin-left" id="sendbutton" disabled>Send</button>
-            </div>
-			
-			<div class="row" style="background-color:#97B6CB; border-style:solid;">
+            </div>		
+			<div name='FTLWindow' style=" border: 1px solid;">
                 <h3 class="margin-left">FTL</h3>
                 <div class="margin-left" readonly id="ftl" rows="5" cols="70" autocomplete="off"></div>
                 <button type="button" class="btn btn-info margin-left" id="calcFTL">Show FTL</button>
@@ -90,33 +117,31 @@
 				
             </div>
 		</div>
-	</div>
 	<script type="text/javascript">
-    //When DOM ready then call node js server and receive layer_spec from db:geoportia then populate selector
-    $(function () {
+//When DOM ready then call node js server and receive layer_spec from db:geoportia then populate selector
+$(function () {
 
-        var lagerspecar = "kattkatt";;
+	var lagerspecar = "kattkatt";;
 
-        $.ajax({
-            type: 'GET',
-            url: 'http://localhost:1337/geoportia',
+	$.ajax({
+		type: 'GET',
+		url: 'http://localhost:1337/geoportia',
 
-            success: function (json) {
-                lagerspecar = json;
-                lagerspecar.forEach(function (v) {
-                    var opt = document.createElement('option');
-                    opt.textContent = v.name;
-                    opt.value = v.name + "|" + v.public_title + "|" + v.postgis_table_name + "|" + v.postgis_view_where_condition;
-                    $("#layerspecs").append(opt);
-                });
-                // $("#layerspecs").append('<option value='+ object.public_title + '>' + object.name + '</option>');
-            }
+		success: function (json) {
+			lagerspecar = json;
+			lagerspecar.forEach(function (v) {
+				var opt = document.createElement('option');
+				opt.textContent = v.name;
+				opt.value = v.name + "|" + v.public_title + "|" + v.postgis_table_name + "|" + v.postgis_view_where_condition;
+				$("#layerspecs").append(opt);
+			});
+			// $("#layerspecs").append('<option value='+ object.public_title + '>' + object.name + '</option>');
+		}
 
-        });
+	});
 
 
-    });
-
+});
 
 //fill dropbox with table column names from the database
 function fillDropBox(kolumner){
@@ -128,8 +153,7 @@ function fillDropBox(kolumner){
 		$(".dropbox").append(option);
 		});
 };		
-			
-	
+				
 //onchange='checkbox()'
 //creates a string which you can insert in the html to create a  new row
 function createRow(){
@@ -149,11 +173,7 @@ function checkbox(title){
 	$('input[id="' + title.id + '"]').not(title).prop('checked', false);
 }
 	
-
-	
-
 function update_fixed_fields(array) {
-    console.log("I uppdatera_fixed_fields");
     //document.getElementById("tabell").innerHTML=array[2];
     $('#sokvy').text(array[0]);
     $('#titel').text(array[1]);
@@ -168,7 +188,6 @@ function readTableColumns(){
 	var layerspecs = document.getElementById("layerspecs");
 	var split = layerspecs.value.split("|");
 	update_fixed_fields(split);
-	console.log("$('#tabell').text(): " + $('#tabell').text());
 	$.ajax({
         type: 'GET',
         url: 'http://localhost:1337/eskilstuna/' + $('#tabell').text(),
@@ -186,20 +205,9 @@ $("#layerspecs").on('change', function(){
 	readTableColumns();
 	});
 
-//Function som skriver ut object
-function printObject(o) {
-		var out = '';
-		for (var p in o) {
-			out += p + ': ' + o[p] + '\n';
-		}
-	console.log(out);
-}
-
-
 //reads columns from database and updates the whole table
 $(".add-all-columns").on('click', function(){
 	var layerspecs = document.getElementById("layerspecs");
-	//console.log(layerspecs.value);
 	var split = layerspecs.value.split("|");
 	update_fixed_fields(split)
 	$.ajax({
@@ -242,7 +250,6 @@ function updateNewDropbox(){
 	}
 }
 	
-
 /*adds a new row when clicking on +1*/
 $("#addbutton").click(function () {
 	$("table").append(createRow()); // new createRow func
@@ -250,13 +257,11 @@ $("#addbutton").click(function () {
 	
 });
 
-
 /*creates all needed rows and then calls readTableColumns
 	to set the value on the dropboxes*/
-function setTable(huvuden) { //Set table
+function setTable(huvuden) { 
     $("#fler_kolumner tr").each(function () {
-       $("#fler_kolumner").find("tr:gt(" + ((huvuden.length > 0) ? 0 : 1) + ")").remove(); //välj alla element med högre index än 1, dvs 2->
-        console.log($(this).val());
+       $("#fler_kolumner").find("tr:gt(" + ((huvuden.length > 0) ? 0 : 1) + ")").remove();
     });
     $.each(huvuden, function (index, object){
         $("#fler_kolumner tr:last").after(createRow());
@@ -273,73 +278,67 @@ $(document).on('click', 'button.btn-danger', function () {
 		$(this).closest('tr').remove();
 });
 
-$("#calcbutton").click(function () {   //Utvinn tabellens värden, kontrollera, post om så, return om ej
+/*reads row and sends a object with
+	information to serverside which
+	returns an sqlQuery*/
+$("#calcbutton").click(function () {
 
     var samling = {}; //tabellobjekt
     var title_is_present = false;
 
-    function illegalCharsCheck(string) { //Returnerar falskt om inkommande sträng ej innehåller känt problematiskt tecken
-        if (!(string.indexOf(" ") > -1) && !(string.indexOf("/") > -1) && !(string.indexOf("Å") > -1) && !(string.indexOf("å") > -1) && (!string.indexOf("Ä") > -1) && !(string.indexOf("ä") > -1) && !(string.indexOf("Ö") > -1) && !(string.indexOf("ö") > -1)) {
-            return false
-        }
-        else {
-            return true
-        }
-        }
+    $('#fler_kolumner tr').each(function (k) {// 'table row'
 
-        $('#fler_kolumner tr').each(function (k) {// 'table row'
+        var obj = {};
 
-
-            var obj = {}; //js-objekt som representerar en rad
-
-            $(this).find("input,select").each(function (i) {
-                //console.log($(this).);
-                if (this.id.indexOf('sokdel') >= 0) {
-                    if ($(this).is(":checked")) {
-                        obj["sokdel"] = "j";
-                    }
-                    else {
-                        obj["sokdel"] = "n";
-                    }
-                }
-				if (this.id.indexOf('title') >= 0) {
-					if($(this).is(":checked")){
-						title_is_present = true;
-						obj["title"] = "j";
-					}
-					else{
-						obj["title"] = "n";
-					}
+        $(this).find("input,select").each(function (i) {
+			if (this.id.indexOf('sokdel') >= 0) {
+				if ($(this).is(":checked")) 
+				{
+					obj["sokdel"] = "j";
 				}
-				if(this.id.indexOf('kolumn') >= 0){
-                    obj["kolumn"] = $(this).val();
+				else 
+				{
+					obj["sokdel"] = "n";
 				}
-			});
-        samling["row" + k] = obj;
-		console.log(["row"+k] + " Kolumn: "+ obj["kolumn"]);
-
-    });
-    //console.log("här är hopsamling av tabellen, tja.html"+ JSON.stringify(samling)); //Vi bör kunna göra en rätt snyggo json här va, som sen kan skickas
-    if (!title_is_present) {
+			}
+			if (this.id.indexOf('title') >= 0) 
+			{
+				if($(this).is(":checked"))
+				{
+					title_is_present = true;
+					obj["title"] = "j";
+				}
+				else
+				{
+					obj["title"] = "n";
+				}
+			}
+			if(this.id.indexOf('kolumn') >= 0)
+			{
+				obj["kolumn"] = $(this).val();
+			}
+		});
+	samling["row" + k] = obj;
+	});
+	if (!title_is_present) 
+	{
 		alert("Måste ange en title");
-        //$("#titelkomihag").fadeOut(700).fadeIn(700).fadeOut(700).fadeIn(700);
-        return;
-    }
-    else {
+		return;
+	}
+	else 
+	{
+	samling["tabellnamn"] = $('#tabell').text();
+	samling["sokvynamn"] = $('#sokvy').text();
+	samling["titel"] = $('#titel').text();
+	samling["where"] = $('#where').text();
 
-        samling["tabellnamn"] = $('#tabell').text();
-        samling["sokvynamn"] = $('#sokvy').text();
-        samling["titel"] = $('#titel').text();
-        samling["where"] = $('#where').text();
+	$.post('http://localhost:1337/eskilstuna_nyvy', samling, function (data, status) {
 
-        $.post('http://localhost:1337/eskilstuna_nyvy', samling, function (data, status) {
-
-            $('#sql').html("<code id='SQL'>" + data + "</code>"); //klienten behöver formatera svaret för visning i div, nyrad vid första AS, FROM, WHERE
-            console.log("Data: " + data + "\nStatus: " + status);
-            });
-			$('#sendbutton').prop("disabled", false);
-        }
-    });
+		$('#sql').html("<code id='SQL'>" + data + "</code>");
+	});
+	$('#sendbutton').prop("disabled", false);
+	}
+});
 
 //trigger FTLfunctions on click	
 $("#calcFTL").click(calcFTL);
@@ -424,14 +423,16 @@ function saveFTL(){
 
 $("#sendbutton").click(SendSQL);
 
+//Sends query to serverside and the database
 function SendSQL(){
 	
-	/*var SqlQuery = {};
-	SqlQuery["query"] = $("#SQL").text() 
-	console.log(SqlQuery);
-	$.post('http://localhost:1337/sovy_testo', SqlQuery, function () {
-            console.log("Success");
-    });*/
+	var SqlQuery = {};
+	SqlQuery["query"] = $("#SQL").text();
+	
+	$.post('http://localhost:1337/sovy_testo', SqlQuery, function (data, status) {
+            console.log("Send successful!");
+			console.log("supah status:" + status);
+    });
 }
 
 //jqueryUI för att göra lista DOMelement sorterbar
