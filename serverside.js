@@ -49,7 +49,8 @@ app.get('/geoportia', function (req, res) {
 app.get('/eskilstuna/:tabell', function (req, res) {
     var pool = new pg.Pool(DBobj.config_eskilstuna);
     pool.connect(function (err, client, done) {
-        if (err) {
+        if (err) 
+		{
             return console.error('error fetching client from pool', err);
         }
         console.log(req.params.tabell);
@@ -58,9 +59,12 @@ app.get('/eskilstuna/:tabell', function (req, res) {
         client.query("SELECT column_name FROM information_schema.columns WHERE table_Schema = 'public' AND column_name <> 'geom' AND column_name <> 'geodb_oid' AND table_name = '" + str + "'", function (err, result) {  //Strängen behöver vara inom ' ', annars blir den tydligen gemen.
             done();
 
-            if (err) {
+            if (err) 
+			{
                 return console.error('error running query', err);
-            } else {
+            } 
+			else 
+			{
                 console.log("skickar nu return med result för eskilstuna");
                 console.log(result.rows);
                 res.send(result.rows); //alla akt_bet. För första raden så .rows[0]
@@ -156,7 +160,7 @@ app.post('/sovy_testo', function (req, res){
             }
 			else
 			{
-			res.send();
+				res.send();
 			}
 		});
 	});

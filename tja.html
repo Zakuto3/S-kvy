@@ -6,8 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">  
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">   
 	<style>
@@ -231,7 +230,7 @@ function updateAllDropboxes(){
 
 }
 
-/*copies data from above row and
+/*copies data from the row above and
 	sets dropbox default value to whatever
 	its index is, same as updateAllDropboxes
 	but for +1 clickevent*/
@@ -425,13 +424,10 @@ $("#sendbutton").click(SendSQL);
 
 //Sends query to serverside and the database
 function SendSQL(){
-	
 	var SqlQuery = {};
-	SqlQuery["query"] = $("#SQL").text();
-	
-	$.post('http://localhost:1337/sovy_testo', SqlQuery, function (data, status) {
+	SqlQuery["query"] = $("#SQL").text();	
+	$.post('http://localhost:1337/sovy_testo', SqlQuery, function () {
             console.log("Send successful!");
-			console.log("supah status:" + status);
     });
 }
 
