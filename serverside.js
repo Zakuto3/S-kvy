@@ -89,7 +89,7 @@ app.post('/eskilstuna_nyvy', function (req, res) {
     var sistaknamn = "";
     var skapasokvy_str = "CREATE OR REPLACE VIEW ";
 	var finnsSokBar = false;
-    skapasokvy_str += "test_sokvy_scriptet"; //sokvyn
+    skapasokvy_str += sokvyn
     skapasokvy_str += " AS SELECT ";
     skapasokvy_str += '"' + tabelln + '".geom, ' + '"' + tabelln + '".geodb_oid AS sokid, ';
 
@@ -169,6 +169,7 @@ app.post('/sovy_testo', function (req, res){
             done();
 			if (err) 
 			{
+				res.send(err);
                 return console.error('error running query', err);
             }
 			else

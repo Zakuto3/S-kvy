@@ -98,8 +98,8 @@
 					</body>
 				
                 </table>
-				<button type="button" class="add-all-columns btn btn-info" style="position: relative; float: right; bottom: 1em; right: 0.5em;">Lägg till<br> alla kolumner</button>
-                <button class="btn btn-info" id="addbutton" style="position: relative; left: 0.5em;">+1</button>
+				<button type="button" class="add-all-columns btn btn-info" style="position: relative; left: 0.5em;">Lägg till<br> alla kolumner</button>
+				<button class="btn btn-info" id="addbutton" style="position: relative; left: 1em;">+1</button>
             </div>
         <div name='SQLandFTL' class='divs' style=' width: 31%; right: 0px;  padding-left: 0px;'>		
             <div name='SQLWindow' style=" border: 1px solid;" >
@@ -391,8 +391,18 @@ $("#sendbutton").click(SendSQL);
 function SendSQL(){
 	var SqlQuery = {};
 	SqlQuery["query"] = $("#SQL").text();	
-	$.post('http://localhost:1337/sovy_testo', SqlQuery, function () {
-            console.log("Send successful!");
+	$.post('http://localhost:1337/sovy_testo', SqlQuery, function (data) {
+			if(data.code == "42P16") 
+			{
+				if (confirm("Sökvyn med namnet finns redan, vill du ta bort och skapa ny?")) {
+					SqlQuery["query"] = "DROP VIEW" + $("#sokvy").text() + "; " + SqlQuery["query"];
+					$.post('http://localhost:1337/sovy_testo', SqlQuery);
+				}
+			}
+            else
+			{
+				alert("Sökvy skapad");
+			}
     });
 }
 //jqueryUI för att göra lista DOMelement sorterbar
