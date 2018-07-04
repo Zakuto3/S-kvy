@@ -55,12 +55,24 @@
 		</div>
         <div name='tabellWindow' class='divs'  style="width: 31%;  left:0px; ">
                 <select id="layerspecs" label="Select one:"></select> <br> < (Innehållet i tabellen nedan ersätts när ny spec väljs och dess postgrestabell hämtas)
-                <h3>Tabell</h3>
+                <h3>
+					Tabell
+				</h3>
                 <p id="tabell"></p>
-                <h3>Sökvy</h3>
-                <p id="sokvy"></p>
-                <h3>Titel</h3>
-                <p id="titel"></p>
+                <h3>
+					Sökvy 
+					<button onclick='changeText(this,"sokvy","newsokvy")' type="button" class="btn btn-info" id="changeName" style="height:25px; padding:0;" >Ändra</button>
+				</h3>
+				<input id='newsokvy' type='text' style="display:none; width:99%;">				
+                <p id="sokvy" style="display:block;"></p>
+				
+                <h3>
+					Titel
+					<button onclick='changeText(this,"titel","newtitel")' type="button" class="btn btn-info" id="changeName" style="height:25px; padding:0;" >Ändra</button>
+				</h3>
+                <input id='newtitel' type='text' style="display:none; width:99%;">				
+                <p id="titel" style="display:block;"></p>
+				
                 <h3>Where</h3>
                 <p id="where"></p>
             </div>
@@ -167,7 +179,9 @@ function checkbox(title){
 function update_fixed_fields(array) {
     //document.getElementById("tabell").innerHTML=array[2];
     $('#sokvy').text(array[0]);
+	$('#newsokvy').val(array[0]);
     $('#titel').text(array[1]);
+	$('#newtitel').val(array[1]);
     $('#tabell').text(array[2]);
     if (array[3] != 'null') {
         $('#where').text(array[3]);
@@ -405,8 +419,41 @@ function SendSQL(){
 			}
     });
 }
+
+function changeText(button,idText,idInput){
+	$("#"+idInput).toggle();
+	$("#"+idText).toggle();
+	$("#"+idText).text($("#"+idInput).val());
+	if($(button).text() == "Ändra")
+	{$(button).text("Bekräfta");}
+	else 
+	{$(button).text("Ändra");}
+}
+
+
 //jqueryUI för att göra lista DOMelement sorterbar
 $('#fler_kolumner tbody').sortable();
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
