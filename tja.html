@@ -6,8 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">  
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">   
 	<style>
@@ -111,8 +110,8 @@
 					</body>
 				
                 </table>
-				<button type="button" class="add-all-columns btn btn-info" style="position: relative; float: right; bottom: 1em; right: 0.5em;">Lägg till<br> alla kolumner</button>
-                <button class="btn btn-info" id="addbutton" style="position: relative; left: 0.5em;">+1</button>
+				<button type="button" class="add-all-columns btn btn-info" style="position: relative; left: 0.5em;">Lägg till<br> alla kolumner</button>
+				<button class="btn btn-info" id="addbutton" style="position: relative; left: 1em;">+1</button>
             </div>
         <div name='SQLandFTL' class='divs' style=' width: 31%; right: 0px;  padding-left: 0px;'>		
             <div name='SQLWindow' style=" border: 1px solid;" >
@@ -231,7 +230,8 @@ function updateAllDropboxes(){
 		}
 	}); 
 }
-/*copies data from above row and
+
+/*copies data from the row above and
 	sets dropbox default value to whatever
 	its index is, same as updateAllDropboxes
 	but for +1 clickevent*/
@@ -403,13 +403,20 @@ function saveFTL(){
 $("#sendbutton").click(SendSQL);
 //Sends query to serverside and the database
 function SendSQL(){
-	
 	var SqlQuery = {};
-	SqlQuery["query"] = $("#SQL").text();
-	
-	$.post('http://localhost:1337/sovy_testo', SqlQuery, function (data, status) {
-            console.log("Send successful!");
-			console.log("supah status:" + status);
+	SqlQuery["query"] = $("#SQL").text();	
+	$.post('http://localhost:1337/sovy_testo', SqlQuery, function (data) {
+			if(data.code == "42P16") 
+			{
+				if (confirm("Sökvyn med namnet finns redan, vill du ta bort och skapa ny?")) {
+					SqlQuery["query"] = "DROP VIEW" + $("#sokvy").text() + "; " + SqlQuery["query"];
+					$.post('http://localhost:1337/sovy_testo', SqlQuery);
+				}
+			}
+            else
+			{
+				alert("Sökvy skapad");
+			}
     });
 }
 
