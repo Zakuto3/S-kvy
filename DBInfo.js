@@ -22,5 +22,3 @@ var config2 = {
 //ECMAScript 5
 module.exports.config1 = config1;
 module.exports.config2 = config2;
-
-//dummy test
