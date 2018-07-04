@@ -23,5 +23,5 @@ will be called multiple times if there are various feature collections
   </ul>
 </#list>
 </ul>
-</table> 
+</table>
 

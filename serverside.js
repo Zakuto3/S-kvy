@@ -88,6 +88,7 @@ app.post('/eskilstuna_nyvy', function (req, res) {
     var sokbara = "";
     var sistaknamn = "";
     var skapasokvy_str = "CREATE OR REPLACE VIEW ";
+	var finnsSokBar = false;
     skapasokvy_str += "test_sokvy_scriptet"; //sokvyn
     skapasokvy_str += " AS SELECT ";
     skapasokvy_str += '"' + tabelln + '".geom, ' + '"' + tabelln + '".geodb_oid AS sokid, ';
@@ -117,7 +118,8 @@ app.post('/eskilstuna_nyvy', function (req, res) {
         else if(key == "sokdel")// key == "sokdel" 
         {
             if (value == "j") {
-                sokbara += '"' + sistaknamn + '",'; //lägg till searchfield mha dessa..behöver nog en traverserare
+                sokbara += '"' + sistaknamn +'"'+ ",'"+"','"+", "+"',"; //lägg till searchfield mha dessa..behöver nog en traverserare
+				finnsSokBar = true;
             }
         }
         //sökdel, hanteras varsamt:    COALESCE("Natur_miljo_Foryngringsomraden_fisk"."Namn", ' '::character varying)::text AS searchfield
@@ -138,9 +140,20 @@ app.post('/eskilstuna_nyvy', function (req, res) {
     };
     traverse(req.body, process);
     sokbaraArray = sokbara.split(",");
-    sokbaraArray.pop();
-    skapasokvy_str += " concat(" + sokbaraArray + ")::text AS searchfield ";
-    skapasokvy_str += "FROM " + '"' + tabelln + '";';
+    sokbaraArray.pop();	
+	sokbaraArray.pop();	
+	sokbaraArray.pop();		
+	
+	
+	if(finnsSokBar)	{
+		skapasokvy_str += " concat(" + sokbaraArray + ")::text AS searchfield ";} 
+	else{
+		//replace "," with space for correct sql syntax
+		skapasokvy_str = skapasokvy_str.substring(0,skapasokvy_str.length-2); 
+		skapasokvy_str += " ";
+		}	
+		
+	skapasokvy_str += "FROM " + '"' + tabelln + '";';
     console.log(skapasokvy_str);
     res.send(skapasokvy_str);
 });
