@@ -443,19 +443,32 @@ function SendSQL(){
 	and makes it possible to change what is in
 	the paragraph*/
 function changeText(button,idText,idInput){
+
+	if(!IlligalChar($("#"+idInput).val()) && $(button).text()== "Bekräfta"){ 
+		alert("Only allows for English characters, numbers and underscore");
+		return;
+	}
+
 	$("#"+idInput).toggle();
 	$("#"+idText).toggle();
 	$("#"+idText).text($("#"+idInput).val());
-	if($(button).text() == "Ändra")
-	{$(button).text("Bekräfta");}
+	if($(button).text() == "Ändra") { $(button).text("Bekräfta"); }
 	else 
-	{$(button).text("Ändra");}
+	{
+	$(button).text("Ändra");
+	}
 }
 
 $("#fler_kolumner").on('change', function(){
 	$("#sendbutton").prop('disabled', 'true');
 	});
 
+function IlligalChar(strToCheck){
+var Regexp = /^[a-z][a-z0-9_]*$/i;//Only allows for English chars, numbers and underscore (͡°͜ʖ͡°)
+return Regexp.test(strToCheck);
+}
+
+	
 //jqueryUI för att göra lista DOMelement sorterbar
 $('#fler_kolumner tbody').sortable();
 </script>
