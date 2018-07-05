@@ -61,14 +61,14 @@
                 <p id="tabell"></p>
                 <h3>
 					Sökvy 
-					<button onclick='changeText(this,"sokvy","newsokvy")' type="button" class="btn btn-info" id="changeName" style="height:25px; padding:0;" >Ändra</button>
+					<button onclick='changeText(this,"sokvy","newsokvy")' type="button" class="btn btn-info" id="changeName" style="height:25px; padding:0;">Ändra</button>
 				</h3>
 				<input id='newsokvy' type='text' style="display:none; width:99%;">				
                 <p id="sokvy" style="display:block;"></p>
 				
                 <h3>
 					Titel
-					<button onclick='changeText(this,"titel","newtitel")' type="button" class="btn btn-info" id="changeName" style="height:25px; padding:0;" >Ändra</button>
+					<!--<button onclick='changeText(this,"titel","newtitel")' type="button" class="btn btn-info" id="changeName" style="height:25px; padding:0;">Ändra</button>-->
 				</h3>
                 <input id='newtitel' type='text' style="display:none; width:99%;">				
                 <p id="titel" style="display:block;"></p>
@@ -114,13 +114,13 @@
 				<button class="btn btn-info" id="addbutton" style="position: relative; left: 1em;">+1</button>
             </div>
         <div name='SQLandFTL' class='divs' style=' width: 31%; right: 0px;  padding-left: 0px;'>		
-            <div name='SQLWindow' style=" border: 1px solid;" >
+            <div name='SQLWindow' style=" border: 1px solid; border-left: 0px; border-top: 0px;" >
                 <h3 class="margin-left">SQL</h3>
                 <div class="margin-left" readonly id="sql" rows="5" cols="70" autocomplete="off"></div>
                 <button type="button" class="btn btn-info margin-left" id="calcbutton">Show SQL</button>
                 <button type="button" class="btn btn-info margin-left" id="sendbutton" disabled>Send</button>
             </div>		
-			<div name='FTLWindow' style=" border: 1px solid;">
+			<div name='FTLWindow' style=" border: 1px solid; border-left: 0px; border-top: 0px;">
                 <h3 class="margin-left">FTL</h3>
                 <div class="margin-left" readonly id="ftl" rows="5" cols="70" autocomplete="off"></div>
                 <button type="button" class="btn btn-info margin-left" id="calcFTL">Show FTL</button>
@@ -147,6 +147,7 @@ $(function () {
 		}
 	});
 });
+
 //fill dropbox with table column names from the database
 function fillDropBox(kolumner){
 	$(".dropbox_option").remove();
@@ -158,7 +159,6 @@ function fillDropBox(kolumner){
 		});
 };		
 				
-//onchange='checkbox()'
 //creates a string which you can insert in the html to create a  new row
 function createRow(){
 	var row = "<tr>";
@@ -170,6 +170,7 @@ function createRow(){
 	row += removeButton + columnName + titleBox + searchBox + FTLfield + "</tr>";
 	return row;
 };
+
 //onclick event in the html
 //unchecks all title-checkboxes except for the one you click.
 function checkbox(title){
@@ -187,6 +188,7 @@ function update_fixed_fields(array) {
         $('#where').text(array[3]);
     } else { $('#where').text("") };
 };
+
 //reads the current table from the database to get the columns
 function readTableColumns(){
 	var layerspecs = document.getElementById("layerspecs");
@@ -201,12 +203,15 @@ function readTableColumns(){
         }
 	})
 }
+
 //remove all rows except the first one and update the data
 $("#layerspecs").on('change', function(){
 	var length = $(".dropbox").length - 1;
 	$("#fler_kolumner tr:gt(1)").remove();
 	readTableColumns();
+	$("#sendbutton").prop('disabled', 'true');
 	});
+
 //reads columns from database and updates the whole table
 $(".add-all-columns").on('click', function(){
 	var layerspecs = document.getElementById("layerspecs");
@@ -217,9 +222,11 @@ $(".add-all-columns").on('click', function(){
         url: 'http://localhost:1337/eskilstuna/' + $('#tabell').text(),
         success: function (json) {
             setTable(json);
+			$("#sendbutton").prop('disabled', 'true');
 		}
     });
 });
+
 //sets dropboxes default value based on thier index, ex row 2 by default will have value from column 2
 function updateAllDropboxes(){
 	$('.dropbox').each(function (index){
@@ -254,8 +261,9 @@ function updateNewDropbox(){
 $("#addbutton").click(function () {
 	$("table").append(createRow()); // new createRow func
 	updateNewDropbox();	//update the new dropbox
-	
+	$("#sendbutton").prop('disabled', 'true');
 });
+
 /*creates all needed rows and then calls readTableColumns
 	to set the value on the dropboxes*/
 function setTable(huvuden) { 
@@ -268,12 +276,17 @@ function setTable(huvuden) {
 	readTableColumns();
 	
 };
+
 //clickevent to remove a row
 $(document).on('click', 'button.btn-danger', function () {
     var rows = $("#mainbody").children(); 
 	if(rows.length > 2)
+	{
 		$(this).closest('tr').remove();
+		$("#sendbutton").prop('disabled', 'true');
+	}
 });
+
 /*reads row and sends a object with
 	information to serverside which
 	returns an sqlQuery*/
@@ -325,13 +338,15 @@ $("#calcbutton").click(function () {
 	samling["where"] = $('#where').text();
 	$.post('http://localhost:1337/eskilstuna_nyvy', samling, function (data, status) {
 		$('#sql').html("<code id='SQL'>" + data + "</code>");
+		$('#sendbutton').prop("disabled", false);
 	});
-	$('#sendbutton').prop("disabled", false);
 	}
 });
+
 //trigger FTLfunctions on click	
 $("#calcFTL").click(calcFTL);
 $("#saveFTL").click(saveFTL);
+
 /*calculates which columns to be included in FTL
 	and show the completed FTLtext on screen*/
 function calcFTL (){
@@ -354,6 +369,7 @@ function calcFTL (){
 	$('#ftl').html("<code id='FTL'>"+FTLString+"</code>"); 
 	$('#saveFTL').prop("disabled", false);
 }
+
 //builds the FTLstring and returns it(frankenstein)
 function FTLbuilder(FTLarr, kolumnArr){ 
 	let OT = "&lt;"; //<
@@ -382,6 +398,7 @@ function FTLbuilder(FTLarr, kolumnArr){
 	}
 	return FTLbegin + FTLmiddle+FTLend;
 };
+
 /*downloads the FTLstring into
 	a content.ftl file*/
 function saveFTL(){
@@ -400,7 +417,9 @@ function saveFTL(){
 	//var downloadLink = "<a id='SaveLink' href='data:application/xml;charset=utf-8," + FTLtext +"' download='content.ftl'></a>";
 	//$("#saveFTL").wrap(downloadLink);
 }
+
 $("#sendbutton").click(SendSQL);
+
 //Sends query to serverside and the database
 function SendSQL(){
 	var SqlQuery = {};
@@ -420,6 +439,9 @@ function SendSQL(){
     });
 }
 
+/*Toggles between text input field and paragraph
+	and makes it possible to change what is in
+	the paragraph*/
 function changeText(button,idText,idInput){
 	$("#"+idInput).toggle();
 	$("#"+idText).toggle();
@@ -430,6 +452,9 @@ function changeText(button,idText,idInput){
 	{$(button).text("Ändra");}
 }
 
+$("#fler_kolumner").on('change', function(){
+	$("#sendbutton").prop('disabled', 'true');
+	});
 
 //jqueryUI för att göra lista DOMelement sorterbar
 $('#fler_kolumner tbody').sortable();
