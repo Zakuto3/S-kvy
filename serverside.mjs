@@ -10,8 +10,6 @@ import DBobj from './DBinfo';
 
 //var DBobj = require('./DBinfo');
 
-var app = express();
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -31,7 +29,8 @@ app.get('/geoportia', function (req, res) {
         {
             return console.error('error fetching client from pool', err);
         }
-        client.query('SELECT name, public_title, postgis_view_where_condition, postgis_table_name FROM layer_specification ORDER BY name', function (err, result) {
+        client.query('SELECT name, public_title, postgis_view_where_condition, postgis_table_name FROM layer_specification ORDER BY name', function (err, result) 
+		{
             //call `done()` to release the client back to the pool
             done();
             if (err)
@@ -52,27 +51,31 @@ app.get('/geoportia', function (req, res) {
 });
 
 app.get('/eskilstuna/:tabell', function (req, res) {
-
-
     var pool = new pg.Pool(DBobj.config_eskilstuna);
-    pool.connect(function (err, client, done) {
-        if (err) {
+    pool.connect(function (err, client, done) 
+	{
+        if (err) 
+		{
             return console.error('error fetching client from pool', err);
         }
         console.log(req.params.tabell);
         var str = req.params.tabell; // Finns en OBJECTID för vissa lager, ex ÖP. filtreras även bort?
         //Hämtar kolumnnamn via information_schema.columns, minus geom och geodb_oid. De hämtas aldrig ens till applikationen så behöver inte filtreras bort senare.
-        client.query("SELECT column_name FROM information_schema.columns WHERE table_Schema = 'public' AND column_name <> 'geom' AND column_name <> 'geodb_oid' AND table_name = '" + str + "'", function (err, result) {  //Strängen behöver vara inom ' ', annars blir den tydligen gemen.
+        client.query("SELECT column_name FROM information_schema.columns WHERE table_Schema = 'public' AND column_name <> 'geom' AND column_name <> 'geodb_oid' AND table_name = '" + str + "'", function (err, result) 
+		{  //Strängen behöver vara inom ' ', annars blir den tydligen gemen.
             done();
 
-            if (err) {
+            if (err) 
+			{
                 return console.error('error running query', err);
-            } else {
+            } 
+			else 
+			{
                 console.log("skickar nu return med result för eskilstuna");
                 console.log(result.rows);
                 res.send(result.rows); //alla akt_bet. För första raden så .rows[0]
             }
-            //output: 1
+            
         });
     });
     pool.on('error', function (err, client) {
@@ -91,40 +94,42 @@ app.post('/eskilstuna_nyvy', function (req, res) {
     var sokbara = "";
     var sistaknamn = "";
     var skapasokvy_str = "CREATE OR REPLACE VIEW ";
-    skapasokvy_str += sokvyn;
+	var finnsSokBar = false;
+    skapasokvy_str += sokvyn; 
     skapasokvy_str += " AS SELECT ";
     skapasokvy_str += '"' + tabelln + '".geom, ' + '"' + tabelln + '".geodb_oid AS sokid, ';
-
-    //traversera resten av rec.body, dvs kolumnerna, såhär kanske: http://stackoverflow.com/questions/722668/traverse-all-the-nodes-of-a-json-object-tree-with-javascript
 
     //geom och oid behövs inte hämtas eftersom de inte specas i sökvyn.. 
     function process(key, value) {
         console.log("Nyckel: " + key + " : " + "värde: " + value); //stoppa i sträng
-
-        if (key == "kolumn") {
+        if (key == "kolumn") 
+		{
             skapasokvy_str += '"' + tabelln + '"."' + value + '"';
             sistaknamn = value;
         }
-        else if (key == "title") {
-            if (value == "j") { skapasokvy_str += " AS title, "; }
-            else {
+        else if (key == "title") 
+		{
+            if (value == "j") 
+			{
+				skapasokvy_str += " AS title, ";
+			}
+            else 
+			{
                 skapasokvy_str += ", "; //Kan sluta med , om COALESCE eller dylikt sokstrang-skapande kommer efter. Annat scenario är att inget blir sökbart.
             }
         }
         //Eftersom en kolumn-cell skickas åt gången måste sokdel "n" eller "j" sparas i lista som motsvarar rader, eller något
         //Se firefox-D för concat(kol1, kol2..) re coalesce för att undvika null. || är concat-operator i SQL, :: castar om, måste från en till andra till tredje ibland 
 
-        else // key == "sokdel" 
+        else if(key == "sokdel") 
         {
-            if (value == "j") {
-                sokbara += '"' + sistaknamn + '",'; //lägg till searchfield mha dessa..behöver nog en traverserare
+            if (value == "j") 
+			{
+                sokbara += '"' + sistaknamn +'",';//'"'+ ",'"+"','"+", "+"',"; // en "," för separa
+				finnsSokBar = true;
             }
         }
-        //sökdel, hanteras varsamt:    COALESCE("Natur_miljo_Foryngringsomraden_fisk"."Namn", ' '::character varying)::text AS searchfield
-
-
-        // for (i=0; i<sokbaraArray.length; i++) {
-        // }           
+          
     };
     function traverse(o, func) {
         for (let i in o) {
@@ -136,42 +141,54 @@ app.post('/eskilstuna_nyvy', function (req, res) {
             }
         }
     };
-    console.log("Börjar att traversera tabellen\n");
-
     traverse(req.body, process);
-
-    console.log("sökbara-sträng: " + sokbara);
-
-    console.log("Klar.  ");
     sokbaraArray = sokbara.split(",");
-    console.log(sokbaraArray);
-    sokbaraArray.pop();
-    console.log(sokbaraArray);
-    skapasokvy_str += " concat(" + sokbaraArray + ")::text AS searchfield ";
-    skapasokvy_str += "FROM " + '"' + tabelln + '";';
+    sokbaraArray.pop();	
 
+	
+	if(finnsSokBar)	
+	{
+		skapasokvy_str += " concat_ws(', '," + sokbaraArray + ")::text AS searchfield ";
+	} 
+	else
+	{
+		//replace "," with space for correct sql syntax
+		skapasokvy_str = skapasokvy_str.substring(0,skapasokvy_str.length-2); 
+		skapasokvy_str += " ";
+	}	
+		
+	skapasokvy_str += "FROM " + '"' + tabelln + '";';
     console.log(skapasokvy_str);
-
-    //FROM "Natur_miljo_Foryngringsomraden_fisk";
-
     res.send(skapasokvy_str);
 });
-/*
-var pool = new pg.Pool(config_eskilstuna);
-pool.connect(function(err, client, done) {
-  if(err) {
-    return console.error('error fetching client from pool', err);
-  }
 
-  
-  
-  pool.on('error', function (err, client) {
-  console.error('idle client error', err.message, err.stack)
-})
-});*/
+app.post('/sovy_testo', function (req, res){
+	var pool = new pg.Pool(DBobj.config_eskilstuna);
+    pool.connect(function (err, client, done) 
+	{
+        if (err) 
+		{
+            return console.error('error fetching client from pool', err);
+        }
+		client.query(req.body.query, function (err, result) 
+		{ 
+            done();
+			if (err) 
+			{
+				res.send(err);
+                return console.error('error running query', err);
+            }
+			else
+			{
+				res.send();
+			}
+		});
+	});
+});
 
 
 app.listen(1337);
+
 
 
 
