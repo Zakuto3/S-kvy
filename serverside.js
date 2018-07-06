@@ -82,7 +82,7 @@ app.get('/eskilstuna/:tabell', function (req, res) {
 
 
 
-app.post('/eskilstuna_nyvy', function (req, res) {
+/*app.post('/eskilstuna_nyvy', function (req, res) {
 
     var tabelln = req.body.tabellnamn;
     var sokvyn = req.body.sokvynamn;
@@ -90,7 +90,7 @@ app.post('/eskilstuna_nyvy', function (req, res) {
     var titel = req.body.titel;
     var sokbara = "";
     var sistaknamn = "";
-    var skapasokvy_str = "CREATE OR REPLACE VIEW ";
+    var skapasokvy_str = "CREATE VIEW ";
 	var finnsSokBar = false;
     skapasokvy_str += sokvyn; 
     skapasokvy_str += " AS SELECT ";
@@ -122,7 +122,7 @@ app.post('/eskilstuna_nyvy', function (req, res) {
         {
             if (value == "j") 
 			{
-                sokbara += '"' + sistaknamn +'",';//'"'+ ",'"+"','"+", "+"',"; // en "," för separa
+                sokbara += '"' + sistaknamn +'",';
 				finnsSokBar = true;
             }
         }
@@ -153,11 +153,12 @@ app.post('/eskilstuna_nyvy', function (req, res) {
 		skapasokvy_str = skapasokvy_str.substring(0,skapasokvy_str.length-2); 
 		skapasokvy_str += " ";
 	}	
-		
-	skapasokvy_str += "FROM " + '"' + tabelln + '";';
+	var x=(where=='') ? ';':'';
+	console.log("Where:" + where);
+	skapasokvy_str += "FROM " + '"' + tabelln +'" '+where + x;
     console.log(skapasokvy_str);
     res.send(skapasokvy_str);
-});
+});*/
 
 app.post('/sovy_testo', function (req, res){
 	var pool = new pg.Pool(DBobj.config_eskilstuna);
