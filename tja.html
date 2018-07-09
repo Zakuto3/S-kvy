@@ -13,40 +13,42 @@
 	
 </head>
 <body>
-<		<div name='tabellHeader' class='header' style="width: 31%;  left:0px; ">
+<		<div name='tabellHeader' class='header tabell'>
 			TABELLER
 		</div>
-		<div name='kolumnHeader' class='header' style="width: 38%; right: 31%;">
+		<div name='kolumnHeader' class='header kolumn'>
 			KOLUMNER
 		</div>
-		<div name='FTLnSQLHeader' class='header' style='width: 31%; right: 0px;'>
+		<div name='FTLnSQLHeader' class='header SQLFTL'>
 			SKRIPT
 		</div>
-        <div name='tabellWindow' class='divs'  style="width: 31%;  left:0px; ">
-                <select id="layerspecs" label="Select one:"></select> <br> < (Innehållet i tabellen nedan ersätts när ny spec väljs och dess postgrestabell hämtas)
+        <div name='tabellWindow' class='divs tabell'>
+				<h3><button id='tabellInfo' class='info_knapp glyphicon glyphicon-exclamation-sign'></button></h3><br>
+                <select id="layerspecs" label="Select one:"></select> <br>
                 <h3>
 					Tabell
 				</h3>
-                <p id="tabell" style='border-bottom: solid 1px black;' ></p>
+                <p id="tabell"></p>
                 <h3>
 					Sökvy 
-					<button onclick='changeText(this,"sokvy","newsokvy")' type="button" class="btn btn-info" id="changeName" style="height:25px; padding:0;">Ändra</button>
+					<button onclick='changeText(this,"sokvy","newsokvy")' type="button" class="btn btn-info" id="changeName">Ändra</button>
 				</h3>
-				<input id='newsokvy' type='text' style="display:none; width:99%;">				
-                <p id="sokvy" style="display:block; border-bottom: solid 1px black;"></p>
+				<input id='newsokvy' type='text'>				
+                <p id="sokvy"></p>
 				
                 <h3>
 					Titel
-					<!--<button onclick='changeText(this,"titel","newtitel")' type="button" class="btn btn-info" id="changeName" style="height:25px; padding:0;">Ändra</button>-->
+					<!--<button onclick='changeText(this,"titel","newtitel")' type="button" class="btn btn-info" id="changeName">Ändra</button>-->
 				</h3>
-                <input id='newtitel' type='text' style="display:none; width:99%;">				
-                <p id="titel" style="display:block; border-bottom: solid 1px black;"></p>
+                <input id='newtitel' type='text'>				
+                <p id="titel"></p>
 				
                 <h3>Where</h3>
-                <p id="where" style='border-bottom: solid 1px black;'></p>
+                <p id="where"></p>
             </div>
-		<div name='kolumnWindow' class='divs' style="width: 38%; right: 31%;">
-                <h3>Inkluderade kolumner med ev. FTLnamn</h3>
+		<div name='kolumnWindow' class='divs kolumn'>
+                <h3>Inkluderade kolumner med ev. FTLnamn <button id='kolumnInfo' class='info_knapp glyphicon glyphicon-exclamation-sign'></button></h3>
+				
                 <table class="table" id="fler_kolumner">
                     <!--Ändras kanske senare till att läsa från tabell i db "eskilstuna".-->
 
@@ -82,25 +84,38 @@
 				<button type="button" class="add-all-columns btn btn-info" style="position: relative; left: 0.5em;">Lägg till<br> alla kolumner</button>
 				<button class="btn btn-info" id="addbutton" style="position: relative; left: 1em;">+1</button>
             </div>
-        <div name='SQLandFTL' class='divs' style=' width: 31%; right: 0px;  padding-left: 0px;'>	
-            <div name='SQLWindow' style=" border: 1px solid; border-left: 0px; border-right:0px; border-top: 0px;" >
-                <h3 class="margin-left">SQL</h3>
+        <div name='SQLandFTL' class='divs SQLFTL'>	
+            <div name='SQLWindow' id='SQLWindow'>
+                <h3 class="margin-left">SQL<button id='SQLInfo' class='info_knapp glyphicon glyphicon-exclamation-sign'></button></h3>
                 <div class="margin-left" readonly id="sql" rows="5" cols="70" autocomplete="off"></div>
-                <button type="button" class="btn btn-info margin-left" id="calcbutton">Show SQL</button>
-                <button type="button" class="btn btn-info margin-left" id="sendbutton" disabled>Send</button>
+                <button type="button" class="btn btn-info margin-left" id="calcbutton">Visa SQL</button>
+                <button type="button" class="btn btn-info margin-left" id="sendbutton" disabled>Skapa sökvyn</button>
             </div>		
-			<div name='FTLWindow' style=" border: 1px solid; border-left: 0px; border-right:0px; border-top: 0px;">
-                <h3 class="margin-left">FTL</h3>
+			<div name='FTLWindow' id='FTLWindow'>
+                <h3 class="margin-left">FTL<button id='FTLInfo' class='info_knapp glyphicon glyphicon-exclamation-sign'></button></h3>
                 <div class="margin-left" readonly id="ftl" rows="5" cols="70" autocomplete="off"></div>
-                <button type="button" class="btn btn-info margin-left" id="calcFTL">Show FTL</button>
-				<button type="button" class="btn btn-info margin-left" id="saveFTL" disabled >Save</button>
+                <button type="button" class="btn btn-info margin-left" id="calcFTL">Visa FTL</button>
+				<button type="button" class="btn btn-info margin-left" id="saveFTL" disabled >Spara</button>
+				<button type="button" class="btn btn-info margin-left" id="addFTLLink">Lägg till länk</button><br>
+				<div style="display: none;" class="margin-left plink">
+					Länk URL: <br>					
+					<div id="FTLLinkp" style="display: block;" class="margin-left"></div>
+					<input style="display: none;" class="margin-left" type='text' id='FTLLink'></input>
+				</div>
+				<div style="display: none;" class="margin-left plink">
+					Länk Namn: <br>
+					<div id="FTLLinkNamnp" style="display: block;" class="margin-left"></div>
+					<input style="display: none;" type='text' class="margin-left" id='FTLLinkNamn'></input>
+				</div>
+				<!--<p style="display: block;" class="margin-left"><br></p>
+				<p style="display: block;" class="margin-left"></p>-->
 				
             </div>
 		</div>
 	<script type="text/javascript">
 //When DOM ready then call node js server and receive layer_spec from db:geoportia then populate selector
 $(function () {
-	var lagerspecar = "kattkatt";;
+	var lagerspecar = "kattkatt";
 	$.ajax({
 		type: 'GET',
 		url: 'http://localhost:1337/geoportia',
@@ -362,11 +377,16 @@ function FTLbuilder(FTLarr, kolumnArr){
 	let td = tab+tab+tab+tab+OT+"td"+CT; // /t/t/t/t<td>
 	let OUL = tab+tab+OT+"ul"+CT+BR; // /t/t<ul><br>
 	let CUL = tab+tab+OT+"/ul"+CT+BR; // /t/t</ul><br>
-	let FTLbegin = OT+"#list features as feature"+CT+BR+
-					tab+OT+'table class="featureInfo"'+CT+BR+OUL;
+	let FTLbegin = OT+"#list features as feature"+CT+BR;
 	let FTLmiddle = "";
 	let FTLend = CUL+tab+OT+"/table"+CT+BR+
-					OT+"/#list"+CT;
+					OT+"/#list"+CT;	
+					
+	console.log("LINK: "+  $("#FTLLink").val());
+	if($("#FTLLinkp").text() != '') FTLbegin += OT + "a href ='"+ $("#FTLLinkp").text() +"' target='_blank'" + CT
+		+ OT+"b"+CT+ $("#FTLLinkNamnp").text() + OT + "/b" + CT + OT + "/a"+ CT + BR;  //"<a href='' target='_blank'><b>Placeholder</b></a>";
+	FTLbegin += tab+OT+'table class="featureInfo"'+CT+BR+OUL;
+	
 	for(amount in kolumnArr)
 	{
 		if(FTLarr[amount] != "") //check if FTLfield was empty
@@ -528,6 +548,43 @@ function SQLBuilder (data) {
     console.log(skapasokvy_str);
     return skapasokvy_str;
 }
+
+$("#addFTLLink").click(AddLink)
+
+function AddLink(){
+	$("#FTLLink").toggle();
+	$("#FTLLinkNamn").toggle();
+	$("#FTLLinkp").toggle();
+	$("#FTLLinkNamnp").toggle();
+	$(".plink").css('display', 'block');
+	if($("#addFTLLink").text() == "Lägg till länk" || 
+		$("#addFTLLink").text() == "Ändra länk")
+	{
+		$("#addFTLLink").text("Bekräfta");
+	}
+	else{	
+		$("#addFTLLink").text("Ändra länk");
+		$("#FTLLinkp").text($("#FTLLink").val());
+		$("#FTLLinkNamnp").text($("#FTLLinkNamn").val());
+	}
+}
+
+$("#tabellInfo").on('click', function (){
+	alert("Till vänster listas sökvyer som specifierats i layerspecifications.\nInformationen under kommer direkt från layerspecifications i databasen.\n"+
+	"- Tabell: Vilken tabell som används för sökvyn\n- Sökvy: Vad sökvyn du skapar heter\n- Titel: \n- Where: Sökvyns where-sats");
+});
+	
+$("#kolumnInfo").on('click', function (){
+
+});
+
+$("#SQLInfo").on('click', function (){
+	
+});
+
+$("#FTLInfo").on('click', function (){
+	
+});
 
 //jqueryUI för att göra lista DOMelement sorterbar
 $('#fler_kolumner tbody').sortable();
