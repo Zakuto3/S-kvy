@@ -44,7 +44,7 @@
 
 </head>
 <body>
-		<div name='tabellHeader' class='header' style="width: 31%;  left:0px; ">
+		<div name='tabellHeader' class='header' style="width: 31%;  left:0px; " data-toggle="tooltip" title="HTML GUDEN">
 			TABELLER
 		</div>
 		<div name='kolumnHeader' class='header' style="width: 38%; right: 31%;">
@@ -66,9 +66,12 @@
 				<input id='newsokvy' type='text' style="display:none; width:99%;">				
                 <p id="sokvy" style="display:block;"></p>
 				
+
                 <h3>
 					Titel
+					
 					<button onclick='changeText(this,"titel","newtitel")' type="button" class="btn btn-info" id="changeName" style="height:25px; padding:0;" >Ändra</button>
+											
 				</h3>
                 <input id='newtitel' type='text' style="display:none; width:99%;">				
                 <p id="titel" style="display:block;"></p>
@@ -124,12 +127,14 @@
                 <h3 class="margin-left">FTL</h3>
                 <div class="margin-left" readonly id="ftl" rows="5" cols="70" autocomplete="off"></div>
                 <button type="button" class="btn btn-info margin-left" id="calcFTL">Show FTL</button>
-				<button type="button" class="btn btn-info margin-left" id="saveFTL" disabled >Save</button>
-				
+				<button type="button" class="btn btn-info margin-left" id="saveFTL" disabled data-toggle="tooltip" title="Spara FTL till en content.ftl fil">Save</button>
+				  
             </div>
 		</div>
+
 	<script type="text/javascript">
 //When DOM ready then call node js server and receive layer_spec from db:geoportia then populate selector
+
 $(function () {
 	var lagerspecar = "kattkatt";;
 	$.ajax({
