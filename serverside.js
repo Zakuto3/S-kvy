@@ -78,7 +78,6 @@ app.get('/eskilstuna/:tabell', function (req, res) {
 });
 
 
-
 app.post('/eskilstuna_nyvy', function (req, res) {
 
     var tabelln = req.body.tabellnamn;
@@ -176,11 +175,6 @@ app.post('/sovy_testo', function (req, res){
 
 
 app.listen(1337);
-
-
-
-
-
 
 
 
