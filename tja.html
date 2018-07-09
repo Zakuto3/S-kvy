@@ -13,7 +13,7 @@
 	
 </head>
 <body>
-<		<div name='tabellHeader' class='header tabell'>
+		<div name='tabellHeader' class='header tabell'>
 			TABELLER
 		</div>
 		<div name='kolumnHeader' class='header kolumn'>
@@ -23,7 +23,7 @@
 			SKRIPT
 		</div>
         <div name='tabellWindow' class='divs tabell'>
-				<h3><button id='tabellInfo' class='info_knapp glyphicon glyphicon-exclamation-sign'></button></h3><br>
+				<h3><button id='tabellInfo' class='popup info_knapp glyphicon glyphicon-exclamation-sign popup'></button></h3><br>
                 <select id="layerspecs" label="Select one:"></select> <br>
                 <h3>
 					Tabell
@@ -102,14 +102,7 @@
 					<div id="FTLLinkp" style="display: block;" class="margin-left"></div>
 					<input style="display: none;" class="margin-left" type='text' id='FTLLink'></input>
 				</div>
-				<div style="display: none;" class="margin-left plink">
-					Länk Namn: <br>
-					<div id="FTLLinkNamnp" style="display: block;" class="margin-left"></div>
-					<input style="display: none;" type='text' class="margin-left" id='FTLLinkNamn'></input>
-				</div>
-				<!--<p style="display: block;" class="margin-left"><br></p>
-				<p style="display: block;" class="margin-left"></p>-->
-				
+				<div style="display: none;" class="margin-left plink">				
             </div>
 		</div>
 	<script type="text/javascript">
@@ -570,8 +563,10 @@ function AddLink(){
 }
 
 $("#tabellInfo").on('click', function (){
-	alert("- Till vänster listas sökvyer som specifierats i layerspecifications i databasen.\n- Informationen under kommer också direkt från layerspecifications.\n"+
-	"- Tabell: Vilken tabell som används för sökvyn\n- Sökvy: Vad sökvyn du skapar heter\n- Titel: \n- Where: Sökvyns where-sats");
+	alert("- Till vänster listas sökvyer som specifierats i layerspecification-tabellen i databasen.\n"+
+	"- Informationen under kommer också direkt från layerspecifications.\n"+
+	"- Vid ändring av sökvynamn, tänk på sökvyn kanske inte finns specifierad i layerspecification-tabellen.\n"+
+	"- Tabell: Vilken tabell som används för sökvyn.\n- Sökvy: Vad sökvyn du skapar heter.\n- Titel: Sökvyns titel i geoserver. \n- Where: Sökvyns where-sats.");
 });
 	
 $("#kolumnInfo").on('click', function (){
@@ -581,14 +576,17 @@ $("#kolumnInfo").on('click', function (){
 
 $("#SQLInfo").on('click', function (){
 	alert("- Här visas SQL-koden.\n- Tänk på att det krävs en 'title' för att visa koden.\n"+
-	"- När du är nöjd kan du trycka på 'Skapa sökvyn' för att skapa den i databasen");
+	"- När du är nöjd kan du trycka på 'Skapa sökvyn' för att skapa den i databasen.");
 });
 
 $("#FTLInfo").on('click', function (){
 	alert("- Här visas FTL-koden.\n- Du kan lägga till en länk så genereras den i FTL-koden.\n"+
-	"- Spara-knappen laddar ner en 'config.ftl'.\n- Om du vill ha fler länkar eller inte nöjd med"+
-	" vart länken befinner sig så kan du kopiera raden,flytta den eller ange ny URL och namn.");
+	"- Spara-knappen laddar ner en 'config.ftl'.\n- Om du inte får välja vart den sparar så hamnar den nog på standardplatsen för hämtade filer."+
+	"\n- Om du vill ha fler länkar eller inte nöjd med"+
+	" vart länken befinner sig så kan du kopiera raden, flytta den eller ange ny URL och namn.");
 });
+
+
 
 //jqueryUI för att göra lista DOMelement sorterbar
 $('#fler_kolumner tbody').sortable();
