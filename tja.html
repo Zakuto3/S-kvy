@@ -39,12 +39,13 @@
 			margin 3px 2px 0px 2px;
 			font-family: Serif;
 			
+			
 		}
 	</style>
 
 </head>
 <body>
-		<div name='tabellHeader' class='header' style="width: 31%;  left:0px; " data-toggle="tooltip" title="HTML GUDEN">
+		<div name='tabellHeader' class='header' style="width: 31%;  left:0px; ">
 			TABELLER
 		</div>
 		<div name='kolumnHeader' class='header' style="width: 38%; right: 31%;">
@@ -61,7 +62,7 @@
                 <p id="tabell"></p>
                 <h3>
 					Sökvy 
-					<button onclick='changeText(this,"sokvy","newsokvy")' type="button" class="btn btn-info" id="changeName" style="height:25px; padding:0;"data-toggle="tooltip" title="Ändrar namn på sökvy tabellen, VARNING: Nya namnet kanske inte finns i 'layer_specification' tabellen i Geoportia databasen, detta kan leda till oförmodad resultat" >Ändra</button>
+					<button onclick='changeText(this,"sokvy","newsokvy")' type="button" class="btn btn-info" id="changeName" style="height:25px; padding:0;"data-toggle="tooltip" title="Ändrar namn på sökvy tabellen. VARNING: Nya namnet kanske inte finns i 'layer_specification' tabellen i Geoportia databasen, detta kan leda till oförmodad resultat" >Ändra</button>
 				</h3>
 				<input id='newsokvy' type='text' style="display:none; width:99%;">				
                 <p id="sokvy" style="display:block;"></p>
@@ -101,7 +102,7 @@
 								</select>
 							</td>
 							<td>
-								<input onchange='checkbox(this)' type='checkbox' id='title' class='title_check' data-toggle="tooltip" title="Denna kolumnnamn blir 'title' för nya sökvyn">
+								<input onchange='checkbox(this)' type='checkbox' id='title' class='title_check' data-toggle="tooltip" title="Denna kolumnnamn blir title för nya sökvyn">
 							</td>
 							<td>
 								<input type="checkbox" id="sokdel" name="checkbox" data-toggle="tooltip" title="För att göra kolumnen sökbar klickar du i bockrutan">
@@ -167,11 +168,11 @@ function fillDropBox(kolumner){
 //creates a string which you can insert in the html to create a  new row
 function createRow(){
 	var row = "<tr>";
-	var removeButton = "<td><button type='button' class='btn btn-danger' name='bortknapp'>X</button></td>";
+	var removeButton = "<td><button type='button' class='btn btn-danger' name='bortknapp' data-toggle='tooltip' title='Ta bort denna rad'>X</button></td>";
 	var columnName = "<td><select class='dropbox' id='kolumn' name='kolumn'></select></td>";
-	var titleBox = "<td><input onchange='checkbox(this)' type='checkbox' id='title' class='title_check'></td>";
-	var searchBox = "<td><input type='checkbox' id='sokdel' name='checkbox'></td>";
-	var FTLfield = "<td><input id='FTLfield' type='text'></td>"
+	var titleBox = "<td><input onchange='checkbox(this)' type='checkbox' id='title' class='title_check' data-toggle='tooltip' title='Denna kolumnnamn blir title för nya sökvyn' ></td>";
+	var searchBox = "<td><input type='checkbox' id='sokdel' name='checkbox' data-toggle='tooltip' title='För att göra kolumnen sökbar klickar du i bockrutan'></td>";
+	var FTLfield = "<td><input id='FTLfield' type='text'data-toggle='tooltip' title='Om du vill använda FTL-vy så ange ett användarvänligt namn här, annars lämna det tomt'></td>"
 	row += removeButton + columnName + titleBox + searchBox + FTLfield + "</tr>";
 	return row;
 };
