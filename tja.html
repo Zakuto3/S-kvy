@@ -570,20 +570,24 @@ function AddLink(){
 }
 
 $("#tabellInfo").on('click', function (){
-	alert("Till vänster listas sökvyer som specifierats i layerspecifications.\nInformationen under kommer direkt från layerspecifications i databasen.\n"+
+	alert("- Till vänster listas sökvyer som specifierats i layerspecifications i databasen.\n- Informationen under kommer också direkt från layerspecifications.\n"+
 	"- Tabell: Vilken tabell som används för sökvyn\n- Sökvy: Vad sökvyn du skapar heter\n- Titel: \n- Where: Sökvyns where-sats");
 });
 	
 $("#kolumnInfo").on('click', function (){
-
+	alert("- Lägg till de kolumner du vill ha i din sökvy.\n- Välj vilken som ska vara 'title'.\n- Sökbara kolumner läggs till i searchfield i sökvyn.\n"+
+	"- För att kolumnen ska vara med i FTL-filen så skriver du något i FTL-fältet.");
 });
 
 $("#SQLInfo").on('click', function (){
-	
+	alert("- Här visas SQL-koden.\n- Tänk på att det krävs en 'title' för att visa koden.\n"+
+	"- När du är nöjd kan du trycka på 'Skapa sökvyn' för att skapa den i databasen");
 });
 
 $("#FTLInfo").on('click', function (){
-	
+	alert("- Här visas FTL-koden.\n- Du kan lägga till en länk så genereras den i FTL-koden.\n"+
+	"- Spara-knappen laddar ner en 'config.ftl'.\n- Om du vill ha fler länkar eller inte nöjd med"+
+	" vart länken befinner sig så kan du kopiera raden,flytta den eller ange ny URL och namn.");
 });
 
 //jqueryUI för att göra lista DOMelement sorterbar

@@ -38,9 +38,10 @@
 	width: 40px;
 	height: 30px;
 	border-radius: 3px;
+	border-color: #46b8da;
 	right: 2%;
-	color: black;
-	background-color: white;
+	color: white;
+	background-color: #31b0d5;
 }	
 
 .tabell{
