@@ -80,86 +80,6 @@ app.get('/eskilstuna/:tabell', function (req, res) {
     })
 });
 
-
-
-/*app.post('/eskilstuna_nyvy', function (req, res) {
-
-    var tabelln = req.body.tabellnamn;
-    var sokvyn = req.body.sokvynamn;
-    var where = req.body.where;
-    var titel = req.body.titel;
-    var sokbara = "";
-    var sistaknamn = "";
-    var skapasokvy_str = "CREATE VIEW ";
-	var finnsSokBar = false;
-    skapasokvy_str += sokvyn; 
-    skapasokvy_str += " AS SELECT ";
-    skapasokvy_str += '"' + tabelln + '".geom, ' + '"' + tabelln + '".geodb_oid AS sokid, ';
-
-    //geom och oid behövs inte hämtas eftersom de inte specas i sökvyn.. 
-    function process(key, value) {
-        console.log("Nyckel: " + key + " : " + "värde: " + value); //stoppa i sträng
-        if (key == "kolumn") 
-		{
-            skapasokvy_str += '"' + tabelln + '"."' + value + '"';
-            sistaknamn = value;
-        }
-        else if (key == "title") 
-		{
-            if (value == "j") 
-			{
-				skapasokvy_str += " AS title, ";
-			}
-            else 
-			{
-                skapasokvy_str += ", "; //Kan sluta med , om COALESCE eller dylikt sokstrang-skapande kommer efter. Annat scenario är att inget blir sökbart.
-            }
-        }
-        //Eftersom en kolumn-cell skickas åt gången måste sokdel "n" eller "j" sparas i lista som motsvarar rader, eller något
-        //Se firefox-D för concat(kol1, kol2..) re coalesce för att undvika null. || är concat-operator i SQL, :: castar om, måste från en till andra till tredje ibland 
-
-        else if(key == "sokdel") 
-        {
-            if (value == "j") 
-			{
-                sokbara += '"' + sistaknamn +'",';
-				finnsSokBar = true;
-            }
-        }
-          
-    };
-    function traverse(o, func) {
-        for (let i in o) {
-            if (o[i] !== null && typeof (o[i]) == "object") {
-                traverse(o[i], func);
-            }
-            else if (i == "kolumn" || i == "title" || i == "sokdel") {
-                func.apply(this, [i, o[i]]); //http://www.w3schools.com/js/js_function_invocation.asp
-            }
-        }
-    };
-    traverse(req.body, process);
-    sokbaraArray = sokbara.split(",");
-    sokbaraArray.pop();	
-
-	
-	if(finnsSokBar)	
-	{
-		skapasokvy_str += " concat_ws(', '," + sokbaraArray + ")::text AS searchfield ";
-	} 
-	else
-	{
-		//replace "," with space for correct sql syntax
-		skapasokvy_str = skapasokvy_str.substring(0,skapasokvy_str.length-2); 
-		skapasokvy_str += " ";
-	}	
-	var x=(where=='') ? ';':'';
-	console.log("Where:" + where);
-	skapasokvy_str += "FROM " + '"' + tabelln +'" '+where + x;
-    console.log(skapasokvy_str);
-    res.send(skapasokvy_str);
-});*/
-
 app.post('/sovy_testo', function (req, res){
 	var pool = new pg.Pool(DBobj.config_eskilstuna);
     pool.connect(function (err, client, done) 
@@ -186,11 +106,6 @@ app.post('/sovy_testo', function (req, res){
 
 
 app.listen(1337);
-
-
-
-
-
 
 
 
