@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">  
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">   
+
 	<link rel="stylesheet" href="./style.css">
 	
 </head>
@@ -21,21 +22,21 @@
 		</div>
 		<div name='FTLnSQLHeader' class='header SQLFTL'>
 			SKRIPT
-		</div>
+		</div>    
         <div name='tabellWindow' class='divs tabell'>
 				<h3><button id='tabellInfo' class='popup info_knapp glyphicon glyphicon-exclamation-sign popup'></button></h3><br>
                 <select id="layerspecs" label="Select one:"></select> <br>
-                <h3>
+                <h3 data-toggle="tooltip" title="Visar aktuella tabellen">
 					Tabell
 				</h3>
                 <p id="tabell"></p>
                 <h3>
 					Sökvy 
-					<button onclick='changeText(this,"sokvy","newsokvy")' type="button" class="btn btn-info" id="changeName">Ändra</button>
+					<button onclick='changeText(this,"sokvy","newsokvy")' type="button" class="btn btn-info" id="changeName" data-toggle="tooltip" title="Ändrar namn på sökvy tabellen. VARNING: Nya namnet kanske inte finns i 'layer_specification' tabellen i Geoportia databasen, detta kan leda till oförmodad resultat.">Ändra</button>
+
 				</h3>
 				<input id='newsokvy' type='text'>				
                 <p id="sokvy"></p>
-				
                 <h3>
 					Titel
 					<!--<button onclick='changeText(this,"titel","newtitel")' type="button" class="btn btn-info" id="changeName">Ändra</button>-->
@@ -56,57 +57,62 @@
 						<tr style='text-align: center;'>
 							<th>Försvinn!</th>
 							<th>Kolumnnamn</th>
-							<th>Title</th>
+							<th>Titel</th>
 							<th>Sökbar kolumn</th>
 							<th style='text-align: left;'>FTL-namn</th>
 						</tr>
 						<tr >
 							<td>
-								<button type="button" class="btn btn-danger" id="bortknapp">X</button>
+								<button type="button" class="btn btn-danger" name="bortknapp"data-toggle="tooltip" title="Ta bort denna rad">X</button>
 							</td>
 							<td>
 								<select class="dropbox" id="kolumn" name="kolumn">
 								</select>
 							</td>
 							<td>
-								<input onchange='checkbox(this)' type='checkbox' id='title' class='title_check'>
+								<input onchange='checkbox(this)' type='checkbox' id='title' class='title_check' data-toggle="tooltip" title="Denna kolumnnamn blir title för nya sökvyn">
 							</td>
 							<td>
-								<input type="checkbox" id="sokdel" name="checkbox">
+								<input type="checkbox" id="sokdel" name="checkbox" data-toggle="tooltip" title="För att göra kolumnen sökbar klickar du i bockrutan">
 							</td>
 							<td>
-								<input id='FTLfield' type='text'>
+								<input id='FTLfield' type='text' data-toggle="tooltip" title="Om du vill använda FTL-vy så ange ett användarvänligt namn här, annars lämna det tomt.">
 							</td>
 						</tr>
 					</body>
 				
                 </table>
-				<button type="button" class="add-all-columns btn btn-info" style="position: relative; left: 0.5em;">Lägg till<br> alla kolumner</button>
-				<button class="btn btn-info" id="addbutton" style="position: relative; left: 1em;">+1</button>
+				<button type="button" class="add-all-columns btn btn-info" style="position: relative; left: 0.5em;"data-toggle="tooltip" title="Lägg till alla kolumner från tabellen">Lägg till<br> alla kolumner</button>
+				<button class="btn btn-info" id="addbutton" style="position: relative; left: 1em;"data-toggle="tooltip" title="Lägg till en kolumn">+1</button>
             </div>
         <div name='SQLandFTL' class='divs SQLFTL'>	
             <div name='SQLWindow' id='SQLWindow'>
                 <h3 class="margin-left">SQL<button id='SQLInfo' class='info_knapp glyphicon glyphicon-exclamation-sign'></button></h3>
                 <div class="margin-left" readonly id="sql" rows="5" cols="70" autocomplete="off"></div>
-                <button type="button" class="btn btn-info margin-left" id="calcbutton">Visa SQL</button>
-                <button type="button" class="btn btn-info margin-left" id="sendbutton" disabled>Skapa sökvyn</button>
+                <button type="button" class="btn btn-info margin-left" id="calcbutton" data-toggle="tooltip" title="Visa/Uppdatera SQL koden">Visa SQL</button>
+                <button type="button" class="btn btn-info margin-left" id="sendbutton" disabled data-toggle="tooltip" title="Skickar SQL koden till databasen(eskilstuna), detta skapar sökvyn.">Skapa sökvy</button>
             </div>		
 			<div name='FTLWindow' id='FTLWindow'>
                 <h3 class="margin-left">FTL<button id='FTLInfo' class='info_knapp glyphicon glyphicon-exclamation-sign'></button></h3>
                 <div class="margin-left" readonly id="ftl" rows="5" cols="70" autocomplete="off"></div>
-                <button type="button" class="btn btn-info margin-left" id="calcFTL">Visa FTL</button>
-				<button type="button" class="btn btn-info margin-left" id="saveFTL" disabled >Spara</button>
-				<button type="button" class="btn btn-info margin-left" id="addFTLLink">Lägg till länk</button><br>
+                <button type="button" class="btn btn-info margin-left" id="calcFTL" data-toggle="tooltip" title="Visa/Uppdatera FTL koden">Visa FTL</button>
+				<button type="button" class="btn btn-info margin-left" id="saveFTL" disabled data-toggle="tooltip" title="Spara FTL till en content.ftl fil">Spara</button>
+				<button type="button" class="btn btn-info margin-left" id="addFTLLink" data-toggle="tooltip" title="Skapa en href i FTL">Lägg till länk</button><br>
 				<div style="display: none;" class="margin-left plink">
 					Länk URL: <br>					
 					<div id="FTLLinkp" style="display: block;" class="margin-left"></div>
 					<input style="display: none;" class="margin-left" type='text' id='FTLLink'></input>
 				</div>
-				<div style="display: none;" class="margin-left plink">				
+				<div style="display: none;" class="margin-left plink">
+					Länk Namn: <br>
+					<div id="FTLLinkNamnp" style="display: block;" class="margin-left"></div>
+					<input style="display: none;" type='text' class="margin-left" id='FTLLinkNamn'></input>
             </div>
 		</div>
+
 	<script type="text/javascript">
 //When DOM ready then call node js server and receive layer_spec from db:geoportia then populate selector
+
 $(function () {
 	var lagerspecar = "kattkatt";
 	$.ajax({
@@ -139,11 +145,11 @@ function fillDropBox(kolumner){
 //creates a string which you can insert in the html to create a  new row
 function createRow(){
 	var row = "<tr>";
-	var removeButton = "<td><button style='position: relative;  left: 20%;' type='button' class='btn btn-danger' name='bortknapp'>X</button></td>";
+	var removeButton = "<td><button type='button' class='btn btn-danger' name='bortknapp' data-toggle='tooltip' title='Ta bort denna rad'>X</button></td>";
 	var columnName = "<td><select class='dropbox' id='kolumn' name='kolumn'></select></td>";
-	var titleBox = "<td><input style='position: relative;  left: 20%;' onchange='checkbox(this)' type='checkbox' id='title' class='title_check'></td>";
-	var searchBox = "<td><input type='checkbox' id='sokdel' name='checkbox'></td>";
-	var FTLfield = "<td><input id='FTLfield' type='text'></td>"
+	var titleBox = "<td><input onchange='checkbox(this)' type='checkbox' id='title' class='title_check' data-toggle='tooltip' title='Denna kolumnnamn blir title för nya sökvyn' ></td>";
+	var searchBox = "<td><input type='checkbox' id='sokdel' name='checkbox' data-toggle='tooltip' title='För att göra kolumnen sökbar klickar du i bockrutan'></td>";
+	var FTLfield = "<td><input id='FTLfield' type='text'data-toggle='tooltip' title='Om du vill använda FTL-vy så ange ett användarvänligt namn här, annars lämna det tomt'></td>"
 	row += removeButton + columnName + titleBox + searchBox + FTLfield + "</tr>";
 	return row;
 };
@@ -198,30 +204,8 @@ $(".add-all-columns").on('click', function(){
 			$("table").append(createRow());
 			updateNewDropbox();
 	};
-	$("#sendbutton").prop('disabled', 'true');
-	/*var layerspecs = document.getElementById("layerspecs");
-	var split = layerspecs.value.split("|");
-	update_fixed_fields(split)
-	$.ajax({
-        type: 'GET',
-        url: 'http://localhost:1337/eskilstuna/' + $('#tabell').text(),
-        success: function (json) {
-            setTable(json);
-			$("#sendbutton").prop('disabled', 'true');
-		}
-    });*/
+	$("#sendbutton").prop('disabled', 'true');	
 });
-
-//sets dropboxes default value based on thier index, ex row 2 by default will have value from column 2
-/*function updateAllDropboxes(){
-	$('.dropbox').each(function (index){
-		var box = $(this);
-		var options = box.children();
-		if(options.length > index){
-			box.val(options[index].text); 
-		}
-	}); 
-}*/
 
 /*copies data from the row above and
 	sets dropbox default value to whatever
@@ -248,19 +232,6 @@ $("#addbutton").click(function () {
 	updateNewDropbox();	//update the new dropbox
 	$("#sendbutton").prop('disabled', 'true');
 });
-
-/*creates all needed rows and then calls readTableColumns
-	to set the value on the dropboxes*/
-/*function setTable(huvuden) { 
-    $("#fler_kolumner tr").each(function () {
-       $("#fler_kolumner").find("tr:gt(" + ((huvuden.length > 0) ? 0 : 1) + ")").remove();
-    });
-    $.each(huvuden, function (index, object){
-        $("#fler_kolumner tr:last").after(createRow());
-    });
-	readTableColumns();
-	
-};*/
 
 //clickevent to remove a row
 $(document).on('click', 'button.btn-danger', function () {
@@ -442,7 +413,7 @@ function SendSQL(){
 function changeText(button,idText,idInput){
 
 	if(!IlligalChar($("#"+idInput).val()) && $(button).text()== "Bekräfta"){ 
-		alert("Only allows for English characters, numbers and underscore");
+		alert("Endast engelska bokstäver, siffror och understreck. Måste börja med en bokstav.");
 		return;
 	}
 
@@ -565,7 +536,7 @@ function AddLink(){
 $("#tabellInfo").on('click', function (){
 	alert("- Till vänster listas sökvyer som specifierats i layerspecification-tabellen i databasen.\n"+
 	"- Informationen under kommer också direkt från layerspecifications.\n"+
-	"- Vid ändring av sökvynamn, tänk på sökvyn kanske inte finns specifierad i layerspecification-tabellen.\n"+
+	"- Vid ändring av sökvynamn, tänk på att sökvyn kanske inte finns specifierad i layerspecification-tabellen.\n"+
 	"- Tabell: Vilken tabell som används för sökvyn.\n- Sökvy: Vad sökvyn du skapar heter.\n- Titel: Sökvyns titel i geoserver. \n- Where: Sökvyns where-sats.");
 });
 	
