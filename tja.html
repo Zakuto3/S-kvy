@@ -14,7 +14,8 @@
 	
 </head>
 <body>
-		<div name='tabellHeader' class='header tabell'>
+
+	<div name='tabellHeader' class='header tabell'>
 			TABELLER
 		</div>
 		<div name='kolumnHeader' class='header kolumn'>
@@ -24,8 +25,13 @@
 			SKRIPT
 		</div>    
         <div name='tabellWindow' class='divs tabell'>
+
+        		<input type="text" id="Search" onkeyup="searchFunc()"placeholder="Search for names.." title="Search"> 
+
 				<h3><button id='tabellInfo' class='popup info_knapp glyphicon glyphicon-exclamation-sign popup'></button></h3><br>
-                <select id="layerspecs" label="Select one:"></select> <br>
+
+        		<select id="layerspecs" size=1 label="Select one:"></select> 
+
                 <h3 data-toggle="tooltip" title="Visar aktuella tabellen">
 					Tabell
 				</h3>
@@ -186,6 +192,18 @@ function readTableColumns(){
         }
 	})
 }
+//allows for selection in search dropdown
+$("#layerspecs").keyup(function( event ) {
+	if(event.key == "Enter")
+	this.size = 1;
+});
+
+$("#layerspecs").mouseup(function(){
+	console.log("yo: "+this.size);
+	this.size = 1;
+
+	$(this).trigger("change");
+});
 
 //remove all rows except the first one and update the data
 $("#layerspecs").on('change', function(){
@@ -324,7 +342,7 @@ function calcFTL (){
 	/*send columnNames and FTLNames into FTLbuilder
 		and get the completed FTLstring*/
 	var FTLString = FTLbuilder(FTLnamn, kolumnNamn); 
-	$('#ftl').html("<code class='code_snippets' id='FTL'>"+FTLString+"</code>"); 
+	$('#ftl').html("<textarea class='code_snippets' id='FTL'>"+FTLString+"</textarea>"); 
 	$('#saveFTL').prop("disabled", false);
 }
 
@@ -335,7 +353,7 @@ function FTLbuilder(FTLarr, kolumnArr){
 	let Obold = OT + "b" + CT; //<b>
 	let Cbold = OT + "/b" + CT; //</b>
 	let tab = "\t";
-	let BR = "\n<br>";
+	let BR = "\n";
 	let Otr = tab+tab+tab+OT+"tr"; // /t/t/t<tr
 	let Ctr = tab+tab+tab+OT+"/tr"; // /t/t/t</tr
 	let td = tab+tab+tab+tab+OT+"td"+CT; // /t/t/t/t<td>
@@ -365,7 +383,8 @@ function FTLbuilder(FTLarr, kolumnArr){
 /*downloads the FTLstring into
 	a content.ftl file*/
 function saveFTL(){
-	var FTLtext = $("#FTL").text();
+	var FTLtext = $("#FTL").val();
+	console.log($("#FTL").val());
 	var file = new Blob([FTLtext]);
 	var a = document.createElement("a"),
             url = URL.createObjectURL(file);
@@ -531,6 +550,7 @@ function AddLink(){
 		$("#FTLLinkp").text($("#FTLLink").val());
 		$("#FTLLinkNamnp").text($("#FTLLinkNamn").val());
 	}
+
 }
 
 $("#tabellInfo").on('click', function (){
@@ -557,6 +577,27 @@ $("#FTLInfo").on('click', function (){
 	" vart länken befinner sig så kan du kopiera raden, flytta den eller ange ny URL och namn.");
 });
 
+function searchFunc() {
+    var filter, layerspec, options, i,laySize=0;
+    filter = document.getElementById("Search").value.toUpperCase();
+    layerspec = document.getElementById("layerspecs");
+    options = layerspec.getElementsByTagName("option");
+    for (i = 0; i < options.length; i++) {
+        
+        if (options[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
+            options[i].style.display = "block";
+            laySize++;
+        } else {
+            options[i].style.display = "none";
+        }
+    }   
+    console.log(event.key);
+    layerspec.size=laySize+1;
+    if (event.key == "ArrowDown")
+    layerspec.focus();  
+    if(filter=="")
+    layerspec.size=1;
+}
 
 
 //jqueryUI för att göra lista DOMelement sorterbar

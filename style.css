@@ -102,6 +102,11 @@
 	left: 20%;
 }	
 
-
+#FTL{
+	margin-left: 1.319583em;
+	width: 90%;
+	height: 500px;
+	overflow:auto;
+}
 
 
