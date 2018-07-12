@@ -102,6 +102,7 @@
 	left: 20%;
 }	
 
+<<<<<<< HEAD
 #FTL{
 	margin-left: 1.319583em;
 	width: 90%;
@@ -156,6 +157,60 @@
 
 /* Change color of dropdown links on hover */
 .dropdown-content a:hover {background-color: #ddd}
+=======
+#modifyFTL{
+	display : none;
+}
+
+#textareaFTL {
+	/*display: none;*/
+	width: 98%;
+	height: 500px;
+}
+
+#FTLcodesButton {
+	
+}
+
+#FTLCodeSnippets {
+	
+	opacity: 0.8;
+	display: none;
+	background: whitesmoke;
+	border: solid 1px black;
+	margin: 10px;
+	
+}
+
+#FTLSnippetsHead {
+	font-size: 18px;
+	border-bottom: solid 1px black;
+	padding: 5px;
+}
+
+#FTLSnippetsText{
+	margin: 10px;
+	margin-top: 5px;
+}
+
+#closeFTLCode{
+	font-size: 16px;
+	border-radius: 5px;	
+	float: right;
+	margin-top: 0px;
+	margin-right: 4px;
+	width: 5%;
+	text-align: center;
+	/*display: none;*/
+}
+
+#closeFTLCode:hover{
+	background: red;
+	color: white;
+	cursor: pointer;
+	/*display: none;*/
+}
+>>>>>>> 9da7bc230bf912e97c3aaf92ecaa7ce1f39cdb70
 
 /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
 .show {display:none;}

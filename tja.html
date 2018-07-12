@@ -112,18 +112,24 @@
 			<div name='FTLWindow' id='FTLWindow'>
                 <h3 class="margin-left">FTL<button id='FTLInfo' class='info_knapp glyphicon glyphicon-exclamation-sign'></button></h3>
                 <div class="margin-left" readonly id="ftl" rows="5" cols="70" autocomplete="off"></div>
-                <button type="button" class="btn btn-info margin-left" id="calcFTL" data-toggle="tooltip" title="Visa/Uppdatera FTL koden">Visa FTL</button>
+                <button type="button" class="btn btn-info margin-left" id="calcFTL" data-toggle="tooltip" title="Visa/Återställ FTL koden">Visa FTL</button>
 				<button type="button" class="btn btn-info margin-left" id="saveFTL" disabled data-toggle="tooltip" title="Spara FTL till en content.ftl fil">Spara</button>
-				<button type="button" class="btn btn-info margin-left" id="addFTLLink" data-toggle="tooltip" title="Skapa en href i FTL">Lägg till länk</button><br>
-				<div style="display: none;" class="margin-left plink">
-					Länk URL: <br>					
-					<div id="FTLLinkp" style="display: block;" class="margin-left"></div>
-					<input style="display: none;" class="margin-left" type='text' id='FTLLink'></input>
-				</div>
-				<div style="display: none;" class="margin-left plink">
-					Länk Namn: <br>
-					<div id="FTLLinkNamnp" style="display: block;" class="margin-left"></div>
-					<input style="display: none;" type='text' class="margin-left" id='FTLLinkNamn'></input>
+				<button type="button" class="btn btn-info margin-left" id="modifyFTL" data-toggle="tooltip" title="Justera den generarade FTL-koden">Modifiera</button>
+				<button type="button" class="btn btn-info margin-left" id="FTLcodesButton" data-toggle="tooltip" title="Visa exempel på FTL-kod">Kodexempel</button>
+				<br>
+				<div id='FTLCodeSnippets'>
+					<div id='FTLSnippetsHead'>
+				<span id="closeFTLCode" data-toggle="tooltip" title="Stäng kodexemplen">X</span>
+					Kodexempel
+					</div>
+					<p id='FTLSnippetsText'>
+					För att ange kolumnvärdet:<br><i>${feature.KOLUMNNAMN.value}</i><br><br>
+					Ta bort timmar, minuter och sekunder från timestamps:<br><i>${KOLUMNVÄRDE?string?substring(0,10)}</i><br><br>
+					Kapa alla decimaler:<br><i><#assign x=KOLUMNVÄRDE?index_of(".")><br>${KOLUMNVÄRDE?substring(0,x)}</i><br><br>
+					Lägga till en länk:<br><i>&lt;a href='DIN URL' target='_blank'&gt;DIN TEXT/BILD&lt;/a&gt;</i><br><br>
+					Lägga till en bild:<br><i>&lt;img src="DIN SÖKVÄG/URL" width="130px"&gt;</i>				
+					</p>
+				</div>		
             </div>
 		</div>
 
@@ -166,7 +172,7 @@ function createRow(){
 	var titleBox = "<td><input onchange='checkbox(this)' type='checkbox' id='title' class='title_check' data-toggle='tooltip' title='Denna kolumnnamn blir title för nya sökvyn' ></td>";
 	var searchBox = "<td><input type='checkbox' id='sokdel' name='checkbox' data-toggle='tooltip' title='För att göra kolumnen sökbar klickar du i bockrutan'></td>";
 	var FTLfield = "<td><input id='FTLfield' type='text'data-toggle='tooltip' title='Om du vill använda FTL-vy så ange ett användarvänligt namn här, annars lämna det tomt'></td>"
-	var FTLtype = "<td><div class='dropdown'><button onclick='FTLtypes(this)' id='FTLtype' class='FTLtypeBtn dropbtn'>Värde</button><div id='FTLlist' class='dropdown-content'><a>Länkkek</a><a>Bild</a><a>Datum</a></div> </div></td>"
+	var FTLtype = "<td><div class='dropdown'><button onclick='FTLtypes(this)' id='FTLtype' class='FTLtypeBtn dropbtn'>Värde</button><div id='FTLlist' class='dropdown-content'><a>Länk</a><a>Bild</a><a>Datum</a></div> </div></td>"
 	row += removeButton + columnName + titleBox + searchBox + FTLfield + FTLtype +"</tr>";
 	return row;
 
@@ -354,41 +360,39 @@ function calcFTL (){
 			}
 		});
 	});
-	
-
 	/*send columnNames and FTLNames into FTLbuilder
 		and get the completed FTLstring*/
 	var FTLString = FTLbuilder(FTLnamn, kolumnNamn,FTLtypes); 
-	$('#ftl').html("<textarea class='code_snippets' id='FTL'>"+FTLString+"</textarea>"); 
+	$('#ftl').html("<textarea disabled id='textareaFTL'>"+FTLString+"</textarea>"); 
 	$('#saveFTL').prop("disabled", false);
 }
+
 
 //builds the FTLstring and returns it(frankenstein)
 function FTLbuilder(FTLarr, kolumnArr,FTLtypes){ 
 	let B = { 
-	 OT : "&lt;", //<
-	 CT : "&gt;", //>
-	 Obold : "&lt;" + "b" + "&gt;", //<b>
-	 Cbold : "&lt;" + "/b" + "&gt;", //</b>
-	 tab : "\t",
-	 BR : "\n",
-	 Otr : "\t\t\t"+"&lt;"+"tr", // /t/t/t<tr
-	 Ctr : "\t\t\t"+"&lt;"+"/tr", // /t/t/t</tr
-	 td : "\t\t\t\t"+"&lt;"+"td"+"&gt;", // /t/t/t/t<td>
-	 OUL : "\t\t"+"&lt;"+"ul"+"&gt;"+"\n", // /t/t<ul><br>
-	 CUL : "\t\t"+"&lt;"+"/ul"+"&gt;"+"\n" // /t/t</ul><br>
-};
+		 OT : "&lt;", //<
+		 CT : "&gt;", //>
+		 Obold : "&lt;" + "b" + "&gt;", //<b>
+		 Cbold : "&lt;" + "/b" + "&gt;", //</b>
+		 tab : "\t",
+		 BR : "\n",
+		 Otr : "\t\t\t"+"&lt;"+"tr", // /t/t/t<tr
+		 Ctr : "\t\t\t"+"&lt;"+"/tr", // /t/t/t</tr
+		 td : "\t\t\t\t"+"&lt;"+"td"+"&gt;", // /t/t/t/t<td>
+		 OUL : "\t\t"+"&lt;"+"ul"+"&gt;"+"\n", // /t/t<ul><br>
+		 CUL : "\t\t"+"&lt;"+"/ul"+"&gt;"+"\n" // /t/t</ul><br>
+	};
 
 	let FTLbegin = B.OT+"#list features as feature"+B.CT+B.BR;
 	let FTLmiddle = "";
 	let FTLend = B.CUL+B.tab+B.OT+"/table"+B.CT+B.BR+
 					B.OT+"/#list"+B.CT;	
-					
-	console.log("LINK: "+  $("#FTLLink").val());
+
 	if($("#FTLLinkp").text() != '') FTLbegin += B.OT + "a href ='"+ $("#FTLLinkp").text() +"' target='_blank'" + B.CT
 		+ B.OT+"b"+B.CT+ $("#FTLLinkNamnp").text() + B.OT + "/b" + B.CT + B.OT + "/a"+ B.CT + B.BR;  //"<a href='' target='_blank'><b>Placeholder</b></a>";
 	FTLbegin += B.tab+B.OT+'table class="featureInfo"'+B.CT+B.BR+B.OUL;
-	
+
 	for(amount in kolumnArr)
 	{
 		if(FTLarr[amount] != "") //check if FTLfield was empty
@@ -408,8 +412,7 @@ function BuildRow(value, name, type, B){
 /*downloads the FTLstring into
 	a content.ftl file*/
 function saveFTL(){
-	var FTLtext = $("#FTL").val();
-	console.log($("#FTL").val());
+	var FTLtext = $("#textareaFTL").val();
 	var file = new Blob([FTLtext]);
 	var a = document.createElement("a"),
     url = URL.createObjectURL(file);
@@ -476,11 +479,13 @@ $("#fler_kolumner").on('change', function(){
 	$("#sendbutton").prop('disabled', 'true');
 	});
 
+//regex for not allow certain characters
 function IlligalChar(strToCheck){
 var Regexp = /^[a-z][a-z0-9_]*$/i;//Only allows for English chars, numbers and underscore (͡°͜ʖ͡°)
 return Regexp.test(strToCheck);
 }
 
+//Builds the SQL-code to send to database
 function SQLBuilder (data) {
 
     var tabelln = data.tabellnamn;
@@ -557,27 +562,8 @@ function SQLBuilder (data) {
     return skapasokvy_str;
 }
 
-$("#addFTLLink").click(AddLink)
 
-function AddLink(){
-	$("#FTLLink").toggle();
-	$("#FTLLinkNamn").toggle();
-	$("#FTLLinkp").toggle();
-	$("#FTLLinkNamnp").toggle();
-	$(".plink").css('display', 'block');
-	if($("#addFTLLink").text() == "Lägg till länk" || 
-		$("#addFTLLink").text() == "Ändra länk")
-	{
-		$("#addFTLLink").text("Bekräfta");
-	}
-	else{	
-		$("#addFTLLink").text("Ändra länk");
-		$("#FTLLinkp").text($("#FTLLink").val());
-		$("#FTLLinkNamnp").text($("#FTLLinkNamn").val());
-	}
-
-}
-
+//Infoboxes on the app
 $("#tabellInfo").on('click', function (){
 	alert("- Till vänster listas sökvyer som specifierats i layerspecification-tabellen i databasen.\n"+
 	"- Informationen under kommer också direkt från layerspecifications.\n"+
@@ -631,8 +617,7 @@ function FTLtypes(thebutton) {
 
 //replaces buttons text with selected value in dropbox
 $(document).on('click',"[id=FTLlist] a", function(){
-
-	let button = $(this).closest("#FTLlist").siblings();
+		let button = $(this).closest("#FTLlist").siblings();
 	let currentText = $(this).text();
 	$(this).text(button.text());
 	button.text(currentText);
@@ -661,6 +646,54 @@ window.onclick = function(event) {
   }
 }
 
+$("#modifyFTL").click(ModFTL);
+
+$("#calcFTL").click(CheckFTLButtons);
+
+//button changes with FTLbutton
+function CheckFTLButtons(){
+	$('#saveFTL').prop("disabled", false);
+	$("#calcFTL").text("Rekonstruera FTL");
+	$("#modifyFTL").css('display', 'inline-block');
+}
+
+//hide button and enable textarea
+function ModFTL(){
+	$("#textareaFTL").prop('disabled',false);
+	$("#modifyFTL").toggle();
+}
+
+$("#FTLcodesButton").click(function(){
+	$("#FTLCodeSnippets").css("display",'block');
+	$(this).toggle();
+});
+
+$("#closeFTLCode").click(function(){
+	$("#FTLCodeSnippets").css("display",'none');
+	$("#FTLcodesButton").toggle();
+});
+	
+/*Function makes it possible to use tab 
+	in the FTLtextarea*/
+$(document).delegate('#textareaFTL', 'keydown', function(event) {
+  var keyCode = event.keyCode || event.which;
+
+  if (keyCode == 9) {
+    event.preventDefault();
+    var start = this.selectionStart;
+    var end = this.selectionEnd;
+
+    // set textarea value to: text before caret + tab + text after caret
+    $(this).val($(this).val().substring(0, start)
+                + "\t"
+                + $(this).val().substring(end));
+
+    // put caret at right position again
+    this.selectionStart =
+    this.selectionEnd = start + 1;
+  }
+});
+	
 //jqueryUI för att göra lista DOMelement sorterbar
 $('#fler_kolumner tbody').sortable();
 </script>
