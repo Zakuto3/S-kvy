@@ -97,7 +97,21 @@
                 <div class="margin-left" readonly id="ftl" rows="5" cols="70" autocomplete="off"></div>
                 <button type="button" class="btn btn-info margin-left" id="calcFTL" data-toggle="tooltip" title="Visa/Uppdatera FTL koden">Visa FTL</button>
 				<button type="button" class="btn btn-info margin-left" id="saveFTL" disabled data-toggle="tooltip" title="Spara FTL till en content.ftl fil">Spara</button>
-				<button type="button" class="btn btn-info margin-left" id="addFTLLink" data-toggle="tooltip" title="Skapa en href i FTL">Lägg till länk</button><br>
+				<button type="button" class="btn btn-info margin-left" id="modifyFTL" data-toggle="tooltip" title="Justera den generarade FTL-koden">Modifiera</button>
+				<button type="button" class="btn btn-info margin-left" id="FTLcodesButton" data-toggle="tooltip" title="Visa exempel på FTL-kod">Kodexempel</button>
+				<br>
+				<div id='FTLCodeSnippets'>
+					<div id='FTLSnippetsHead'>
+				<span id="closeFTLCode" data-toggle="tooltip" title="Stäng kodexemplen">X</span>
+					Kod
+					</div>
+					<p id='FTLSnippetsText'>
+					Ta bort timmar, minuter och sekunder från timestamps:<br><i>${KOLUMNVÄRDE?string?substring(0,10)}</i><br><br>
+					hello<br>
+					hehe
+					</p>
+				</div>
+				<!--<button type="button" class="btn btn-info margin-left" id="addFTLLink" data-toggle="tooltip" title="Skapa en href i FTL">Lägg till länk</button><br>
 				<div style="display: none;" class="margin-left plink">
 					Länk URL: <br>					
 					<div id="FTLLinkp" style="display: block;" class="margin-left"></div>
@@ -107,10 +121,7 @@
 					Länk Namn: <br>
 					<div id="FTLLinkNamnp" style="display: block;" class="margin-left"></div>
 					<input style="display: none;" type='text' class="margin-left" id='FTLLinkNamn'></input>
-<<<<<<< HEAD
-				</div>				
-=======
->>>>>>> 3dac609ded57cb8bd548f30e4e17e301cd381ef5
+				</div>	-->			
             </div>
 		</div>
 
@@ -328,8 +339,9 @@ function calcFTL (){
 	/*send columnNames and FTLNames into FTLbuilder
 		and get the completed FTLstring*/
 	var FTLString = FTLbuilder(FTLnamn, kolumnNamn); 
-	$('#ftl').html("<code class='code_snippets' id='FTL'>"+FTLString+"</code>"); 
-	$('#saveFTL').prop("disabled", false);
+	//$('#ftl').html("<code class='code_snippets' id='FTL'>"+FTLString+"</code>"); 
+	$('#ftl').html("<textarea disabled id='textareaFTL'>"+FTLString+"</textarea>");
+
 }
 
 //builds the FTLstring and returns it(frankenstein)
@@ -339,7 +351,7 @@ function FTLbuilder(FTLarr, kolumnArr){
 	let Obold = OT + "b" + CT; //<b>
 	let Cbold = OT + "/b" + CT; //</b>
 	let tab = "\t";
-	let BR = "\n<br>";
+	let BR = "\n";
 	let Otr = tab+tab+tab+OT+"tr"; // /t/t/t<tr
 	let Ctr = tab+tab+tab+OT+"/tr"; // /t/t/t</tr
 	let td = tab+tab+tab+tab+OT+"td"+CT; // /t/t/t/t<td>
@@ -369,7 +381,7 @@ function FTLbuilder(FTLarr, kolumnArr){
 /*downloads the FTLstring into
 	a content.ftl file*/
 function saveFTL(){
-	var FTLtext = $("#FTL").text();
+	var FTLtext = $("#textareaFTL").val();
 	var file = new Blob([FTLtext]);
 	var a = document.createElement("a"),
             url = URL.createObjectURL(file);
@@ -517,7 +529,7 @@ function SQLBuilder (data) {
     return skapasokvy_str;
 }
 
-$("#addFTLLink").click(AddLink)
+/*$("#addFTLLink").click(AddLink)
 
 function AddLink(){
 	$("#FTLLink").toggle();
@@ -535,7 +547,7 @@ function AddLink(){
 		$("#FTLLinkp").text($("#FTLLink").val());
 		$("#FTLLinkNamnp").text($("#FTLLinkNamn").val());
 	}
-}
+}*/
 
 $("#tabellInfo").on('click', function (){
 	alert("- Till vänster listas sökvyer som specifierats i layerspecification-tabellen i databasen.\n"+
@@ -561,8 +573,33 @@ $("#FTLInfo").on('click', function (){
 	" vart länken befinner sig så kan du kopiera raden, flytta den eller ange ny URL och namn.");
 });
 
+$("#modifyFTL").click(ModFTL);
 
+$("#calcFTL").click(CheckFTLButtons);
 
+function CheckFTLButtons(){
+	$('#saveFTL').prop("disabled", false);
+	$("#calcFTL").text("Återställ FTL");
+	$("#modifyFTL").css('display', 'inline-block');
+}
+
+function ModFTL(){
+	if($("#modifyFTL").text() == "Modifiera"){
+		$("#textareaFTL").prop('disabled',false);
+		$("#modifyFTL").toggle();
+	}
+}
+
+$("#FTLcodesButton").click(function(){
+	$("#FTLCodeSnippets").css("display",'block');
+	$(this).toggle();
+});
+
+$("#closeFTLCode").click(function(){
+	$("#FTLCodeSnippets").css("display",'none');
+	$("#FTLcodesButton").toggle();
+});
+	
 //jqueryUI för att göra lista DOMelement sorterbar
 $('#fler_kolumner tbody').sortable();
 </script>

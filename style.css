@@ -102,6 +102,55 @@
 	left: 20%;
 }	
 
+#modifyFTL{
+	display : none;
+}
 
+#textareaFTL {
+	/*display: none;*/
+	width: 98%;
+	height: 500px;
+}
 
+#FTLcodesButton {
+	
+}
+
+#FTLCodeSnippets {
+	opacity: 0.8;
+	display: none;
+	background: whitesmoke;
+	border: solid 1px black;
+	margin: 10px;
+	
+}
+
+#FTLSnippetsHead {
+	font-size: 18px;
+	border-bottom: solid 1px black;
+	padding: 5px;
+}
+
+#FTLSnippetsText{
+	margin: 10px;
+	margin-top: 5px;
+}
+
+#closeFTLCode{
+	font-size: 16px;
+	border-radius: 5px;	
+	float: right;
+	margin-top: 0px;
+	margin-right: 4px;
+	width: 5%;
+	text-align: center;
+	/*display: none;*/
+}
+
+#closeFTLCode:hover{
+	background: red;
+	color: white;
+	cursor: pointer;
+	/*display: none;*/
+}
 
