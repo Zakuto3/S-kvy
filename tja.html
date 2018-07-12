@@ -95,7 +95,7 @@
 			<div name='FTLWindow' id='FTLWindow'>
                 <h3 class="margin-left">FTL<button id='FTLInfo' class='info_knapp glyphicon glyphicon-exclamation-sign'></button></h3>
                 <div class="margin-left" readonly id="ftl" rows="5" cols="70" autocomplete="off"></div>
-                <button type="button" class="btn btn-info margin-left" id="calcFTL" data-toggle="tooltip" title="Visa/Uppdatera FTL koden">Visa FTL</button>
+                <button type="button" class="btn btn-info margin-left" id="calcFTL" data-toggle="tooltip" title="Visa/Återställ FTL koden">Visa FTL</button>
 				<button type="button" class="btn btn-info margin-left" id="saveFTL" disabled data-toggle="tooltip" title="Spara FTL till en content.ftl fil">Spara</button>
 				<button type="button" class="btn btn-info margin-left" id="modifyFTL" data-toggle="tooltip" title="Justera den generarade FTL-koden">Modifiera</button>
 				<button type="button" class="btn btn-info margin-left" id="FTLcodesButton" data-toggle="tooltip" title="Visa exempel på FTL-kod">Kodexempel</button>
@@ -103,25 +103,16 @@
 				<div id='FTLCodeSnippets'>
 					<div id='FTLSnippetsHead'>
 				<span id="closeFTLCode" data-toggle="tooltip" title="Stäng kodexemplen">X</span>
-					Kod
+					Kodexempel
 					</div>
 					<p id='FTLSnippetsText'>
+					För att ange kolumnvärdet:<br><i>${feature.KOLUMNNAMN.value}</i><br><br>
 					Ta bort timmar, minuter och sekunder från timestamps:<br><i>${KOLUMNVÄRDE?string?substring(0,10)}</i><br><br>
-					hello<br>
-					hehe
+					Kapa alla decimaler:<br><i><#assign x=KOLUMNVÄRDE?index_of(".")><br>${KOLUMNVÄRDE?substring(0,x)}</i><br><br>
+					Lägga till en länk:<br><i>&lt;a href='DIN URL' target='_blank'&gt;DIN TEXT/BILD&lt;/a&gt;</i><br><br>
+					Lägga till en bild:<br><i>&lt;img src="DIN SÖKVÄG/URL" width="130px"&gt;</i>				
 					</p>
-				</div>
-				<!--<button type="button" class="btn btn-info margin-left" id="addFTLLink" data-toggle="tooltip" title="Skapa en href i FTL">Lägg till länk</button><br>
-				<div style="display: none;" class="margin-left plink">
-					Länk URL: <br>					
-					<div id="FTLLinkp" style="display: block;" class="margin-left"></div>
-					<input style="display: none;" class="margin-left" type='text' id='FTLLink'></input>
-				</div>
-				<div style="display: none;" class="margin-left plink">
-					Länk Namn: <br>
-					<div id="FTLLinkNamnp" style="display: block;" class="margin-left"></div>
-					<input style="display: none;" type='text' class="margin-left" id='FTLLinkNamn'></input>
-				</div>	-->			
+				</div>		
             </div>
 		</div>
 
@@ -362,7 +353,6 @@ function FTLbuilder(FTLarr, kolumnArr){
 	let FTLend = CUL+tab+OT+"/table"+CT+BR+
 					OT+"/#list"+CT;	
 					
-	console.log("LINK: "+  $("#FTLLink").val());
 	if($("#FTLLinkp").text() != '') FTLbegin += OT + "a href ='"+ $("#FTLLinkp").text() +"' target='_blank'" + CT
 		+ OT+"b"+CT+ $("#FTLLinkNamnp").text() + OT + "/b" + CT + OT + "/a"+ CT + BR;  //"<a href='' target='_blank'><b>Placeholder</b></a>";
 	FTLbegin += tab+OT+'table class="featureInfo"'+CT+BR+OUL;
@@ -448,11 +438,13 @@ $("#fler_kolumner").on('change', function(){
 	$("#sendbutton").prop('disabled', 'true');
 	});
 
+//regex for not allow certain characters
 function IlligalChar(strToCheck){
 var Regexp = /^[a-z][a-z0-9_]*$/i;//Only allows for English chars, numbers and underscore (͡°͜ʖ͡°)
 return Regexp.test(strToCheck);
 }
 
+//Builds the SQL-code to send to database
 function SQLBuilder (data) {
 
     var tabelln = data.tabellnamn;
@@ -529,26 +521,7 @@ function SQLBuilder (data) {
     return skapasokvy_str;
 }
 
-/*$("#addFTLLink").click(AddLink)
-
-function AddLink(){
-	$("#FTLLink").toggle();
-	$("#FTLLinkNamn").toggle();
-	$("#FTLLinkp").toggle();
-	$("#FTLLinkNamnp").toggle();
-	$(".plink").css('display', 'block');
-	if($("#addFTLLink").text() == "Lägg till länk" || 
-		$("#addFTLLink").text() == "Ändra länk")
-	{
-		$("#addFTLLink").text("Bekräfta");
-	}
-	else{	
-		$("#addFTLLink").text("Ändra länk");
-		$("#FTLLinkp").text($("#FTLLink").val());
-		$("#FTLLinkNamnp").text($("#FTLLinkNamn").val());
-	}
-}*/
-
+//Infoboxes on the app
 $("#tabellInfo").on('click', function (){
 	alert("- Till vänster listas sökvyer som specifierats i layerspecification-tabellen i databasen.\n"+
 	"- Informationen under kommer också direkt från layerspecifications.\n"+
@@ -577,17 +550,17 @@ $("#modifyFTL").click(ModFTL);
 
 $("#calcFTL").click(CheckFTLButtons);
 
+//button changes with FTLbutton
 function CheckFTLButtons(){
 	$('#saveFTL').prop("disabled", false);
 	$("#calcFTL").text("Återställ FTL");
 	$("#modifyFTL").css('display', 'inline-block');
 }
 
+//hide button and enable textarea
 function ModFTL(){
-	if($("#modifyFTL").text() == "Modifiera"){
-		$("#textareaFTL").prop('disabled',false);
-		$("#modifyFTL").toggle();
-	}
+	$("#textareaFTL").prop('disabled',false);
+	$("#modifyFTL").toggle();
 }
 
 $("#FTLcodesButton").click(function(){
@@ -598,6 +571,27 @@ $("#FTLcodesButton").click(function(){
 $("#closeFTLCode").click(function(){
 	$("#FTLCodeSnippets").css("display",'none');
 	$("#FTLcodesButton").toggle();
+});
+	
+/*Function makes it possible to use tab 
+	in the FTLtextarea*/
+$(document).delegate('#textareaFTL', 'keydown', function(event) {
+  var keyCode = event.keyCode || event.which;
+
+  if (keyCode == 9) {
+    event.preventDefault();
+    var start = this.selectionStart;
+    var end = this.selectionEnd;
+
+    // set textarea value to: text before caret + tab + text after caret
+    $(this).val($(this).val().substring(0, start)
+                + "\t"
+                + $(this).val().substring(end));
+
+    // put caret at right position again
+    this.selectionStart =
+    this.selectionEnd = start + 1;
+  }
 });
 	
 //jqueryUI för att göra lista DOMelement sorterbar
