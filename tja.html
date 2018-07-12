@@ -60,12 +60,12 @@
                     <!--Ändras kanske senare till att läsa från tabell i db "eskilstuna".-->
 
 					<tbody id=mainbody>
-						<tr style='text-align: center;'>
+						<tr>
 							<th>Försvinn!</th>
 							<th>Kolumnnamn</th>
 							<th>Titel</th>
 							<th>Sökbar kolumn</th>
-							<th style='text-align: left;'>FTL-namn</th>
+							<th>FTL-namn</th>
 							<th>FTL-typ</th>
 						</tr>
 						<tr >
@@ -92,6 +92,7 @@
 							    <a >Länk</a>
 							    <a >Bild</a>
 							    <a >Datum</a>
+							    <a >Heltal</a>
 							 </div> 
 							</div>
 							</td>
@@ -112,7 +113,7 @@
 			<div name='FTLWindow' id='FTLWindow'>
                 <h3 class="margin-left">FTL<button id='FTLInfo' class='info_knapp glyphicon glyphicon-exclamation-sign'></button></h3>
                 <div class="margin-left" readonly id="ftl" rows="5" cols="70" autocomplete="off"></div>
-                <button type="button" class="btn btn-info margin-left" id="calcFTL" data-toggle="tooltip" title="Visa/Återställ FTL koden">Visa FTL</button>
+                <button type="button" class="btn btn-info margin-left" id="calcFTL" data-toggle="tooltip" title="Visa/Bygg om FTL-koden">Visa FTL</button>
 				<button type="button" class="btn btn-info margin-left" id="saveFTL" disabled data-toggle="tooltip" title="Spara FTL till en content.ftl fil">Spara</button>
 				<button type="button" class="btn btn-info margin-left" id="modifyFTL" data-toggle="tooltip" title="Justera den generarade FTL-koden">Modifiera</button>
 				<button type="button" class="btn btn-info margin-left" id="FTLcodesButton" data-toggle="tooltip" title="Visa exempel på FTL-kod">Kodexempel</button>
@@ -124,10 +125,21 @@
 					</div>
 					<p id='FTLSnippetsText'>
 					För att ange kolumnvärdet:<br><i>${feature.KOLUMNNAMN.value}</i><br><br>
-					Ta bort timmar, minuter och sekunder från timestamps:<br><i>${KOLUMNVÄRDE?string?substring(0,10)}</i><br><br>
-					Kapa alla decimaler:<br><i><#assign x=KOLUMNVÄRDE?index_of(".")><br>${KOLUMNVÄRDE?substring(0,x)}</i><br><br>
+					Ta bort timmar, minuter och sekunder från timestamps:<br><i>${feature.KOLUMNNAMN.value?string?substring(0,10)}</i><br><br>
+					Kapa alla decimaler:<br><i><#assign x=feature.KOLUMNNAMN.value?index_of(".")><br>${feature.KOLUMNNAMN.value?substring(0,x)}</i><br><br>
 					Lägga till en länk:<br><i>&lt;a href='DIN URL' target='_blank'&gt;DIN TEXT/BILD&lt;/a&gt;</i><br><br>
-					Lägga till en bild:<br><i>&lt;img src="DIN SÖKVÄG/URL" width="130px"&gt;</i>				
+					Lägga till en bild:<br><i>&lt;img src="DIN SÖKVÄG/URL" width="130px"&gt;</i><br><br>
+					Lägg till en rad med Värdet som en länk:
+					<br>
+					&lt;tr&gt;
+					<br>
+						&lt;td&gt;&lt;b&gt;FTLNAMNET&lt;/b&gt;&lt;/td&gt;
+						&lt;td&gt;&lt;a href='DIN URL' target='_blank'&gt;${feature.KOLUMNNAMN.value}&lt;/a&gt;&lt;/td&gt;
+						<br>
+					&lt;/tr&gt;
+					<br><br>
+					&lt;tr&gt; : En rad i inforutan<br>
+					&lt;td&gt; : En cell i en rad
 					</p>
 				</div>		
             </div>
@@ -135,13 +147,12 @@
 
 	<script type="text/javascript">
 //When DOM ready then call node js server and receive layer_spec from db:geoportia then populate selector
+
 $(function () {
-	var lagerspecar = "kattkatt";
 	$.ajax({
 		type: 'GET',
 		url: 'http://localhost:1337/geoportia',
-		success: function (json) {
-			lagerspecar = json;
+		success: function (lagerspecar) {
 			lagerspecar.forEach(function (v) {
 				var opt = document.createElement('option');
 				opt.textContent = v.name;
@@ -172,7 +183,7 @@ function createRow(){
 	var titleBox = "<td><input onchange='checkbox(this)' type='checkbox' id='title' class='title_check' data-toggle='tooltip' title='Denna kolumnnamn blir title för nya sökvyn' ></td>";
 	var searchBox = "<td><input type='checkbox' id='sokdel' name='checkbox' data-toggle='tooltip' title='För att göra kolumnen sökbar klickar du i bockrutan'></td>";
 	var FTLfield = "<td><input id='FTLfield' type='text'data-toggle='tooltip' title='Om du vill använda FTL-vy så ange ett användarvänligt namn här, annars lämna det tomt'></td>"
-	var FTLtype = "<td><div class='dropdown'><button onclick='FTLtypes(this)' id='FTLtype' class='FTLtypeBtn dropbtn'>Värde</button><div id='FTLlist' class='dropdown-content'><a>Länk</a><a>Bild</a><a>Datum</a></div> </div></td>"
+	var FTLtype = "<td><div class='dropdown'><button onclick='FTLtypes(this)' id='FTLtype' class='FTLtypeBtn dropbtn'>Värde</button><div id='FTLlist' class='dropdown-content'><a>Länk</a><a>Bild</a><a>Datum</a><a >Heltal</a></div> </div></td>"
 	row += removeButton + columnName + titleBox + searchBox + FTLfield + FTLtype +"</tr>";
 	return row;
 
@@ -348,7 +359,7 @@ function calcFTL (){
 	var kolumnNamn = [];
 	var FTLtypes = [];
 	$('#fler_kolumner tr').each(function (k) {// 'table row'
-		$(this).find("input,select").each(function (i) {
+		$(this).find("input,select, button").each(function (i) {
 			if (this.id.indexOf('FTLfield') >= 0) {
 				FTLnamn[k] = $(this).val();
 			}
@@ -356,7 +367,7 @@ function calcFTL (){
 				kolumnNamn[k] = $(this).val();
 			}
 			if (this.id.indexOf('FTLtype') >= 0){
-				FTLtypes[k] = $(this).val();
+				FTLtypes[k] = $(this).text();
 			}
 		});
 	});
@@ -388,25 +399,53 @@ function FTLbuilder(FTLarr, kolumnArr,FTLtypes){
 	let FTLmiddle = "";
 	let FTLend = B.CUL+B.tab+B.OT+"/table"+B.CT+B.BR+
 					B.OT+"/#list"+B.CT;	
-
-	if($("#FTLLinkp").text() != '') FTLbegin += B.OT + "a href ='"+ $("#FTLLinkp").text() +"' target='_blank'" + B.CT
-		+ B.OT+"b"+B.CT+ $("#FTLLinkNamnp").text() + B.OT + "/b" + B.CT + B.OT + "/a"+ B.CT + B.BR;  //"<a href='' target='_blank'><b>Placeholder</b></a>";
 	FTLbegin += B.tab+B.OT+'table class="featureInfo"'+B.CT+B.BR+B.OUL;
 
 	for(amount in kolumnArr)
 	{
 		if(FTLarr[amount] != "") //check if FTLfield was empty
-		//	FTLmiddle += BuildRow(kolumnArr[amount], FTLarr[amount], FTLtypes[amount],B);
-			FTLmiddle += B.Otr+B.CT+B.BR+
-						B.td+B.Obold+FTLarr[amount]+":"+B.Cbold+B.OT+"/td"+B.CT+B.BR+
-						B.td+"${feature."+kolumnArr[amount]+".value}"+B.OT+"/td"+B.CT+B.BR+
-						B.Ctr+B.CT+B.BR;
+			FTLmiddle += BuildRow(kolumnArr[amount], FTLarr[amount], FTLtypes[amount],B);
 	}
 	return FTLbegin + FTLmiddle+FTLend;
 };
 
-function BuildRow(value, name, type, B){
+//Builds a row in FTL based on the type chosen
+function BuildRow(kolumn, name, type, B){
+	let FTLrow;
+	console.log(type);
+		switch(type){
+			case "Länk": 
+				FTLrow = B.Otr+B.CT+B.BR+B.td+B.OT+"a href='${feature."+kolumn+".value}' target='_blank'"+B.CT+name+B.OT+"/a"+B.CT+B.OT+"/td"+B.CT+B.BR+
+				B.Ctr+B.CT+B.BR;
+				 break;
 
+			case "Datum":
+				FTLrow = B.Otr+B.CT+B.BR+
+				B.td+B.Obold+name+":"+B.Cbold+B.OT+"/td"+B.CT+B.BR+
+				B.td+"${feature."+kolumn+".value?string?substring(0,10)}"+B.OT+"/td"+B.CT+B.BR+
+				B.Ctr+B.CT+B.BR;
+				break;
+
+			case "Bild":
+				FTLrow = B.Otr+B.CT+B.BR+B.td+B.OT+"img src='${feature."+kolumn+".value}' width='130px'"+B.CT+B.OT+"/td"+B.CT+B.BR+
+				B.Ctr+B.CT+B.BR;
+				break;
+
+			case "Heltal":
+				FTLrow = B.Otr+B.CT+B.BR+"\t\t\t\t<#assign x=feature."+kolumn+".value?index_of('.')>"+B.BR+B.td+B.Obold+name+":"+B.Cbold+B.OT+"/td"+B.CT+B.BR+
+				B.td+"${feature."+kolumn+".value?string?substring(0,x)}"+B.OT+"/td"+B.CT+B.BR+
+				B.Ctr+B.CT+B.BR;
+				break;
+
+			default: 
+				FTLrow =  B.Otr+B.CT+B.BR+
+				B.td+B.Obold+name+":"+B.Cbold+B.OT+"/td"+B.CT+B.BR+
+				B.td+"${feature."+kolumn+".value}"+B.OT+"/td"+B.CT+B.BR+
+				B.Ctr+B.CT+B.BR;
+				 break;
+
+		}
+	return FTLrow;
 }
 
 /*downloads the FTLstring into
@@ -653,7 +692,7 @@ $("#calcFTL").click(CheckFTLButtons);
 //button changes with FTLbutton
 function CheckFTLButtons(){
 	$('#saveFTL').prop("disabled", false);
-	$("#calcFTL").text("Rekonstruera FTL");
+	$("#calcFTL").text("Rebuild FTL");
 	$("#modifyFTL").css('display', 'inline-block');
 }
 
