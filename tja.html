@@ -14,7 +14,8 @@
 	
 </head>
 <body>
-		<div name='tabellHeader' class='header tabell'>
+
+	<div name='tabellHeader' class='header tabell'>
 			TABELLER
 		</div>
 		<div name='kolumnHeader' class='header kolumn'>
@@ -24,8 +25,13 @@
 			SKRIPT
 		</div>    
         <div name='tabellWindow' class='divs tabell'>
+
+        		<input type="text" id="Search" placeholder="Search for names.." title="Search"> 
+
 				<h3><button id='tabellInfo' class='popup info_knapp glyphicon glyphicon-exclamation-sign popup'></button></h3><br>
-                <select id="layerspecs" label="Select one:"></select> <br>
+
+        		<select id="layerspecs" size=1 label="Select one:"></select> 
+
                 <h3 data-toggle="tooltip" title="Visar aktuella tabellen">
 					Tabell
 				</h3>
@@ -60,6 +66,7 @@
 							<th>Titel</th>
 							<th>Sökbar kolumn</th>
 							<th style='text-align: left;'>FTL-namn</th>
+							<th>FTL-typ</th>
 						</tr>
 						<tr >
 							<td>
@@ -77,6 +84,16 @@
 							</td>
 							<td>
 								<input id='FTLfield' type='text' data-toggle="tooltip" title="Om du vill använda FTL-vy så ange ett användarvänligt namn här, annars lämna det tomt.">
+							</td>
+							<td>
+								<div class="dropdown">
+							  	<button onclick='FTLtypes(this)' id="FTLtype" class="FTLtypeBtn dropbtn">Värde</button>
+								  <div id="FTLlist" class="dropdown-content">
+							    <a >Länk</a>
+							    <a >Bild</a>
+							    <a >Datum</a>
+							 </div> 
+							</div>
 							</td>
 						</tr>
 					</body>
@@ -118,7 +135,6 @@
 
 	<script type="text/javascript">
 //When DOM ready then call node js server and receive layer_spec from db:geoportia then populate selector
-
 $(function () {
 	var lagerspecar = "kattkatt";
 	$.ajax({
@@ -156,8 +172,11 @@ function createRow(){
 	var titleBox = "<td><input onchange='checkbox(this)' type='checkbox' id='title' class='title_check' data-toggle='tooltip' title='Denna kolumnnamn blir title för nya sökvyn' ></td>";
 	var searchBox = "<td><input type='checkbox' id='sokdel' name='checkbox' data-toggle='tooltip' title='För att göra kolumnen sökbar klickar du i bockrutan'></td>";
 	var FTLfield = "<td><input id='FTLfield' type='text'data-toggle='tooltip' title='Om du vill använda FTL-vy så ange ett användarvänligt namn här, annars lämna det tomt'></td>"
-	row += removeButton + columnName + titleBox + searchBox + FTLfield + "</tr>";
+	var FTLtype = "<td><div class='dropdown'><button onclick='FTLtypes(this)' id='FTLtype' class='FTLtypeBtn dropbtn'>Värde</button><div id='FTLlist' class='dropdown-content'><a>Länk</a><a>Bild</a><a>Datum</a></div> </div></td>"
+	row += removeButton + columnName + titleBox + searchBox + FTLfield + FTLtype +"</tr>";
 	return row;
+
+
 };
 
 //onclick event in the html
@@ -192,6 +211,17 @@ function readTableColumns(){
         }
 	})
 }
+//allows for selection in search dropdown
+$("#layerspecs").keyup(function( event ) {
+	if(event.key == "Enter")
+	this.size = 1;
+});
+
+//collapse the dropdown when selecting a option
+$("#layerspecs").mouseup(function(){
+	this.size = 1;
+	$(this).trigger("change");
+});
 
 //remove all rows except the first one and update the data
 $("#layerspecs").on('change', function(){
@@ -316,6 +346,7 @@ $("#saveFTL").click(saveFTL);
 function calcFTL (){
 	var FTLnamn = [];
 	var kolumnNamn = [];
+	var FTLtypes = [];
 	$('#fler_kolumner tr').each(function (k) {// 'table row'
 		$(this).find("input,select").each(function (i) {
 			if (this.id.indexOf('FTLfield') >= 0) {
@@ -324,49 +355,59 @@ function calcFTL (){
 			if (this.id.indexOf('kolumn') >= 0){
 				kolumnNamn[k] = $(this).val();
 			}
+			if (this.id.indexOf('FTLtype') >= 0){
+				FTLtypes[k] = $(this).val();
+			}
 		});
 	});
-	
 	/*send columnNames and FTLNames into FTLbuilder
 		and get the completed FTLstring*/
-	var FTLString = FTLbuilder(FTLnamn, kolumnNamn); 
-	//$('#ftl').html("<code class='code_snippets' id='FTL'>"+FTLString+"</code>"); 
-	$('#ftl').html("<textarea disabled id='textareaFTL'>"+FTLString+"</textarea>");
-
+	var FTLString = FTLbuilder(FTLnamn, kolumnNamn,FTLtypes); 
+	$('#ftl').html("<textarea disabled id='textareaFTL'>"+FTLString+"</textarea>"); 
+	$('#saveFTL').prop("disabled", false);
 }
 
+
 //builds the FTLstring and returns it(frankenstein)
-function FTLbuilder(FTLarr, kolumnArr){ 
-	let OT = "&lt;"; //<
-	let CT = "&gt;"; //>
-	let Obold = OT + "b" + CT; //<b>
-	let Cbold = OT + "/b" + CT; //</b>
-	let tab = "\t";
-	let BR = "\n";
-	let Otr = tab+tab+tab+OT+"tr"; // /t/t/t<tr
-	let Ctr = tab+tab+tab+OT+"/tr"; // /t/t/t</tr
-	let td = tab+tab+tab+tab+OT+"td"+CT; // /t/t/t/t<td>
-	let OUL = tab+tab+OT+"ul"+CT+BR; // /t/t<ul><br>
-	let CUL = tab+tab+OT+"/ul"+CT+BR; // /t/t</ul><br>
-	let FTLbegin = OT+"#list features as feature"+CT+BR;
+function FTLbuilder(FTLarr, kolumnArr,FTLtypes){ 
+	let B = { 
+		 OT : "&lt;", //<
+		 CT : "&gt;", //>
+		 Obold : "&lt;" + "b" + "&gt;", //<b>
+		 Cbold : "&lt;" + "/b" + "&gt;", //</b>
+		 tab : "\t",
+		 BR : "\n",
+		 Otr : "\t\t\t"+"&lt;"+"tr", // /t/t/t<tr
+		 Ctr : "\t\t\t"+"&lt;"+"/tr", // /t/t/t</tr
+		 td : "\t\t\t\t"+"&lt;"+"td"+"&gt;", // /t/t/t/t<td>
+		 OUL : "\t\t"+"&lt;"+"ul"+"&gt;"+"\n", // /t/t<ul><br>
+		 CUL : "\t\t"+"&lt;"+"/ul"+"&gt;"+"\n" // /t/t</ul><br>
+	};
+
+	let FTLbegin = B.OT+"#list features as feature"+B.CT+B.BR;
 	let FTLmiddle = "";
-	let FTLend = CUL+tab+OT+"/table"+CT+BR+
-					OT+"/#list"+CT;	
-					
-	if($("#FTLLinkp").text() != '') FTLbegin += OT + "a href ='"+ $("#FTLLinkp").text() +"' target='_blank'" + CT
-		+ OT+"b"+CT+ $("#FTLLinkNamnp").text() + OT + "/b" + CT + OT + "/a"+ CT + BR;  //"<a href='' target='_blank'><b>Placeholder</b></a>";
-	FTLbegin += tab+OT+'table class="featureInfo"'+CT+BR+OUL;
-	
+	let FTLend = B.CUL+B.tab+B.OT+"/table"+B.CT+B.BR+
+					B.OT+"/#list"+B.CT;	
+
+	if($("#FTLLinkp").text() != '') FTLbegin += B.OT + "a href ='"+ $("#FTLLinkp").text() +"' target='_blank'" + B.CT
+		+ B.OT+"b"+B.CT+ $("#FTLLinkNamnp").text() + B.OT + "/b" + B.CT + B.OT + "/a"+ B.CT + B.BR;  //"<a href='' target='_blank'><b>Placeholder</b></a>";
+	FTLbegin += B.tab+B.OT+'table class="featureInfo"'+B.CT+B.BR+B.OUL;
+
 	for(amount in kolumnArr)
 	{
 		if(FTLarr[amount] != "") //check if FTLfield was empty
-		FTLmiddle += Otr+CT+BR+
-						td+Obold+FTLarr[amount]+":"+Cbold+OT+"/td"+CT+BR+
-						td+"${feature."+kolumnArr[amount]+".value}"+OT+"/td"+CT+BR+
-						Ctr+CT+BR;
+		//	FTLmiddle += BuildRow(kolumnArr[amount], FTLarr[amount], FTLtypes[amount],B);
+			FTLmiddle += B.Otr+B.CT+B.BR+
+						B.td+B.Obold+FTLarr[amount]+":"+B.Cbold+B.OT+"/td"+B.CT+B.BR+
+						B.td+"${feature."+kolumnArr[amount]+".value}"+B.OT+"/td"+B.CT+B.BR+
+						B.Ctr+B.CT+B.BR;
 	}
 	return FTLbegin + FTLmiddle+FTLend;
 };
+
+function BuildRow(value, name, type, B){
+
+}
 
 /*downloads the FTLstring into
 	a content.ftl file*/
@@ -374,7 +415,7 @@ function saveFTL(){
 	var FTLtext = $("#textareaFTL").val();
 	var file = new Blob([FTLtext]);
 	var a = document.createElement("a"),
-            url = URL.createObjectURL(file);
+    url = URL.createObjectURL(file);
     a.href = url;
     a.download = "content.ftl";
     document.body.appendChild(a);
@@ -521,6 +562,7 @@ function SQLBuilder (data) {
     return skapasokvy_str;
 }
 
+
 //Infoboxes on the app
 $("#tabellInfo").on('click', function (){
 	alert("- Till vänster listas sökvyer som specifierats i layerspecification-tabellen i databasen.\n"+
@@ -546,6 +588,64 @@ $("#FTLInfo").on('click', function (){
 	" vart länken befinner sig så kan du kopiera raden, flytta den eller ange ny URL och namn.");
 });
 
+//filters tables when searching in searchfield
+$("#Search").keyup(function searchFunc(event) {
+    var filter, layerspec, options, i,laySize=0;
+    filter = document.getElementById("Search").value.toUpperCase();
+    layerspec = document.getElementById("layerspecs");
+    options = layerspec.getElementsByTagName("option");
+    for (i = 0; i < options.length; i++){
+        
+        if (options[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
+            options[i].style.display = "block";
+            laySize++;
+        } else {
+            options[i].style.display = "none";
+        }
+    }   
+    layerspec.size=laySize+1;
+    if (event.key == "ArrowDown")
+    layerspec.focus();  
+    if(filter=="")
+    layerspec.size=1;
+});
+
+//toggle FTLtypebuttons
+function FTLtypes(thebutton) {
+    $(thebutton).next().toggle();
+}
+
+//replaces buttons text with selected value in dropbox
+$(document).on('click',"[id=FTLlist] a", function(){
+		let button = $(this).closest("#FTLlist").siblings();
+	let currentText = $(this).text();
+	$(this).text(button.text());
+	button.text(currentText);
+
+});
+
+//show or hide FTltypebutton based or FTLfield input
+$(document).on('keyup',"[id=FTLfield]", function(){
+	console.log($(this).val().length);
+	//console.log($(this).next("td").children("#FTLtype").text());
+	if($(this).val() == ""){
+		$(this).parent().siblings().children(".dropdown").children("#FTLtype").css('visibility', 'hidden');
+	}
+	else{
+		$(this).parent().siblings().children(".dropdown").children("#FTLtype").css('visibility', 'visible');
+	}
+});
+
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {	
+  if (!event.target.matches('.dropbtn')) {	
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    for (let i = 0; i < dropdowns.length; i++) {
+      dropdowns[i].style.display = "none";     
+    }
+  }
+}
+
 $("#modifyFTL").click(ModFTL);
 
 $("#calcFTL").click(CheckFTLButtons);
@@ -553,7 +653,7 @@ $("#calcFTL").click(CheckFTLButtons);
 //button changes with FTLbutton
 function CheckFTLButtons(){
 	$('#saveFTL').prop("disabled", false);
-	$("#calcFTL").text("Återställ FTL");
+	$("#calcFTL").text("Rekonstruera FTL");
 	$("#modifyFTL").css('display', 'inline-block');
 }
 
@@ -599,24 +699,3 @@ $('#fler_kolumner tbody').sortable();
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
