@@ -101,18 +101,11 @@
 	position: relative;
 	left: 20%;
 }	
-
-<<<<<<< HEAD
 #FTL{
 	margin-left: 1.319583em;
 	width: 90%;
 	height: 500px;
 	overflow:auto;
-}
-
-#FTLtype{
-	
-	
 }
 
 /* Dropdown Button */
@@ -156,8 +149,10 @@
 }
 
 /* Change color of dropdown links on hover */
-.dropdown-content a:hover {background-color: #ddd}
-=======
+.dropdown-content a:hover {
+	background-color: #ddd
+}
+
 #modifyFTL{
 	display : none;
 }
@@ -168,9 +163,6 @@
 	height: 500px;
 }
 
-#FTLcodesButton {
-	
-}
 
 #FTLCodeSnippets {
 	
@@ -210,7 +202,5 @@
 	cursor: pointer;
 	/*display: none;*/
 }
->>>>>>> 9da7bc230bf912e97c3aaf92ecaa7ce1f39cdb70
 
-/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
 .show {display:none;}
