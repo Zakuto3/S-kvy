@@ -13,106 +13,99 @@
 	<link rel="stylesheet" href="./style.css">
 	
 </head>
-<body>
-
-	<div name='tabellHeader' class='header tabell'>
-			TABELLER
-		</div>
+<body id='background'>
+		<div name='tabellHeader' class='header tabell'>
+				TABELLER
+			</div>
 		<div name='kolumnHeader' class='header kolumn'>
-			KOLUMNER
-		</div>
+				KOLUMNER
+			</div>
 		<div name='FTLnSQLHeader' class='header SQLFTL'>
-			SKRIPT
-		</div>    
-        <div name='tabellWindow' class='divs tabell'>
-
-        		<input type="text" id="Search" placeholder="Search for names.." title="Search"> 
-
-				<h3><button id='tabellInfo' class='popup info_knapp glyphicon glyphicon-exclamation-sign popup'></button></h3><br>
-
-        		<select id="layerspecs" size=1 label="Select one:"></select> 
-
-                <h3 data-toggle="tooltip" title="Visar aktuella tabellen">
-					Tabell
-				</h3>
-                <p id="tabell"></p>
-                <h3>
-					Sökvy 
-					<button onclick='changeText(this,"sokvy","newsokvy")' type="button" class="btn btn-info" id="changeName" data-toggle="tooltip" title="Ändrar namn på sökvy tabellen. VARNING: Nya namnet kanske inte finns i 'layer_specification' tabellen i Geoportia databasen, detta kan leda till oförmodad resultat.">Ändra</button>
-
-				</h3>
-				<input id='newsokvy' type='text'>				
-                <p id="sokvy"></p>
-                <h3>
-					Titel
-					<!--<button onclick='changeText(this,"titel","newtitel")' type="button" class="btn btn-info" id="changeName">Ändra</button>-->
-				</h3>
-                <input id='newtitel' type='text'>				
-                <p id="titel"></p>
-				
-                <h3>Where</h3>
-                <p id="where"></p>
-            </div>
+				SKRIPT
+			</div>    
+		<div name='tabellWindow' class='divs tabell'>
+			<input type="text" id="Search" placeholder="Search for names.." title="Search"> 
+			<h3><button id='tabellInfo' class='popup info_knapp glyphicon glyphicon-exclamation-sign popup'></button></h3><br>
+			<select id="layerspecs" size=1 label="Select one:"></select> 
+			<h3 data-toggle="tooltip" title="Visar aktuella tabellen">
+				Tabell
+			</h3>
+			<p id="tabell"></p>
+			<h3>
+				Sökvy 
+				<button onclick='changeText(this,"sokvy","newsokvy")' type="button" class="btn btn-info" id="changeName" data-toggle="tooltip" title="Ändrar namn på sökvy tabellen. VARNING: Nya namnet kanske inte finns i 'layer_specification' tabellen i Geoportia databasen, detta kan leda till oförmodad resultat.">Ändra</button>
+			</h3>
+			<input id='newsokvy' type='text'>				
+			<p id="sokvy"></p>
+			<h3>
+				Titel
+				<!--<button onclick='changeText(this,"titel","newtitel")' type="button" class="btn btn-info" id="changeName">Ändra</button>-->
+			</h3>
+			<input id='newtitel' type='text'>				
+			<p id="titel"></p>
+			<h3>Where</h3>
+			<p id="where"></p>
+		</div>
 		<div name='kolumnWindow' class='divs kolumn'>
-                <h3>Inkluderade kolumner med ev. FTLnamn <button id='kolumnInfo' class='info_knapp glyphicon glyphicon-exclamation-sign'></button></h3>
-				
-                <table class="table" id="fler_kolumner">
-                    <!--Ändras kanske senare till att läsa från tabell i db "eskilstuna".-->
+			<h3>Inkluderade kolumner med ev. FTLnamn <button id='kolumnInfo' class='info_knapp glyphicon glyphicon-exclamation-sign'></button></h3>
+			
+			<table class="table" id="fler_kolumner">
+				<!--Ändras kanske senare till att läsa från tabell i db "eskilstuna".-->
 
-					<tbody id=mainbody>
-						<tr style='text-align: center;'>
-							<th>Försvinn!</th>
-							<th>Kolumnnamn</th>
-							<th>Titel</th>
-							<th>Sökbar kolumn</th>
-							<th style='text-align: left;'>FTL-namn</th>
-							<th>FTL-typ</th>
-						</tr>
-						<tr >
-							<td>
-								<button type="button" class="btn btn-danger" name="bortknapp"data-toggle="tooltip" title="Ta bort denna rad">X</button>
-							</td>
-							<td>
-								<select class="dropbox" id="kolumn" name="kolumn">
-								</select>
-							</td>
-							<td>
-								<input onchange='checkbox(this)' type='checkbox' id='title' class='title_check' data-toggle="tooltip" title="Denna kolumnnamn blir title för nya sökvyn">
-							</td>
-							<td>
-								<input type="checkbox" id="sokdel" name="checkbox" data-toggle="tooltip" title="För att göra kolumnen sökbar klickar du i bockrutan">
-							</td>
-							<td>
-								<input id='FTLfield' type='text' data-toggle="tooltip" title="Om du vill använda FTL-vy så ange ett användarvänligt namn här, annars lämna det tomt.">
-							</td>
-							<td>
-								<div class="dropdown">
-							  	<button onclick='FTLtypes(this)' id="FTLtype" class="FTLtypeBtn dropbtn">Värde</button>
-								  <div id="FTLlist" class="dropdown-content">
-							    <a >Länk</a>
-							    <a >Bild</a>
-							    <a >Datum</a>
-							 </div> 
-							</div>
-							</td>
-						</tr>
-					</body>
-				
-                </table>
-				<button type="button" class="add-all-columns btn btn-info" style="position: relative; left: 0.5em;"data-toggle="tooltip" title="Lägg till alla kolumner från tabellen">Lägg till<br> alla kolumner</button>
-				<button class="btn btn-info" id="addbutton" style="position: relative; left: 1em;"data-toggle="tooltip" title="Lägg till en kolumn">+1</button>
-            </div>
-        <div name='SQLandFTL' class='divs SQLFTL'>	
-            <div name='SQLWindow' id='SQLWindow'>
-                <h3 class="margin-left">SQL<button id='SQLInfo' class='info_knapp glyphicon glyphicon-exclamation-sign'></button></h3>
-                <div class="margin-left" readonly id="sql" rows="5" cols="70" autocomplete="off"></div>
-                <button type="button" class="btn btn-info margin-left" id="calcbutton" data-toggle="tooltip" title="Visa/Uppdatera SQL koden">Visa SQL</button>
-                <button type="button" class="btn btn-info margin-left" id="sendbutton" disabled data-toggle="tooltip" title="Skickar SQL koden till databasen(eskilstuna), detta skapar sökvyn.">Skapa sökvy</button>
-            </div>		
+				<tbody id=mainbody>
+					<tr style='text-align: center;'>
+						<th>Försvinn!</th>
+						<th>Kolumnnamn</th>
+						<th>Titel</th>
+						<th>Sökbar kolumn</th>
+						<th style='text-align: left;'>FTL-namn</th>
+						<th>FTL-typ</th>
+					</tr>
+					<tr >
+						<td>
+							<button type="button" class="btn btn-danger" name="bortknapp"data-toggle="tooltip" title="Ta bort denna rad">X</button>
+						</td>
+						<td>
+							<select class="dropbox" id="kolumn" name="kolumn">
+							</select>
+						</td>
+						<td>
+							<input onchange='checkbox(this)' type='checkbox' id='title' class='title_check' data-toggle="tooltip" title="Denna kolumnnamn blir title för nya sökvyn">
+						</td>
+						<td>
+							<input type="checkbox" id="sokdel" name="checkbox" data-toggle="tooltip" title="För att göra kolumnen sökbar klickar du i bockrutan">
+						</td>
+						<td>
+							<input id='FTLfield' type='text' data-toggle="tooltip" title="Om du vill använda FTL-vy så ange ett användarvänligt namn här, annars lämna det tomt.">
+						</td>
+						<td>
+							<div class="dropdown">
+							<button onclick='FTLtypes(this)' id="FTLtype" class="FTLtypeBtn dropbtn">Värde</button>
+							  <div id="FTLlist" class="dropdown-content">
+							<a >Länk</a>
+							<a >Bild</a>
+							<a >Datum</a>
+						 </div> 
+						</div>
+						</td>
+					</tr>
+				</tbody>
+					
+			</table>
+			<button type="button" class="add-all-columns btn btn-info" style="position: relative; left: 0.5em;"data-toggle="tooltip" title="Lägg till alla kolumner från tabellen">Lägg till<br> alla kolumner</button>
+			<button class="btn btn-info" id="addbutton" style="position: relative; left: 1em;"data-toggle="tooltip" title="Lägg till en kolumn">+1</button>
+		</div>
+		<div name='SQLandFTL' class='divs SQLFTL'>	
+			<div name='SQLWindow' id='SQLWindow'>
+				<h3 class="margin-left">SQL<button id='SQLInfo' class='info_knapp glyphicon glyphicon-exclamation-sign'></button></h3>
+				<div class="margin-left" readonly id="sql" rows="5" cols="70" autocomplete="off"></div>
+				<button type="button" class="btn btn-info margin-left" id="calcbutton" data-toggle="tooltip" title="Visa/Uppdatera SQL koden">Visa SQL</button>
+				<button type="button" class="btn btn-info margin-left" id="sendbutton" disabled data-toggle="tooltip" title="Skickar SQL koden till databasen(eskilstuna), detta skapar sökvyn.">Skapa sökvy</button>
+			</div>		
 			<div name='FTLWindow' id='FTLWindow'>
-                <h3 class="margin-left">FTL<button id='FTLInfo' class='info_knapp glyphicon glyphicon-exclamation-sign'></button></h3>
-                <div class="margin-left" readonly id="ftl" rows="5" cols="70" autocomplete="off"></div>
-                <button type="button" class="btn btn-info margin-left" id="calcFTL" data-toggle="tooltip" title="Visa/Återställ FTL koden">Visa FTL</button>
+				<h3 class="margin-left">FTL<button id='FTLInfo' class='info_knapp glyphicon glyphicon-exclamation-sign'></button></h3>
+				<div class="margin-left" readonly id="ftl" rows="5" cols="70" autocomplete="off"></div>
+				<button type="button" class="btn btn-info margin-left" id="calcFTL" data-toggle="tooltip" title="Visa/Återställ FTL koden">Visa FTL</button>
 				<button type="button" class="btn btn-info margin-left" id="saveFTL" disabled data-toggle="tooltip" title="Spara FTL till en content.ftl fil">Spara</button>
 				<button type="button" class="btn btn-info margin-left" id="modifyFTL" data-toggle="tooltip" title="Justera den generarade FTL-koden">Modifiera</button>
 				<button type="button" class="btn btn-info margin-left" id="FTLcodesButton" data-toggle="tooltip" title="Visa exempel på FTL-kod">Kodexempel</button>
@@ -130,9 +123,8 @@
 					Lägga till en bild:<br><i>&lt;img src="DIN SÖKVÄG/URL" width="130px"&gt;</i>				
 					</p>
 				</div>		
-            </div>
+			</div>
 		</div>
-
 	<script type="text/javascript">
 //When DOM ready then call node js server and receive layer_spec from db:geoportia then populate selector
 $(function () {
@@ -694,6 +686,47 @@ $(document).delegate('#textareaFTL', 'keydown', function(event) {
   }
 });
 	
+//$(".btn-danger").click(test);	
+
+/*function test (){
+	switch("Light"){
+		case "Light" :
+			$(".header").css('background','#fdf7f7e8');
+			$(".header").css('color','black');
+			$(".divs").css('background','linear-gradient( #fffdfde3, #ffffffa3,#ffffffc4,#ffffffba)');
+			$(".divs").css('color','black');
+			$(".SQLWindow").css('border-color','black');
+			$(".FTLWindow").css('border-color','black');
+			$("#titel").css('border-color','black');
+			$("#sokvy").css('border-color','black');
+			$("#where").css('border-color','black');
+			$("#tabell").css('border-color','black');
+			$(".btn-info").css('background-color','#5bc0de');
+			$(".btn-info:hover").css('background','#202344');
+			$(".btn-info:active").css('background','#202344');
+			$(".btn-info:active:focus").css('background','#202344');
+			$(".btn-info:focus").css('background','#202344');
+			$("[class^=btn-danger]").css('background-color','#d9534f');
+			$("[class^=btn-danger]:hover").css('background','#c9302c');
+			$("[class^=btn-danger]:active").css('background','#c9302c');
+			$("[class^=btn-danger]:active:focus").css('background','#c9302c');
+			$("[class^=btn-danger]:focus").css('background','#c9302c');
+			$(".info_knapp").css('background-color','#5bc0de');
+			$(".info_knapp:hover").css('background','#202344');
+			$(".info_knapp:active").css('background','#202344');
+			$(".info_knapp:active:focus").css('background','#202344');
+			$(".info_knapp:focus").css('background','#202344');
+			$(".dropbtn").css('background-color','#5bc0de');
+			$(".dropbtn:hover").css('background','#202344');
+			$(".dropbtn:active").css('background','#202344');
+			$(".dropbtn:active:focus").css('background','#202344');
+			$(".dropbtn:focus").css('background','#202344');
+			break;
+		case "Dark" : 
+			break;
+	}
+}*/
+
 //jqueryUI för att göra lista DOMelement sorterbar
 $('#fler_kolumner tbody').sortable();
 </script>
