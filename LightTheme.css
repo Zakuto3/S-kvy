@@ -1,0 +1,263 @@
+.margin-left{
+	margin-left: 0.5em;
+}
+
+.divs{
+	background: linear-gradient( #fffdfde3, #ffffffa3,#ffffffc4,#ffffffba);
+    border: solid 1px #dddddd;
+    position: absolute;
+    overflow: auto;
+    padding-left: 6px;
+    padding-top: 6px;
+    min-height: 92%;
+    border-radius: 10px;
+    margin: 1%;
+    margin-top: 0%;
+    color: black;
+			
+}
+
+.header{
+	background: #fdf7f7e8;
+    border: solid 1px #ffffff9e;
+    text-align: center;
+    position: absolute;
+    top: 0px;
+    height: 35px;
+    border-radius: 8px;
+    color: black;
+    line-height: 30px;
+    font-size: 20px;
+    margin: 1%;
+			
+}
+	
+.code_snippets{
+	font-family: Arial;
+	color: black;
+}
+
+.info_knapp{
+	float:right;
+	width: 40px;
+	height: 30px;
+	border: solid 1px #46b8da; 
+	border-radius: 4px;
+	right: 2%;
+	color: white;
+	background-color: #5bc0de;
+}	
+
+.info_knapp:hover{
+	background-color: #31b0d5;	    
+}
+
+.tabell{
+	width: 31%;  
+	left:0px;
+}
+
+.SQLFTL {
+	width: 31%; 
+	right: 0px;
+	padding-left: 0px;
+}
+
+.kolumn{
+	width: 34%; 
+	right: 32%;
+}
+
+
+#background{
+	background-image: url(background_light.jpg);
+    padding: 4%;
+}
+
+#Search{
+	color: black;
+    border-radius: 4px;
+    border-style: initial;
+	margin-top: 1%;
+}
+
+#layerspecs {
+	border-radius: 4px;
+	color: black;
+    position: absolute;
+    top: 4%;
+    width: 70%;	
+}
+
+#kolumn{
+	color:black;
+	border-radius: 4px;
+}
+	
+#FTLWindow, #SQLWindow {
+	border: 1px solid;
+	border-left: 0px;
+	border-right:0px;
+	border-top: 0px;
+	border-color: black;
+}
+	
+#newtitel, #newsokvy{
+	display:none;
+	width:99%;
+	border-color: black;
+}
+	
+#changeName {
+	height:25px;
+	padding:0;
+}
+	
+#where, #tabell {
+	border-bottom: solid 1px #ddd;
+	border-color: black;
+}
+	
+#titel, #sokvy{
+	display:block; 
+	border-bottom: solid 1px #ddd;
+	border-color: black;
+}
+
+#newsokvy{
+	color: black;
+	border-radius: 4px;
+	border-style: initial;
+}
+
+#sokdel {
+	position: relative;
+	left: 30%;
+}
+
+#bortknapp, #title {
+	position: relative;
+	left: 20%;
+}	
+
+#FTL{
+	margin-left: 1.319583em;
+	width: 90%;
+	height: 500px;
+	overflow:auto;
+}
+
+#FTLfield{
+	color: black;	
+	border-radius: 4px;
+}
+
+/* Dropdown Button */
+.dropbtn {
+	visibility: hidden;
+    background-color: #5bc0de;
+    color: white;  
+    font-size: 15px;   
+    cursor: pointer;
+	height: 26px;
+	width: 60px;
+	border: solid 1px #46b8da; 
+	border-radius: 4px;
+}
+
+/* Dropdown button on hover & focus */
+.dropbtn:hover, .dropbtn:focus {
+    background-color: #31b0d5;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 16px;
+    box-shadow: 0px 0px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+/* Change color of dropdown links on hover */
+
+.dropdown-content a:hover {background-color: #ddd}
+
+#modifyFTL{
+	display : none;
+}
+
+#textareaFTL {
+	width: 98%;
+	height: 500px;
+	color: black;
+}
+
+
+#FTLCodeSnippets {
+	display: none;
+	background: whitesmoke;
+	border: solid 1px #ddd;
+	margin: 10px;
+	border-radius: 4px;
+}
+
+#FTLSnippetsHead {
+	font-size: 18px;
+	border-bottom: solid 1px #ddd;
+	padding: 5px;
+	color: black;
+}
+
+#FTLSnippetsText{
+	margin: 10px;
+	margin-top: 5px;
+	color:black;
+}
+
+#closeFTLCode{
+	font-size: 16px;
+	border-radius: 5px;	
+	float: right;
+	margin-top: 0px;
+	margin-right: 4px;
+	width: 5%;
+	text-align: center;
+	/*display: none;*/
+}
+
+#closeFTLCode:hover{
+	background: red;
+	color: white;
+	cursor: pointer;
+	/*display: none;*/
+}
+
+.show {display:none;}
+
+#theme_btn{
+	height: 1.5%;
+    position: absolute;
+    top: 0%;
+    right: 0%;
+    font-size: smaller;
+    z-index: 2;
+     width: 3%;
+    border-radius: inherit;
+    opacity: 0.9;
+}
