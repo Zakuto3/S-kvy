@@ -7,6 +7,7 @@ var DBobj = require('./DBinfo');
 
 //import DBobj from './DBinfo';
 
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -80,6 +81,7 @@ app.get('/eskilstuna/:tabell', function (req, res) {
     })
 });
 
+
 app.post('/sovy_testo', function (req, res){
 	var pool = new pg.Pool(DBobj.config_eskilstuna);
     pool.connect(function (err, client, done) 
@@ -105,9 +107,8 @@ app.post('/sovy_testo', function (req, res){
 });
 
 
+
 app.listen(1337);
-
-
 
 
 
