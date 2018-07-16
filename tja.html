@@ -13,46 +13,39 @@
 	<link rel="stylesheet" href="./style.css">
 	
 </head>
-<body>
-
-	<div name='tabellHeader' class='header tabell'>
-			TABELLER
-		</div>
+<body id='background'>
+		<div name='tabellHeader' class='header tabell'>
+				TABELLER
+			</div>
 		<div name='kolumnHeader' class='header kolumn'>
-			KOLUMNER
-		</div>
+				KOLUMNER
+			</div>
 		<div name='FTLnSQLHeader' class='header SQLFTL'>
-			SKRIPT
-		</div>    
-        <div name='tabellWindow' class='divs tabell'>
-
-        		<input type="text" id="Search" placeholder="Search for names.." title="Search"> 
-
-				<h3><button id='tabellInfo' class='popup info_knapp glyphicon glyphicon-exclamation-sign popup'></button></h3><br>
-
-        		<select id="layerspecs" size=1 label="Select one:"></select> 
-
-                <h3 data-toggle="tooltip" title="Visar aktuella tabellen">
-					Tabell
-				</h3>
-                <p id="tabell"></p>
-                <h3>
-					Sökvy 
-					<button onclick='changeText(this,"sokvy","newsokvy")' type="button" class="btn btn-info" id="changeName" data-toggle="tooltip" title="Ändrar namn på sökvy tabellen. VARNING: Nya namnet kanske inte finns i 'layer_specification' tabellen i Geoportia databasen, detta kan leda till oförmodad resultat.">Ändra</button>
-
-				</h3>
-				<input id='newsokvy' type='text'>				
-                <p id="sokvy"></p>
-                <h3>
-					Titel
-					<!--<button onclick='changeText(this,"titel","newtitel")' type="button" class="btn btn-info" id="changeName">Ändra</button>-->
-				</h3>
-                <input id='newtitel' type='text'>				
-                <p id="titel"></p>
-				
-                <h3>Where</h3>
-                <p id="where"></p>
-            </div>
+				SKRIPT
+			</div>    
+		<div name='tabellWindow' class='divs tabell'>
+			<input type="text" id="Search" placeholder="Search for names.." title="Search"> 
+			<h3><button id='tabellInfo' class='popup info_knapp glyphicon glyphicon-exclamation-sign popup'></button></h3><br>
+			<select id="layerspecs" size=1 label="Select one:"></select> 
+			<h3 data-toggle="tooltip" title="Visar aktuella tabellen">
+				Tabell
+			</h3>
+			<p id="tabell"></p>
+			<h3>
+				Sökvy 
+				<button onclick='changeText(this,"sokvy","newsokvy")' type="button" class="btn btn-info" id="changeName" data-toggle="tooltip" title="Ändrar namn på sökvy tabellen. VARNING: Nya namnet kanske inte finns i 'layer_specification' tabellen i Geoportia databasen, detta kan leda till oförmodad resultat.">Ändra</button>
+			</h3>
+			<input id='newsokvy' type='text'>				
+			<p id="sokvy"></p>
+			<h3>
+				Titel
+				<!--<button onclick='changeText(this,"titel","newtitel")' type="button" class="btn btn-info" id="changeName">Ändra</button>-->
+			</h3>
+			<input id='newtitel' type='text'>				
+			<p id="titel"></p>
+			<h3>Where</h3>
+			<p id="where"></p>
+		</div>
 		<div name='kolumnWindow' class='divs kolumn'>
                 <h3>Inkluderade kolumner med ev. FTLnamn <button id='kolumnInfo' class='info_knapp glyphicon glyphicon-exclamation-sign'></button></h3>
 				
@@ -142,9 +135,8 @@
 					&lt;td&gt; : En cell i en rad
 					</p>
 				</div>		
-            </div>
+			</div>
 		</div>
-
 	<script type="text/javascript">
 //When DOM ready then call node js server and receive layer_spec from db:geoportia then populate selector
 
@@ -733,6 +725,48 @@ $(document).delegate('#textareaFTL', 'keydown', function(event) {
   }
 });
 	
+$(".btn-danger").click(test);	
+
+function test (){
+	switch("Light"){
+		case "Light" :
+			$(".header").css('background','#fdf7f7e8');
+			$(".header").css('color','black');
+			$(".divs").css('background','linear-gradient( #fffdfde3, #ffffffa3,#ffffffc4,#ffffffba)');
+			$(".divs").css('color','black');
+			$(".SQLWindow").css('border-color','black');
+			$(".FTLWindow").css('border-color','black');
+			$("#titel").css('border-color','black');
+			$("#sokvy").css('border-color','black');
+			$("#where").css('border-color','black');
+			$("#tabell").css('border-color','black');
+			$(".btn-info").css('background-color','#5bc0de');
+			$(".btn-info:hover").css('background','#202344');
+			$(".btn-info:active").css('background','#202344');
+			$(".btn-info:active:focus").css('background','#202344');
+			$(".btn-info:focus").css('background','#202344');
+			$("[class=btn-danger]").css('background-color','#d9534f');
+			$("[class=btn-danger:hover]").css('background','#c9302c');
+			$("[class=btn-danger:active]").css('background','#c9302c');
+			$("[class=btn-danger:active:focus]").css('background','#c9302c');
+			$("[class=btn-danger:focus]").css('background','#c9302c');
+			$(".info_knapp").css('background-color','#5bc0de');
+			$(".info_knapp:hover").css('background','#202344');
+			$(".info_knapp:active").css('background','#202344');
+			$(".info_knapp:active:focus").css('background','#202344');
+			$(".info_knapp:focus").css('background','#202344');
+			$(".dropbtn").css('background-color','#5bc0de');
+			$(".dropbtn:hover").css('background','#202344');
+			$(".dropbtn:active").css('background','#202344');
+			$(".dropbtn:active:focus").css('background','#202344');
+			$(".dropbtn:focus").css('background','#202344');
+			break;
+		case "Dark" : 
+		
+			break;
+	}
+}
+
 //jqueryUI för att göra lista DOMelement sorterbar
 $('#fler_kolumner tbody').sortable();
 </script>

@@ -107,7 +107,3 @@ app.post('/sovy_testo', function (req, res){
 
 app.listen(1337);
 
-
-
-
-
