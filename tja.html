@@ -10,10 +10,11 @@
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">   
 
-	<link rel="stylesheet" href="./style.css">
+	<link id="themes" rel="stylesheet" href="./DarkTheme.css">
 	
 </head>
 <body id='background'>
+	<button id="theme_btn" class="info_knapp" value="Dark">Themes</button>
 		<div name='tabellHeader' class='header tabell'>
 				TABELLER
 			</div>
@@ -725,45 +726,22 @@ $(document).delegate('#textareaFTL', 'keydown', function(event) {
   }
 });
 	
-$(".btn-danger").click(test);	
+$("#theme_btn").click(ChangeTheme);	
 
-function test (){
-	switch("Light"){
-		case "Light" :
-			$(".header").css('background','#fdf7f7e8');
-			$(".header").css('color','black');
-			$(".divs").css('background','linear-gradient( #fffdfde3, #ffffffa3,#ffffffc4,#ffffffba)');
-			$(".divs").css('color','black');
-			$(".SQLWindow").css('border-color','black');
-			$(".FTLWindow").css('border-color','black');
-			$("#titel").css('border-color','black');
-			$("#sokvy").css('border-color','black');
-			$("#where").css('border-color','black');
-			$("#tabell").css('border-color','black');
-			$(".btn-info").css('background-color','#5bc0de');
-			$(".btn-info:hover").css('background','#202344');
-			$(".btn-info:active").css('background','#202344');
-			$(".btn-info:active:focus").css('background','#202344');
-			$(".btn-info:focus").css('background','#202344');
-			$("[class=btn-danger]").css('background-color','#d9534f');
-			$("[class=btn-danger:hover]").css('background','#c9302c');
-			$("[class=btn-danger:active]").css('background','#c9302c');
-			$("[class=btn-danger:active:focus]").css('background','#c9302c');
-			$("[class=btn-danger:focus]").css('background','#c9302c');
-			$(".info_knapp").css('background-color','#5bc0de');
-			$(".info_knapp:hover").css('background','#202344');
-			$(".info_knapp:active").css('background','#202344');
-			$(".info_knapp:active:focus").css('background','#202344');
-			$(".info_knapp:focus").css('background','#202344');
-			$(".dropbtn").css('background-color','#5bc0de');
-			$(".dropbtn:hover").css('background','#202344');
-			$(".dropbtn:active").css('background','#202344');
-			$(".dropbtn:active:focus").css('background','#202344');
-			$(".dropbtn:focus").css('background','#202344');
-			break;
-		case "Dark" : 
-		
-			break;
+function ChangeTheme (){
+	var btnValue = $("#theme_btn").val();
+	console.log(btnValue);
+	switch(btnValue){
+		case "Dark":
+		 $("#themes").attr('href','LightTheme.css');
+		 $("#theme_btn").val("Light");
+		break;
+
+		case "Light":
+		$("#themes").attr('href','DarkTheme.css');
+		$("#theme_btn").val("Dark");
+		break;
+
 	}
 }
 
