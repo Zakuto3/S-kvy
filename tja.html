@@ -14,7 +14,7 @@
 	
 </head>
 <body id='background'>
-	<button id="theme_btn" class="info_knapp" value="Dark">Themes</button>
+	<button id="theme_btn" class="info_knapp" value="Dark" data-toggle="tooltip" title="Skifta färgtema">Themes</button>
 		<div name='tabellHeader' class='header tabell'>
 				TABELLER
 			</div>
@@ -81,7 +81,7 @@
 							</td>
 							<td>
 								<div class="dropdown">
-							  	<button onclick='FTLtypes(this)' id="FTLtype" class="FTLtypeBtn dropbtn">Värde</button>
+							  	<button onclick='FTLtypes(this)' id="FTLtype" class="FTLtypeBtn dropbtn" data-toggle="tooltip" title="Välj hur kolumnen ska visas i FTL">Värde</button>
 								  <div id="FTLlist" class="dropdown-content">
 							    <a >Länk</a>
 							    <a >Bild</a>
@@ -121,6 +121,7 @@
 					För att ange kolumnvärdet:<br><i>${feature.KOLUMNNAMN.value}</i><br><br>
 					Ta bort timmar, minuter och sekunder från timestamps:<br><i>${feature.KOLUMNNAMN.value?string?substring(0,10)}</i><br><br>
 					Kapa alla decimaler:<br><i><#assign x=feature.KOLUMNNAMN.value?index_of(".")><br>${feature.KOLUMNNAMN.value?substring(0,x)}</i><br><br>
+					För att formatera postnummer när det finns massor av nollor:<br><i>${feature.KOLUMNNAMN.rawValue?c}</i><br><br>
 					Lägga till en länk:<br><i>&lt;a href='DIN URL' target='_blank'&gt;DIN TEXT/BILD&lt;/a&gt;</i><br><br>
 					Lägga till en bild:<br><i>&lt;img src="DIN SÖKVÄG/URL" width="130px"&gt;</i><br><br>
 					Lägg till en rad med Värdet som en länk:
@@ -176,7 +177,7 @@ function createRow(){
 	var titleBox = "<td><input onchange='checkbox(this)' type='checkbox' id='title' class='title_check' data-toggle='tooltip' title='Denna kolumnnamn blir title för nya sökvyn' ></td>";
 	var searchBox = "<td><input type='checkbox' id='sokdel' name='checkbox' data-toggle='tooltip' title='För att göra kolumnen sökbar klickar du i bockrutan'></td>";
 	var FTLfield = "<td><input id='FTLfield' type='text'data-toggle='tooltip' title='Om du vill använda FTL-vy så ange ett användarvänligt namn här, annars lämna det tomt'></td>"
-	var FTLtype = "<td><div class='dropdown'><button onclick='FTLtypes(this)' id='FTLtype' class='FTLtypeBtn dropbtn'>Värde</button><div id='FTLlist' class='dropdown-content'><a>Länk</a><a>Bild</a><a>Datum</a><a >Heltal</a></div> </div></td>"
+	var FTLtype = "<td><div class='dropdown'><button onclick='FTLtypes(this)' id='FTLtype' class='FTLtypeBtn dropbtn' data-toggle='tooltip' title='Välj hur kolumnen ska visas i FTL'>Värde</button><div id='FTLlist' class='dropdown-content'><a>Länk</a><a>Bild</a><a>Datum</a><a >Heltal</a></div> </div></td>"
 	row += removeButton + columnName + titleBox + searchBox + FTLfield + FTLtype +"</tr>";
 	return row;
 
@@ -605,19 +606,18 @@ $("#tabellInfo").on('click', function (){
 	
 $("#kolumnInfo").on('click', function (){
 	alert("- Lägg till de kolumner du vill ha i din sökvy.\n- Välj vilken som ska vara 'title'.\n- Sökbara kolumner läggs till i searchfield i sökvyn.\n"+
-	"- För att kolumnen ska vara med i FTL-filen så skriver du något i FTL-fältet.");
+	"- För att kolumnen ska vara med i FTL-filen så skriver du något i FTL-fältet.\n- Du kan välja hur värdet ska representeras genom att välja FTL-typ, 'Värde' är stanardtypen.\n- Om du vill ändra på ordningen kan du dra runt raderna fritt.");
 });
 
 $("#SQLInfo").on('click', function (){
 	alert("- Här visas SQL-koden.\n- Tänk på att det krävs en 'title' för att visa koden.\n"+
-	"- När du är nöjd kan du trycka på 'Skapa sökvyn' för att skapa den i databasen.");
+	"- När du är nöjd kan du trycka på 'Skapa sökvyn' för att skapa den i databasen.\n- Om sökvyn redan finns, tänk på att sökvyn du skapar skriver över den befintliga sökvyn i databasen.");
 });
 
 $("#FTLInfo").on('click', function (){
 	alert("- Här visas FTL-koden.\n- Du kan lägga till en länk så genereras den i FTL-koden.\n"+
 	"- Spara-knappen laddar ner en 'config.ftl'.\n- Om du inte får välja vart den sparar så hamnar den nog på standardplatsen för hämtade filer."+
-	"\n- Om du vill ha fler länkar eller inte nöjd med"+
-	" vart länken befinner sig så kan du kopiera raden, flytta den eller ange ny URL och namn.");
+	"\n- Kodexempelknappen visar exempel på kod som du kan använda om du vill modifiera koden själv");
 });
 
 //filters tables when searching in searchfield
