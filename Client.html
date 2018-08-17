@@ -140,7 +140,7 @@
 						<div id="FTLWindowtext" class="collapse">
 							<!--position: absolute; max-width: 50%; right:0px; background-color: black; -->
 							<div class= 'info-text'>
-							- Till vänster listas sökvyer som specifierats i layerspecification-tabellen i databasen.<br>- Informationen under kommer också direkt från layerspecifications.<br>- Vid ändring av sökvynamn, tänk på att sökvyn kanske inte finns specifierad i layerspecification-tabellen.<br>- Tabell: Vilken tabell som används för sökvyn.<br>- Sökvy: Vad sökvyn du skapar heter.<br>- Titel: Sökvyns titel i geoserver. <br>- Where: Sökvyns where-sats.
+							- Här visas FTL-koden.<br>- Spara-knappen laddar ner en 'config.ftl'.<br>- Om du inte får välja vart den sparar så hamnar den nog på standardplatsen för hämtade filer.<br>- Kodexempelknappen visar exempel på kod som du kan använda om du vill modifiera koden själv
 							</div>
 						</div>
 				    </div>
@@ -158,11 +158,13 @@
 					</div>
 					<p id='FTLSnippetsText'>
 					För att ange kolumnvärdet:<br><i>${feature.KOLUMNNAMN.value}</i><br><br>
-					Ta bort timmar, minuter och sekunder från timestamps:<br><i>${feature.KOLUMNNAMN.value?string?substring(0,10)}</i><br><br>
-					Kapa alla decimaler:<br><i><#assign x=feature.KOLUMNNAMN.value?index_of(".")><br>${feature.KOLUMNNAMN.value?substring(0,x)}</i><br><br>
+					Ta bort timmar, minuter och sekunder från timestamps:<br>
+					(timestamp är 18 tecken lång, substring(0,10) behåller de 10 första)<br>
+					<i>${feature.KOLUMNNAMN.value?string?substring(0,10)}</i><br><br>
+					Kapa alla decimaler:<br>(byt ut "." i index_of(".") till "," om det är en kommatecken istället för punk)<br><i><#assign x=feature.KOLUMNNAMN.value?index_of(".")><br>${feature.KOLUMNNAMN.value?substring(0,x)}</i><br><br>
 					För att formatera postnummer när det finns massor av nollor:<br><i>${feature.KOLUMNNAMN.rawValue?c}</i><br><br>
 					Lägga till en länk:<br><i>&lt;a href='DIN URL' target='_blank'&gt;DIN TEXT/BILD&lt;/a&gt;</i><br><br>
-					Lägga till en bild:<br><i>&lt;img src="DIN SÖKVÄG/URL" width="130px"&gt;</i><br><br>
+					Lägga till en bild:<br><i>&lt;img src="DIN SÖKVÄG/URL" width="130px"&gt;</i><br>EX: <i>&lt;img src="/dokument/bilder/Cykelparkeringar/60.JPG" width="200px"&gt;</i><br><br>
 					Lägg till en rad med Värdet som en länk:
 					<br>
 					&lt;tr&gt;
