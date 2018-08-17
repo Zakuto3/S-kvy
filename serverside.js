@@ -36,8 +36,6 @@ app.get('/geoportia', function (req, res) {
             }
             else
             {
-                console.log("skickar nu return med result för geoporto");
-                console.log(result);
                 res.send(result.rows); //alla akt_bet. För första raden så .rows[0]
             }         
         });
@@ -55,7 +53,6 @@ app.get('/eskilstuna/:tabell', function (req, res) {
 		{
             return console.error('error fetching client from pool', err);
         }
-        console.log(req.params.tabell);
         var str = req.params.tabell; // Finns en OBJECTID för vissa lager, ex ÖP. filtreras även bort?
         //Hämtar kolumnnamn via information_schema.columns, minus geom och geodb_oid. De hämtas aldrig ens till applikationen så behöver inte filtreras bort senare.
         client.query("SELECT column_name FROM information_schema.columns WHERE table_Schema = 'public' AND column_name <> 'geom' AND column_name <> 'geodb_oid' AND table_name = '" + str + "'", function (err, result) 
@@ -68,8 +65,6 @@ app.get('/eskilstuna/:tabell', function (req, res) {
             } 
 			else 
 			{
-                console.log("skickar nu return med result för eskilstuna");
-                console.log(result.rows);
                 res.send(result.rows); //alla akt_bet. För första raden så .rows[0]
             }
             
@@ -80,7 +75,7 @@ app.get('/eskilstuna/:tabell', function (req, res) {
     })
 });
 
-app.post('/sovy_testo', function (req, res){
+app.post('/Core', function (req, res){
 	var pool = new pg.Pool(DBobj.config_eskilstuna);
     pool.connect(function (err, client, done) 
 	{

@@ -10,9 +10,9 @@
     padding-left: 6px;
     padding-top: 6px;
     min-height: 92%;
-    border-radius: 10px;
+    border-radius: 8px;
     margin: 1%;
-    margin-top: 0%;
+    margin-top: -0.4%;
     color: black;
 			
 }
@@ -48,6 +48,21 @@
 	background-color: #5bc0de;
 }	
 
+.precollaps{
+	position: absolute;
+	max-width: 65%; 
+	right:2%;
+	margin-top: 3%;
+	z-index: 2;
+}
+
+.info-text{
+	background-color: white; 
+	border: solid 1px #46b8da;
+	border-radius: 4px;
+	padding-left: 1%
+}
+
 .info_knapp:hover{
 	background-color: #31b0d5;	    
 }
@@ -68,6 +83,9 @@
 	right: 32%;
 }
 
+.btn-info{
+	margin-bottom: 1%;
+}
 
 #background{
 	background-image: url(background_light.jpg);
