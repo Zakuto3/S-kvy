@@ -64,7 +64,7 @@
 						<!--position: absolute; max-width: 50%; right:0px; background-color: black; -->
 						<div class= 'info-text'>
 						- Lägg till de kolumner du vill ha i din sökvy.<br>- Välj vilken som ska vara 'title'.<br>- Sökbara kolumner läggs till i searchfield i sökvyn.<br>
-					- För att kolumnen ska vara med i FTL-filen så skriver du något i FTL-fältet.<br>- Du kan välja hur värdet ska representeras genom att välja FTL-typ, 'Värde' är stanardtypen.<br>- Om du vill ändra på ordningen kan du dra runt raderna fritt.
+					- För att kolumnen ska vara med i FTL-filen så skriver du något i FTL-fältet.<br>- Du kan välja hur värdet ska representeras genom att välja FTL-typ, 'Värde' är standardtypen.<br>- Om du vill ändra på ordningen kan du dra runt raderna fritt.
 						</div>
 					</div>
 			    </div>
@@ -100,7 +100,7 @@
 							</td>
 							<td>
 								<div class="dropdown">
-							  	<button onclick='FTLtypes(this)' id="FTLtype" class="FTLtypeBtn dropbtn" data-toggle="tooltip" title="Välj hur kolumnen ska visas i FTL">Värde</button>
+							  	<button onclick='FTLtypes(this)' id="FTLtype" class="FTLtypeBtn dropbtn" data-toggle="tooltip" title="Ange FTL-namn för att välja hur värdet ska visas i FTL" disabled>Värde</button>
 								  <div id="FTLlist" class="dropdown-content">
 							    <a >Länk</a>
 							    <a >Bild</a>
@@ -140,7 +140,7 @@
 						<div id="FTLWindowtext" class="collapse">
 							<!--position: absolute; max-width: 50%; right:0px; background-color: black; -->
 							<div class= 'info-text'>
-							- Här visas FTL-koden.<br>- Spara-knappen laddar ner en 'config.ftl'.<br>- Om du inte får välja vart den sparar så hamnar den nog på standardplatsen för hämtade filer.<br>- Kodexempelknappen visar exempel på kod som du kan använda om du vill modifiera koden själv
+							- Här visas FTL-koden.<br>- Spara-knappen laddar ner en 'config.ftl'.<br>- Om du inte får välja vart den sparar så hamnar den nog på standardplatsen för hämtade filer.<br>- Kodexempelknappen visar exempel på kod som du kan använda om du vill modifiera koden själv.<br>- Tänk på att FTL-filen matchar den sökvy som skapas i samband med den.
 							</div>
 						</div>
 				    </div>
@@ -217,7 +217,7 @@ function createRow(){
 	var titleBox = "<td><input onchange='checkbox(this)' type='checkbox' id='title' class='title_check' data-toggle='tooltip' title='Det här kolumnnamnet blir titel för nya sökvyn.' ></td>";
 	var searchBox = "<td><input type='checkbox' id='sokdel' name='checkbox' data-toggle='tooltip' title='För att göra kolumnen sökbar klickar du i bockrutan'></td>";
 	var FTLfield = "<td><input id='FTLfield' type='text'data-toggle='tooltip' title='Om du vill använda FTL-vy så ange ett användarvänligt namn här, annars lämna det tomt'></td>"
-	var FTLtype = "<td><div class='dropdown'><button onclick='FTLtypes(this)' id='FTLtype' class='FTLtypeBtn dropbtn' data-toggle='tooltip' title='Välj hur kolumnen ska visas i FTL'>Värde</button><div id='FTLlist' class='dropdown-content'><a>Länk</a><a>Bild</a><a>Datum</a><a >Heltal</a></div> </div></td>"
+	var FTLtype = "<td><div class='dropdown'><button onclick='FTLtypes(this)' id='FTLtype' class='FTLtypeBtn dropbtn' data-toggle='tooltip' title='Ange FTL-namn för att välja hur värdet ska visas i FTL' disabled>Värde</button><div id='FTLlist' class='dropdown-content'><a>Länk</a><a>Bild</a><a>Datum</a><a >Heltal</a></div> </div></td>"
 	row += removeButton + columnName + titleBox + searchBox + FTLfield + FTLtype +"</tr>";
 	return row;
 
@@ -442,6 +442,7 @@ function FTLbuilder(FTLarr, kolumnArr,FTLtypes){
 //Builds a row in FTL based on the type chosen
 function BuildRow(kolumn, name, type, B){
 	let FTLrow;
+	name = charConverter(name);
 		switch(type){
 			case "Länk": 
 				FTLrow = B.Otr+B.CT+B.BR+B.td+B.OT+"a href='${feature."+kolumn+".value}' target='_blank'"+B.CT+name+B.OT+"/a"+B.CT+B.OT+"/td"+B.CT+B.BR+
@@ -450,8 +451,9 @@ function BuildRow(kolumn, name, type, B){
 
 			case "Datum":
 				FTLrow = B.Otr+B.CT+B.BR+
+				"\t\t\t\t<#assign x=feature."+kolumn+".value?index_of(' ')>"+B.BR+
 				B.td+B.Obold+name+":"+B.Cbold+B.OT+"/td"+B.CT+B.BR+
-				B.td+"${feature."+kolumn+".value?string?substring(0,10)}"+B.OT+"/td"+B.CT+B.BR+
+				B.td+"${feature."+kolumn+".value?string?substring(0,x)}"+B.OT+"/td"+B.CT+B.BR+
 				B.Ctr+B.CT+B.BR;
 				break;
 
@@ -477,10 +479,17 @@ function BuildRow(kolumn, name, type, B){
 	return FTLrow;
 }
 
+function charConverter(str){
+	//avoid translating characters in textarea
+	str = str.replace(/ä/g,"&\\#228;").replace(/å/g, "&\\#229;").replace(/ö/g, "&\\#246;");
+	str = str.replace(/Ä/g,"&\\#196;").replace(/Å/g, "&\\#197;").replace(/Ö/g, "&\\#214;");
+	return str;
+}
+
 /*downloads the FTLstring into
 	a content.ftl file*/
 function saveFTL(){
-	var FTLtext = $("#textareaFTL").val();
+	var FTLtext = $("#textareaFTL").val().replace(/\\/g, '');//Removes slashes to get correct HTML encoding in FTL file
 	var file = new Blob([FTLtext]);
 	var a = document.createElement("a"),
     url = URL.createObjectURL(file);
@@ -666,10 +675,10 @@ $(document).on('click',"[id=FTLlist] a", function(){
 //show or hide FTltypebutton based or FTLfield input
 $(document).on('keyup',"[id=FTLfield]", function(){
 	if($(this).val() == ""){
-		$(this).parent().siblings().children(".dropdown").children("#FTLtype").css('visibility', 'hidden');
+		$(this).parent().siblings().children(".dropdown").children("#FTLtype").prop('disabled', true);
 	}
 	else{
-		$(this).parent().siblings().children(".dropdown").children("#FTLtype").css('visibility', 'visible');
+		$(this).parent().siblings().children(".dropdown").children("#FTLtype").prop('disabled', false);
 	}
 });
 

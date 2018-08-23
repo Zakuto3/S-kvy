@@ -208,8 +208,29 @@
 
 /* Dropdown Button */
 .dropbtn {
-	visibility: hidden;
     background-color: black;
+    color: white;  
+    font-size: 15px;   
+    cursor: pointer;
+	height: 26px;
+	width: 60px;
+	border: solid 1px #46b8da; 
+	border-radius: 4px;
+}
+
+.dropbtn:disabled{
+    background-color: gray;
+    color: white;  
+    font-size: 15px;   
+    cursor: pointer;
+	height: 26px;
+	width: 60px;
+	border: solid 1px #46b8da; 
+	border-radius: 4px;
+}
+
+.dropbtn:disabled:hover{
+    background-color: gray;
     color: white;  
     font-size: 15px;   
     cursor: pointer;
