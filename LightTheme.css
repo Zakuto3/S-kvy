@@ -9,7 +9,7 @@
     overflow: auto;
     padding-left: 6px;
     padding-top: 6px;
-    min-height: 92%;
+    min-height: 90%;
     border-radius: 8px;
     margin: 1%;
     margin-top: -0.4%;
@@ -177,7 +177,7 @@
     font-size: 15px;   
     cursor: pointer;
 	height: 26px;
-	width: 60px;
+	width: 69px;
 	border: solid 1px #46b8da; 
 	border-radius: 4px;
 }
@@ -188,7 +188,7 @@
     font-size: 15px;   
     cursor: pointer;
 	height: 26px;
-	width: 60px;
+	width: 69px;
 	border: solid 1px #46b8da; 
 	border-radius: 4px;
 }
@@ -199,7 +199,7 @@
     font-size: 15px;   
     cursor: pointer;
 	height: 26px;
-	width: 60px;
+	width: 69px;
 	border: solid 1px #46b8da; 
 	border-radius: 4px;
 }
