@@ -10,7 +10,7 @@
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">   
 
-	<link id="themes" rel="stylesheet" href="./DarkTheme.css">
+	<link id="themes" rel="stylesheet" href="./LightTheme.css">
 	
 </head>
 <body id='background'>
@@ -105,7 +105,7 @@
 							    <a >Länk</a>
 							    <a >Bild</a>
 							    <a >Datum</a>
-							    <a >Heltal</a>
+							    <a >Avrunda</a>
 							 </div> 
 							</div>
 							</td>
@@ -390,11 +390,15 @@ function calcFTL (){
 	var FTLtypes = [];
 	$('#fler_kolumner tr').each(function (k) {// 'table row'
 		$(this).find("input,select, button").each(function (i) {
+			console.log(this.id.indexOf('title'),this,this.checked);
 			if (this.id.indexOf('FTLfield') >= 0) {
 				FTLnamn[k] = $(this).val();
 			}
 			if (this.id.indexOf('kolumn') >= 0){
 				kolumnNamn[k] = $(this).val();
+			}
+			if (this.id.indexOf('title') >= 0 && this.checked){
+				kolumnNamn[k] = 'title';
 			}
 			if (this.id.indexOf('FTLtype') >= 0){
 				FTLtypes[k] = $(this).text();
