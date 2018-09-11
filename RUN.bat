@@ -1,2 +1,1 @@
-start chrome Client.html
-node serverside.js
+start cmd /k node serverside.js && start /MIN chrome Client.html
