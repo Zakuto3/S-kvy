@@ -65,6 +65,8 @@ app.get('/eskilstuna/:tabell', function (req, res) {
             } 
 			else 
 			{
+                console.log("New request");
+                console.log(result.rows);
                 res.send(result.rows); //alla akt_bet. För första raden så .rows[0]
             }
             
