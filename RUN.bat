@@ -1,1 +1,1 @@
-start cmd /k node serverside.js && start /MIN chrome Client.html
+start cmd /k node ./src/serverside.js && timeout 2 && start chrome Client.html
