@@ -1,3 +1,2 @@
 # S-kvy
-Finalized app, Terminated support in this repo.
-++
+Nya Skapa-Sökvy Appen. Intern support for creating and maintaining layer-view for Eskilstuna Map.
