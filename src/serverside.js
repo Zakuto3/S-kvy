@@ -99,8 +99,38 @@ app.post('/Core', function (req, res){
 			}
 		});
 	});
+    pool.on('error', function (err, client) {
+        console.error('idle client error', err.message, err.stack)
+    })
 });
 
+app.post('/where', function (req,res) {
+    var pool = new pg.Pool(DBobj.config_eskilstuna);
+    pool.connect(function (err, client, done) 
+    {
+        if (err) 
+        {
+            return console.error('error fetching client from pool', err);
+        }
+        client.query("SELECT pg_get_viewdef('"+req.body.sokvy+"');", function(err, result){
+            done();
+            if (err) 
+            {
+                return console.error('error running query', err);
+            } 
+            else 
+            {
+                var sokvycode = result.rows[0].pg_get_viewdef;
+                var where = sokvycode.slice(sokvycode.indexOf("WHERE"));
+                where = where.replace(/\(|\)/g, "");
+                res.send(where);
+            }
+        });
+    });
+    pool.on('error', function (err, client) {
+        console.error('idle client error', err.message, err.stack)
+    })
+});
 
 app.listen(1337);
 

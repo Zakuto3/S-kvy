@@ -88,6 +88,7 @@ $("#layerspecs").on('change', function(){
 	var length = $(".dropbox").length - 1;
 	$("#fler_kolumner tr:gt(1)").remove();
 	readTableColumns();
+	checkWhere();
 	$("#sendbutton").prop('disabled', 'true');
 });
 
@@ -575,6 +576,13 @@ function ChangeTheme (){
 		break;
 
 	}
+}
+
+function checkWhere(){
+	var data = {sokvy : $('#sokvy').text()};
+	$.post('http://localhost:1337/where', data, function(whereString){
+		$("#nuwhere").text(whereString);
+	});
 }
 
 //jqueryUI för att göra lista DOMelement sorterbar

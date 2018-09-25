@@ -32,7 +32,7 @@
 				<div id="tabellInfotext" class="collapse">
 					<!--position: absolute; max-width: 50%; right:0px; background-color: black; -->
 					<div class= 'info-text'>
-					- Till vänster listas sökvyer som specifierats i layerspecification-tabellen i databasen.<br>- Informationen under kommer också direkt från layerspecifications.<br>- Vid ändring av sökvynamn, tänk på att sökvyn kanske inte finns specifierad i layerspecification-tabellen.<br>- Tabell: Vilken tabell som används för sökvyn.<br>- Sökvy: Vad sökvyn du skapar heter.<br>- Titel: Sökvyns titel i geoserver. <br>- Where: Sökvyns where-sats.
+					- Till vänster listas sökvyer som specifierats i layerspecification-tabellen i databasen.<br>- Informationen under kommer också direkt från layerspecifications, exklusive '<b>Nuvarande Where-sats:</b>".<br>- Vid ändring av sökvynamn, tänk på att sökvyn kanske inte finns specifierad i layerspecification-tabellen.<br>- Tabell: Vilken tabell som används för sökvyn.<br>- Sökvy: Vad sökvyn du skapar heter.<br>- Titel: Sökvyns titel i geoserver. <br>- Where: Sökvyns where-sats.<br>- Nuvarande Where-sats: Den where-sats som finns på befintilig sökvy.
 					</div>
 				</div>
 		    </div>
@@ -53,8 +53,10 @@
 			</h3>
 			<input id='newtitel' type='text'>				
 			<p id="titel"></p>
-			<h3>Where</h3>
+			<h3>Layerspecs Where-sats</h3>
 			<p id="where"></p>
+			<h3>Nuvarande Where-sats</h3>
+			<p id="nuwhere"></p>
 		</div>
 		<div name='kolumnWindow' class='divs kolumn'>
                 <h3>Inkluderade kolumner med ev. FTLnamn <button id='kolumnInfo' class='info_knapp glyphicon glyphicon-exclamation-sign popup' data-toggle="collapse" data-target="#kolumnwindowtext"></button></h3>
